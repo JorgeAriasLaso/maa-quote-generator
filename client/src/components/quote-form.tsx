@@ -283,16 +283,16 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         pricePerTeacher: currentQuote.pricePerTeacher?.toString() || "",
         adhocServices: currentQuote.adhocServices || "[]",
         
-        // Service pricing fields - ensure these are strings
-        studentAccommodationPerDay: currentQuote.studentAccommodationPerDay ? currentQuote.studentAccommodationPerDay.toString() : "",
-        teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay ? currentQuote.teacherAccommodationPerDay.toString() : "",
-        breakfastPerDay: currentQuote.breakfastPerDay ? currentQuote.breakfastPerDay.toString() : "",
-        lunchPerDay: currentQuote.lunchPerDay ? currentQuote.lunchPerDay.toString() : "",
-        dinnerPerDay: currentQuote.dinnerPerDay ? currentQuote.dinnerPerDay.toString() : "",
-        transportCardTotal: currentQuote.transportCardTotal ? currentQuote.transportCardTotal.toString() : "",
-        studentCoordinationFeeTotal: currentQuote.studentCoordinationFeeTotal ? currentQuote.studentCoordinationFeeTotal.toString() : "",
-        teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal ? currentQuote.teacherCoordinationFeeTotal.toString() : "",
-        airportTransferPerPerson: currentQuote.airportTransferPerPerson ? currentQuote.airportTransferPerPerson.toString() : "",
+        // Service pricing fields - handle all string values properly
+        studentAccommodationPerDay: currentQuote.studentAccommodationPerDay || "",
+        teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay || "",
+        breakfastPerDay: currentQuote.breakfastPerDay || "",
+        lunchPerDay: currentQuote.lunchPerDay || "",
+        dinnerPerDay: currentQuote.dinnerPerDay || "",
+        transportCardTotal: currentQuote.transportCardTotal || "",
+        studentCoordinationFeeTotal: currentQuote.studentCoordinationFeeTotal || "",
+        teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal || "",
+        airportTransferPerPerson: currentQuote.airportTransferPerPerson || "",
         
         // Service inclusion checkboxes
         travelInsurance: currentQuote.travelInsurance || false,
@@ -301,19 +301,25 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         tourGuide: currentQuote.tourGuide || false,
         
         // Internal cost fields
-        costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay ? currentQuote.costStudentAccommodationPerDay.toString() : "",
-        costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay ? currentQuote.costTeacherAccommodationPerDay.toString() : "",
-        costBreakfastPerDay: currentQuote.costBreakfastPerDay ? currentQuote.costBreakfastPerDay.toString() : "",
-        costLunchPerDay: currentQuote.costLunchPerDay ? currentQuote.costLunchPerDay.toString() : "",
-        costDinnerPerDay: currentQuote.costDinnerPerDay ? currentQuote.costDinnerPerDay.toString() : "",
-        costLocalTransportationCard: currentQuote.costLocalTransportationCard ? currentQuote.costLocalTransportationCard.toString() : "",
-        costStudentCoordination: currentQuote.costStudentCoordination ? currentQuote.costStudentCoordination.toString() : "",
-        costTeacherCoordination: currentQuote.costTeacherCoordination ? currentQuote.costTeacherCoordination.toString() : "",
-        costLocalCoordinator: currentQuote.costLocalCoordinator ? currentQuote.costLocalCoordinator.toString() : "",
-        costAirportTransfer: currentQuote.costAirportTransfer ? currentQuote.costAirportTransfer.toString() : "",
+        costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay || "",
+        costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay || "",
+        costBreakfastPerDay: currentQuote.costBreakfastPerDay || "",
+        costLunchPerDay: currentQuote.costLunchPerDay || "",
+        costDinnerPerDay: currentQuote.costDinnerPerDay || "",
+        costLocalTransportationCard: currentQuote.costLocalTransportationCard || "",
+        costStudentCoordination: currentQuote.costStudentCoordination || "",
+        costTeacherCoordination: currentQuote.costTeacherCoordination || "",
+        costLocalCoordinator: currentQuote.costLocalCoordinator || "",
+        costAirportTransfer: currentQuote.costAirportTransfer || "",
       };
       
+      console.log("Form data being reset with:", formData);
       form.reset(formData);
+      
+      // Force form to re-render with proper values
+      setTimeout(() => {
+        console.log("Current form values after reset:", form.getValues());
+      }, 100);
       
       // Handle destination selection
       if (currentQuote.destination) {
