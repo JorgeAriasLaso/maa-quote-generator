@@ -259,7 +259,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   useEffect(() => {
     if (currentQuote) {
       // Use form.reset to properly update all fields and trigger re-renders
-      form.reset({
+      const formData = {
         // Basic quote information
         destination: currentQuote.destination || "",
         tripType: currentQuote.tripType || "",
@@ -283,16 +283,16 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         pricePerTeacher: currentQuote.pricePerTeacher?.toString() || "",
         adhocServices: currentQuote.adhocServices || "[]",
         
-        // Service pricing fields
-        studentAccommodationPerDay: currentQuote.studentAccommodationPerDay?.toString() || "",
-        teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay?.toString() || "",
-        breakfastPerDay: currentQuote.breakfastPerDay?.toString() || "",
-        lunchPerDay: currentQuote.lunchPerDay?.toString() || "",
-        dinnerPerDay: currentQuote.dinnerPerDay?.toString() || "",
-        transportCardTotal: currentQuote.transportCardTotal?.toString() || "",
-        studentCoordinationFeeTotal: currentQuote.studentCoordinationFeeTotal?.toString() || "",
-        teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal?.toString() || "",
-        airportTransferPerPerson: currentQuote.airportTransferPerPerson?.toString() || "",
+        // Service pricing fields - ensure these are strings
+        studentAccommodationPerDay: currentQuote.studentAccommodationPerDay ? currentQuote.studentAccommodationPerDay.toString() : "",
+        teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay ? currentQuote.teacherAccommodationPerDay.toString() : "",
+        breakfastPerDay: currentQuote.breakfastPerDay ? currentQuote.breakfastPerDay.toString() : "",
+        lunchPerDay: currentQuote.lunchPerDay ? currentQuote.lunchPerDay.toString() : "",
+        dinnerPerDay: currentQuote.dinnerPerDay ? currentQuote.dinnerPerDay.toString() : "",
+        transportCardTotal: currentQuote.transportCardTotal ? currentQuote.transportCardTotal.toString() : "",
+        studentCoordinationFeeTotal: currentQuote.studentCoordinationFeeTotal ? currentQuote.studentCoordinationFeeTotal.toString() : "",
+        teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal ? currentQuote.teacherCoordinationFeeTotal.toString() : "",
+        airportTransferPerPerson: currentQuote.airportTransferPerPerson ? currentQuote.airportTransferPerPerson.toString() : "",
         
         // Service inclusion checkboxes
         travelInsurance: currentQuote.travelInsurance || false,
@@ -301,17 +301,19 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         tourGuide: currentQuote.tourGuide || false,
         
         // Internal cost fields
-        costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay?.toString() || "",
-        costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay?.toString() || "",
-        costBreakfastPerDay: currentQuote.costBreakfastPerDay?.toString() || "",
-        costLunchPerDay: currentQuote.costLunchPerDay?.toString() || "",
-        costDinnerPerDay: currentQuote.costDinnerPerDay?.toString() || "",
-        costLocalTransportationCard: currentQuote.costLocalTransportationCard?.toString() || "",
-        costStudentCoordination: currentQuote.costStudentCoordination?.toString() || "",
-        costTeacherCoordination: currentQuote.costTeacherCoordination?.toString() || "",
-        costLocalCoordinator: currentQuote.costLocalCoordinator?.toString() || "",
-        costAirportTransfer: currentQuote.costAirportTransfer?.toString() || "",
-      });
+        costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay ? currentQuote.costStudentAccommodationPerDay.toString() : "",
+        costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay ? currentQuote.costTeacherAccommodationPerDay.toString() : "",
+        costBreakfastPerDay: currentQuote.costBreakfastPerDay ? currentQuote.costBreakfastPerDay.toString() : "",
+        costLunchPerDay: currentQuote.costLunchPerDay ? currentQuote.costLunchPerDay.toString() : "",
+        costDinnerPerDay: currentQuote.costDinnerPerDay ? currentQuote.costDinnerPerDay.toString() : "",
+        costLocalTransportationCard: currentQuote.costLocalTransportationCard ? currentQuote.costLocalTransportationCard.toString() : "",
+        costStudentCoordination: currentQuote.costStudentCoordination ? currentQuote.costStudentCoordination.toString() : "",
+        costTeacherCoordination: currentQuote.costTeacherCoordination ? currentQuote.costTeacherCoordination.toString() : "",
+        costLocalCoordinator: currentQuote.costLocalCoordinator ? currentQuote.costLocalCoordinator.toString() : "",
+        costAirportTransfer: currentQuote.costAirportTransfer ? currentQuote.costAirportTransfer.toString() : "",
+      };
+      
+      form.reset(formData);
       
       // Handle destination selection
       if (currentQuote.destination) {
@@ -346,6 +348,8 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   const airportTransfers = form.watch("airportTransfers");
   const localTransport = form.watch("localTransport");
   const tourGuide = form.watch("tourGuide");
+
+
 
   // Calculate duration when start and end dates change
   useEffect(() => {
@@ -995,7 +999,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-student-accommodation"
-                              checked={studentAccommodationPerDay !== "" && studentAccommodationPerDay !== undefined}
+                              checked={!!(studentAccommodationPerDay && studentAccommodationPerDay !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("studentAccommodationPerDay", "");
@@ -1010,7 +1014,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(studentAccommodationPerDay !== "" && studentAccommodationPerDay !== undefined)}
+                              disabled={!studentAccommodationPerDay || studentAccommodationPerDay === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1026,7 +1030,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-teacher-accommodation"
-                              checked={teacherAccommodationPerDay !== "" && teacherAccommodationPerDay !== undefined}
+                              checked={!!(teacherAccommodationPerDay && teacherAccommodationPerDay !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("teacherAccommodationPerDay", "");
@@ -1041,7 +1045,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(teacherAccommodationPerDay !== "" && teacherAccommodationPerDay !== undefined)}
+                              disabled={!teacherAccommodationPerDay || teacherAccommodationPerDay === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1057,7 +1061,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-breakfast"
-                              checked={breakfastPerDay !== "" && breakfastPerDay !== undefined}
+                              checked={!!(breakfastPerDay && breakfastPerDay !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("breakfastPerDay", "");
@@ -1072,7 +1076,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(breakfastPerDay !== "" && breakfastPerDay !== undefined)}
+                              disabled={!breakfastPerDay || breakfastPerDay === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1088,7 +1092,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-lunch"
-                              checked={lunchPerDay !== "" && lunchPerDay !== undefined}
+                              checked={!!(lunchPerDay && lunchPerDay !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("lunchPerDay", "");
@@ -1103,7 +1107,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(lunchPerDay !== "" && lunchPerDay !== undefined)}
+                              disabled={!lunchPerDay || lunchPerDay === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1119,7 +1123,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-dinner"
-                              checked={dinnerPerDay !== "" && dinnerPerDay !== undefined}
+                              checked={!!(dinnerPerDay && dinnerPerDay !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("dinnerPerDay", "");
@@ -1134,7 +1138,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(dinnerPerDay !== "" && dinnerPerDay !== undefined)}
+                              disabled={!dinnerPerDay || dinnerPerDay === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1156,7 +1160,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-transport"
-                              checked={transportCardTotal !== "" && transportCardTotal !== undefined}
+                              checked={!!(transportCardTotal && transportCardTotal !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("transportCardTotal", "");
@@ -1171,7 +1175,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0.00" 
                               {...field} 
-                              disabled={!(transportCardTotal !== "" && transportCardTotal !== undefined)}
+                              disabled={!transportCardTotal || transportCardTotal === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1187,7 +1191,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-student-coord"
-                              checked={studentCoordinationFeeTotal !== "" && studentCoordinationFeeTotal !== undefined}
+                              checked={!!(studentCoordinationFeeTotal && studentCoordinationFeeTotal !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("studentCoordinationFeeTotal", "");
@@ -1202,7 +1206,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0" 
                               {...field} 
-                              disabled={!(studentCoordinationFeeTotal !== "" && studentCoordinationFeeTotal !== undefined)}
+                              disabled={!studentCoordinationFeeTotal || studentCoordinationFeeTotal === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1218,7 +1222,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-teacher-coord"
-                              checked={teacherCoordinationFeeTotal !== "" && teacherCoordinationFeeTotal !== undefined}
+                              checked={!!(teacherCoordinationFeeTotal && teacherCoordinationFeeTotal !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("teacherCoordinationFeeTotal", "");
@@ -1233,7 +1237,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0" 
                               {...field} 
-                              disabled={!(teacherCoordinationFeeTotal !== "" && teacherCoordinationFeeTotal !== undefined)}
+                              disabled={!teacherCoordinationFeeTotal || teacherCoordinationFeeTotal === ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1249,7 +1253,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
                               id="include-airport"
-                              checked={airportTransferPerPerson !== "" && airportTransferPerPerson !== undefined}
+                              checked={!!(airportTransferPerPerson && airportTransferPerPerson !== "")}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
                                   form.setValue("airportTransferPerPerson", "");
@@ -1266,7 +1270,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             <Input 
                               placeholder="0" 
                               {...field} 
-                              disabled={!(airportTransferPerPerson !== "" && airportTransferPerPerson !== undefined)}
+                              disabled={!airportTransferPerPerson || airportTransferPerPerson === ""}
                             />
                           </FormControl>
                           <FormMessage />
