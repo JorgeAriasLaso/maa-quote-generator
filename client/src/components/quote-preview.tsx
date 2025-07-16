@@ -578,28 +578,47 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Set optimal width for PDF export using full A4 width
-      const originalMaxWidth = quoteElement.style.maxWidth;
-      const originalWidth = quoteElement.style.width;
-      quoteElement.style.maxWidth = '210mm'; // Full A4 width
-      quoteElement.style.width = '210mm';
+      // Set a fixed width for consistent PDF generation
+      const originalStyles = {
+        maxWidth: quoteElement.style.maxWidth,
+        width: quoteElement.style.width,
+        margin: quoteElement.style.margin,
+        padding: quoteElement.style.padding,
+        backgroundColor: quoteElement.style.backgroundColor,
+      };
+      
+      // Set fixed dimensions for PDF export
+      quoteElement.style.maxWidth = '800px';
+      quoteElement.style.width = '800px';
       quoteElement.style.margin = '0';
       quoteElement.style.padding = '20px';
+      quoteElement.style.backgroundColor = '#ffffff';
       
-      // Create canvas from the quote document
+      // Allow time for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Create canvas from the quote document with optimized settings
       const canvas = await html2canvas(quoteElement, {
-        scale: 1.5,
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 794, // A4 width in pixels at 96 DPI
+        width: 840, // 800px + 40px padding
+        logging: false,
+        imageTimeout: 15000,
+        onclone: (clonedDoc) => {
+          // Ensure all styles are applied to the cloned document
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            clonedElement.style.maxWidth = '800px';
+            clonedElement.style.width = '800px';
+            clonedElement.style.backgroundColor = '#ffffff';
+          }
+        }
       });
       
       // Restore original styling
-      quoteElement.style.maxWidth = originalMaxWidth;
-      quoteElement.style.width = originalWidth;
-      quoteElement.style.margin = '';
-      quoteElement.style.padding = '';
+      Object.assign(quoteElement.style, originalStyles);
 
       // Show the header and internal analysis sections again
       if (previewHeader) {
@@ -610,18 +629,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with proper page handling
+      // Create PDF with simplified approach
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 10; // 10mm margins
+      const margin = 15; // 15mm margins
       
-      // Convert canvas to image data
-      const imgData = canvas.toDataURL('image/png');
+      // Convert canvas to image data with high quality
+      const imgData = canvas.toDataURL('image/png', 1.0);
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate dimensions to use full page width
+      // Calculate dimensions to fit page width
       const availableWidth = pdfWidth - (2 * margin);
       const scaledWidth = availableWidth;
       const scaledHeight = (imgHeight * availableWidth) / imgWidth;
@@ -633,7 +652,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         // Content fits on one page
         pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Content needs multiple pages - split the image
+        // Content spans multiple pages - use simple page splitting
         const pageHeight = availableHeight;
         const totalPages = Math.ceil(scaledHeight / pageHeight);
         
@@ -642,24 +661,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             pdf.addPage();
           }
           
-          // Calculate the portion of the image for this page
-          const sourceY = (i * pageHeight * imgHeight) / scaledHeight;
-          const sourceHeight = Math.min((pageHeight * imgHeight) / scaledHeight, imgHeight - sourceY);
-          const destHeight = Math.min(pageHeight, scaledHeight - (i * pageHeight));
-          
-          // Use jsPDF's built-in image clipping
-          pdf.addImage(
-            imgData, 
-            'PNG', 
-            margin, 
-            margin, 
-            scaledWidth, 
-            scaledHeight,
-            undefined,
-            'FAST',
-            0,
-            -i * pageHeight
-          );
+          // Add image with offset for each page
+          const yOffset = -(i * pageHeight);
+          pdf.addImage(imgData, 'PNG', margin, margin + yOffset, scaledWidth, scaledHeight);
         }
       }
       
