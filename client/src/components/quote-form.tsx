@@ -252,7 +252,12 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                   <FormItem>
                     <FormLabel>Duration</FormLabel>
                     <FormControl>
-                      <Input placeholder="7 days" {...field} />
+                      <Input 
+                        placeholder="7 days" 
+                        {...field} 
+                        readOnly 
+                        className="bg-slate-50 text-slate-600"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
