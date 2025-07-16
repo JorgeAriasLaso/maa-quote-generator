@@ -20,15 +20,15 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
   const [customDestination, setCustomDestination] = useState("");
 
   const destinationsByCountry = {
-    "Spain": ["Madrid", "Málaga", "Alicante", "Valladolid", "Gijón"],
-    "Portugal": ["Porto"],
-    "France": ["Lyon", "Paris"],
-    "United Kingdom": ["Bristol"],
-    "Italy": ["Bari", "Catania"],
     "Czech Republic": ["Prague"],
-    "Poland": ["Kraków", "Poznań", "Warsaw"],
+    "Denmark": ["Copenhagen"],
+    "France": ["Lyon", "Paris"],
     "Hungary": ["Budapest"],
-    "Denmark": ["Copenhagen"]
+    "Italy": ["Bari", "Catania"],
+    "Poland": ["Kraków", "Poznań", "Warsaw"],
+    "Portugal": ["Porto"],
+    "Spain": ["Madrid", "Málaga", "Alicante", "Valladolid", "Gijón"],
+    "United Kingdom": ["Bristol"]
   };
 
   const form = useForm<InsertQuote>({
