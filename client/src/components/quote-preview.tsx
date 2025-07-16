@@ -974,18 +974,38 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                             </div>
                           </div>
                           
-                          <div className="border-t border-red-200 pt-2">
+                          <div className="border-t border-red-200 pt-2 space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="text-red-700 font-medium">Net Profit:</span>
-                              <span className={`text-lg font-bold ${costBreakdown.profitability.profit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                                {formatCurrency(costBreakdown.profitability.profit)}
+                              <span className="text-red-700 font-medium">Gross Profit:</span>
+                              <span className={`text-lg font-bold ${costBreakdown.profitability.grossProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                                {formatCurrency(costBreakdown.profitability.grossProfit)}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center mt-1">
-                              <span className="text-red-700 font-medium">Profit Margin:</span>
-                              <span className={`font-bold ${costBreakdown.profitability.marginPercentage >= 20 ? 'text-green-700' : costBreakdown.profitability.marginPercentage >= 10 ? 'text-yellow-600' : 'text-red-700'}`}>
-                                {costBreakdown.profitability.marginPercentage.toFixed(1)}%
+                            <div className="flex justify-between items-center">
+                              <span className="text-red-700 font-medium">VAT (21%):</span>
+                              <span className="text-orange-600 font-bold">
+                                {formatCurrency(costBreakdown.profitability.vat)}
                               </span>
+                            </div>
+                            <div className="flex justify-between items-center border-t border-red-200 pt-2">
+                              <span className="text-red-800 font-semibold">Net Profit:</span>
+                              <span className={`text-xl font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                                {formatCurrency(costBreakdown.profitability.netProfit)}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-red-700">Gross Margin:</span>
+                                <span className={`font-bold ${costBreakdown.profitability.grossMarginPercentage >= 30 ? 'text-green-700' : costBreakdown.profitability.grossMarginPercentage >= 15 ? 'text-yellow-600' : 'text-red-700'}`}>
+                                  {costBreakdown.profitability.grossMarginPercentage.toFixed(1)}%
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-red-700">Net Margin:</span>
+                                <span className={`font-bold ${costBreakdown.profitability.netMarginPercentage >= 20 ? 'text-green-700' : costBreakdown.profitability.netMarginPercentage >= 10 ? 'text-yellow-600' : 'text-red-700'}`}>
+                                  {costBreakdown.profitability.netMarginPercentage.toFixed(1)}%
+                                </span>
+                              </div>
                             </div>
                           </div>
                           

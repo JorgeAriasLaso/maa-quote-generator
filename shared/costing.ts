@@ -257,8 +257,11 @@ export interface CostBreakdown {
   profitability: {
     revenue: number;
     costs: number;
-    profit: number;
-    marginPercentage: number;
+    grossProfit: number;
+    vat: number;
+    netProfit: number;
+    grossMarginPercentage: number;
+    netMarginPercentage: number;
   };
   subtotal: number;
   total: number;
@@ -468,17 +471,26 @@ export function calculateQuoteCost(
   const total = subtotal - (groupDiscount?.amount || 0);
   const netCostAfterErasmus = total - (erasmusFunding?.totalFunding || 0);
   
-  // Calculate profitability
+  // Calculate profitability with VAT
   const revenue = total;
   const costs = totalInternalCosts;
-  const profit = revenue - costs;
-  const marginPercentage = revenue > 0 ? (profit / revenue) * 100 : 0;
+  const grossProfit = revenue - costs;
+  
+  // Calculate VAT using formula: Net Profit = Gross Profit / 1.21
+  const netProfit = grossProfit / 1.21;
+  const vat = grossProfit - netProfit;
+  
+  const grossMarginPercentage = revenue > 0 ? (grossProfit / revenue) * 100 : 0;
+  const netMarginPercentage = revenue > 0 ? (netProfit / revenue) * 100 : 0;
 
   const profitability = {
     revenue,
     costs,
-    profit,
-    marginPercentage,
+    grossProfit,
+    vat,
+    netProfit,
+    grossMarginPercentage,
+    netMarginPercentage,
   };
   
   return {
