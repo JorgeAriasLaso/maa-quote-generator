@@ -61,9 +61,9 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
                 name="taxId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tax ID *</FormLabel>
+                    <FormLabel>Tax ID</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter tax identification number" {...field} />
+                      <Input placeholder="Enter tax identification number (optional)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -75,9 +75,9 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email *</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="contact@school.edu" {...field} />
+                      <Input type="email" placeholder="contact@school.edu (optional)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,9 +117,9 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
                 name="postcode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Postcode *</FormLabel>
+                    <FormLabel>Postcode</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter postal code" {...field} />
+                      <Input placeholder="Enter postal code (optional)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,10 +132,10 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address *</FormLabel>
+                  <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Enter full address"
+                      placeholder="Enter full address (optional)"
                       className="min-h-[80px]"
                       {...field} 
                     />

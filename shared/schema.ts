@@ -7,12 +7,12 @@ import { z } from "zod";
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
   fiscalName: text("fiscal_name").notNull(),
-  taxId: text("tax_id").notNull(),
-  email: text("email").notNull(),
+  taxId: text("tax_id"), // Optional
+  email: text("email"), // Optional
   country: text("country").notNull(),
   city: text("city").notNull(),
-  postcode: text("postcode").notNull(),
-  address: text("address").notNull(),
+  postcode: text("postcode"), // Optional
+  address: text("address"), // Optional
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -101,6 +101,11 @@ export const insertClientSchema = createInsertSchema(clients).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  taxId: z.string().optional(),
+  email: z.string().email().optional().or(z.literal("")),
+  postcode: z.string().optional(),
+  address: z.string().optional(),
 });
 
 export type Client = typeof clients.$inferSelect;

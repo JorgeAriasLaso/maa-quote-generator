@@ -214,7 +214,13 @@ export class DatabaseStorage implements IStorage {
   async createClient(insertClient: InsertClient): Promise<Client> {
     const [client] = await db
       .insert(clients)
-      .values(insertClient)
+      .values({
+        ...insertClient,
+        taxId: insertClient.taxId || null,
+        email: insertClient.email || null,
+        postcode: insertClient.postcode || null,
+        address: insertClient.address || null,
+      })
       .returning();
     return client;
   }
@@ -226,6 +232,10 @@ export class DatabaseStorage implements IStorage {
       .update(clients)
       .set({
         ...updateData,
+        taxId: updateData.taxId || null,
+        email: updateData.email || null,
+        postcode: updateData.postcode || null,
+        address: updateData.address || null,
         updatedAt: new Date(),
       })
       .where(eq(clients.id, id))
