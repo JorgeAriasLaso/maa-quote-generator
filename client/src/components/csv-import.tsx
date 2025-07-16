@@ -23,11 +23,17 @@ export function CSVImport({ onClose }: CSVImportProps) {
 
   const importMutation = useMutation({
     mutationFn: async (data: any[]) => {
-      return await apiRequest("/api/clients/import-csv", {
+      const response = await fetch("/api/clients/import-csv", {
         method: "POST",
-        body: JSON.stringify({ csvData: data }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csvData: data }),
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.json();
     },
     onSuccess: (result) => {
       setImportResult(result);
