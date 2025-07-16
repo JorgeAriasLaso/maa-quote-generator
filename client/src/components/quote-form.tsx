@@ -80,6 +80,15 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
   const duration = form.watch("duration");
   const numberOfStudents = form.watch("numberOfStudents");
   const numberOfTeachers = form.watch("numberOfTeachers");
+  const studentAccommodationPerDay = form.watch("studentAccommodationPerDay");
+  const teacherAccommodationPerDay = form.watch("teacherAccommodationPerDay");
+  const breakfastPerDay = form.watch("breakfastPerDay");
+  const lunchPerDay = form.watch("lunchPerDay");
+  const dinnerPerDay = form.watch("dinnerPerDay");
+  const transportCardTotal = form.watch("transportCardTotal");
+  const studentCoordinationFeeTotal = form.watch("studentCoordinationFeeTotal");
+  const teacherCoordinationFeeTotal = form.watch("teacherCoordinationFeeTotal");
+  const airportTransferPerPerson = form.watch("airportTransferPerPerson");
   const travelInsurance = form.watch("travelInsurance");
   const airportTransfers = form.watch("airportTransfers");
   const localTransport = form.watch("localTransport");
@@ -104,16 +113,6 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     }
   }, [startDate, endDate, form]);
 
-  // Watch custom pricing fields
-  const accommodationPerDay = form.watch("accommodationPerDay");
-  const breakfastPerDay = form.watch("breakfastPerDay");
-  const lunchPerDay = form.watch("lunchPerDay");
-  const dinnerPerDay = form.watch("dinnerPerDay");
-  const transportCardTotal = form.watch("transportCardTotal");
-  const studentCoordinationFeeTotal = form.watch("studentCoordinationFeeTotal");
-  const teacherCoordinationFeeTotal = form.watch("teacherCoordinationFeeTotal");
-  const airportTransferPerPerson = form.watch("airportTransferPerPerson");
-
   // Calculate pricing when relevant values change
   const costBreakdown = destination && duration && numberOfStudents >= 0 && numberOfTeachers >= 0 ? 
     calculateQuoteCost(
@@ -128,7 +127,8 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
         tourGuide: tourGuide || false,
       },
       {
-        accommodationPerDay: accommodationPerDay ? parseFloat(accommodationPerDay) : undefined,
+        studentAccommodationPerDay: studentAccommodationPerDay ? parseFloat(studentAccommodationPerDay) : undefined,
+        teacherAccommodationPerDay: teacherAccommodationPerDay ? parseFloat(teacherAccommodationPerDay) : undefined,
         breakfastPerDay: breakfastPerDay ? parseFloat(breakfastPerDay) : undefined,
         lunchPerDay: lunchPerDay ? parseFloat(lunchPerDay) : undefined,
         dinnerPerDay: dinnerPerDay ? parseFloat(dinnerPerDay) : undefined,
@@ -571,28 +571,59 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <FormField
                       control={form.control}
-                      name="accommodationPerDay"
+                      name="studentAccommodationPerDay"
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex items-center space-x-2 mb-2">
                             <Checkbox 
-                              id="include-accommodation"
-                              checked={accommodationPerDay !== "" && accommodationPerDay !== undefined}
+                              id="include-student-accommodation"
+                              checked={studentAccommodationPerDay !== "" && studentAccommodationPerDay !== undefined}
                               onCheckedChange={(checked) => {
                                 if (!checked) {
-                                  form.setValue("accommodationPerDay", "");
+                                  form.setValue("studentAccommodationPerDay", "");
                                 } else {
-                                  form.setValue("accommodationPerDay", "0");
+                                  form.setValue("studentAccommodationPerDay", "0");
                                 }
                               }}
                             />
-                            <FormLabel>Accommodation (€/day)</FormLabel>
+                            <FormLabel>Student Accommodation (€/day)</FormLabel>
                           </div>
                           <FormControl>
                             <Input 
                               placeholder="0" 
                               {...field} 
-                              disabled={!(accommodationPerDay !== "" && accommodationPerDay !== undefined)}
+                              disabled={!(studentAccommodationPerDay !== "" && studentAccommodationPerDay !== undefined)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="teacherAccommodationPerDay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-teacher-accommodation"
+                              checked={teacherAccommodationPerDay !== "" && teacherAccommodationPerDay !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("teacherAccommodationPerDay", "");
+                                } else {
+                                  form.setValue("teacherAccommodationPerDay", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Teacher Accommodation (€/day)</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(teacherAccommodationPerDay !== "" && teacherAccommodationPerDay !== undefined)}
                             />
                           </FormControl>
                           <FormMessage />

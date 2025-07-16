@@ -17,10 +17,7 @@ export default function Home() {
       // Generate quote number and calculate pricing
       const quoteNumber = `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
       
-      const response = await apiRequest("POST", "/api/quotes", {
-        ...data,
-        quoteNumber,
-      });
+      const response = await apiRequest("POST", "/api/quotes", data);
       return response.json();
     },
     onSuccess: (newQuote: Quote) => {

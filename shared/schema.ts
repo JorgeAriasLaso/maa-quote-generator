@@ -16,7 +16,8 @@ export const quotes = pgTable("quotes", {
   schoolAddress: text("school_address").notNull(),
   
   // Custom pricing inputs - daily rates
-  accommodationPerDay: text("accommodation_per_day"),
+  studentAccommodationPerDay: text("student_accommodation_per_day"),
+  teacherAccommodationPerDay: text("teacher_accommodation_per_day"),
   breakfastPerDay: text("breakfast_per_day"),
   lunchPerDay: text("lunch_per_day"),
   dinnerPerDay: text("dinner_per_day"),
