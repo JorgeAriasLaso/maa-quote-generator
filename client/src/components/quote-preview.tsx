@@ -940,7 +940,7 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                           </span>
                         </div>
                         <p className="text-xs text-green-700 mt-1">
-                          Your school can apply for Erasmus+ funding to significantly reduce trip costs
+                          Erasmus+ funding can significantly reduce your school's out-of-pocket costs
                         </p>
                       </div>
                     )}

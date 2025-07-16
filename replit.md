@@ -44,6 +44,10 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented conditional display logic so only selected services appear in quotes and pricing calculations
 ✓ Split accommodation pricing into separate fields for students and teachers with independent rates
 ✓ Updated transport card label to "Local Transportation Card" throughout the application
+✓ Implemented comprehensive Erasmus+ funding calculation system for internal pricing strategy
+✓ Added funding rates for students (€66/€46, €57/€40, €48/€34) and teachers (€117/€82, €104/€73, €91/€64) across three country groups
+✓ Created duration-based funding calculations (different rates for days 1-14 vs 15+) to help compare quoted prices against available school funding
+✓ Erasmus funding display shows schools potential funding amounts to help justify trip value and encourage bookings
 
 ## System Architecture
 
