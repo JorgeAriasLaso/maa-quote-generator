@@ -1013,8 +1013,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!studentAccommodationPerDay || studentAccommodationPerDay === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1044,8 +1043,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!teacherAccommodationPerDay || teacherAccommodationPerDay === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1075,8 +1073,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!breakfastPerDay || breakfastPerDay === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1106,8 +1103,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!lunchPerDay || lunchPerDay === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1137,8 +1133,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!dinnerPerDay || dinnerPerDay === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1174,8 +1169,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
-                              {...field} 
-                              disabled={!transportCardTotal || transportCardTotal === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1205,8 +1199,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0" 
-                              {...field} 
-                              disabled={!studentCoordinationFeeTotal || studentCoordinationFeeTotal === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1236,8 +1229,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0" 
-                              {...field} 
-                              disabled={!teacherCoordinationFeeTotal || teacherCoordinationFeeTotal === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1269,8 +1261,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <FormControl>
                             <Input 
                               placeholder="0" 
-                              {...field} 
-                              disabled={!airportTransferPerPerson || airportTransferPerPerson === ""}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />
