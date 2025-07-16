@@ -228,15 +228,15 @@ export function calculateQuoteCost(
   const defaultAirportTransferRate = AIRPORT_TRANSFER_PRICING[country] || AIRPORT_TRANSFER_PRICING["Spain"];
   const days = parseDuration(duration);
   
-  // Use custom pricing if provided, otherwise use defaults
-  const accommodationRate = customPricing?.accommodationPerDay ?? defaultPricing.accommodation;
-  const breakfastRate = customPricing?.breakfastPerDay ?? defaultPricing.breakfast;
-  const lunchRate = customPricing?.lunchPerDay ?? defaultPricing.lunch;
-  const dinnerRate = customPricing?.dinnerPerDay ?? defaultPricing.dinner;
-  const transportCardTotal = customPricing?.transportCardTotal ?? (defaultPricing.transportCard * days);
-  const studentCoordinationTotal = customPricing?.studentCoordinationFeeTotal ?? (defaultPricing.coordinationFee * days);
-  const teacherCoordinationTotal = customPricing?.teacherCoordinationFeeTotal ?? (defaultPricing.coordinationFee * days);
-  const airportTransferRate = customPricing?.airportTransferPerPerson ?? defaultAirportTransferRate;
+  // Use custom pricing if provided, otherwise use zero
+  const accommodationRate = customPricing?.accommodationPerDay ?? 0;
+  const breakfastRate = customPricing?.breakfastPerDay ?? 0;
+  const lunchRate = customPricing?.lunchPerDay ?? 0;
+  const dinnerRate = customPricing?.dinnerPerDay ?? 0;
+  const transportCardTotal = customPricing?.transportCardTotal ?? 0;
+  const studentCoordinationTotal = customPricing?.studentCoordinationFeeTotal ?? 0;
+  const teacherCoordinationTotal = customPricing?.teacherCoordinationFeeTotal ?? 0;
+  const airportTransferRate = customPricing?.airportTransferPerPerson ?? 0;
   
   // Calculate student costs
   const studentAccommodation = accommodationRate * days * numberOfStudents;

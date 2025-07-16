@@ -414,23 +414,37 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       <div className="bg-blue-100/50 p-3 rounded">
                         <h5 className="font-medium text-blue-800 mb-2">Students ({numberOfStudents} × {costBreakdown.student.totalPerStudent}€):</h5>
                         <div className="space-y-1 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-blue-600">• Accommodation:</span>
-                            <span className="text-blue-900">{formatCurrency(costBreakdown.student.accommodation)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-blue-600">• Meals (breakfast, lunch, dinner):</span>
-                            <span className="text-blue-900">{formatCurrency(costBreakdown.student.meals)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-blue-600">• Transport card:</span>
-                            <span className="text-blue-900">{formatCurrency(costBreakdown.student.transportCard)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-blue-600">• Student coordination fee:</span>
-                            <span className="text-blue-900">{formatCurrency(costBreakdown.student.coordinationFee)}</span>
-                          </div>
-                          {costBreakdown.student.airportTransfer > 0 && (
+                          {accommodationPerDay && parseFloat(accommodationPerDay) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-blue-600">• Accommodation:</span>
+                              <span className="text-blue-900">{formatCurrency(costBreakdown.student.accommodation)}</span>
+                            </div>
+                          )}
+                          {((breakfastPerDay && parseFloat(breakfastPerDay) > 0) || 
+                            (lunchPerDay && parseFloat(lunchPerDay) > 0) || 
+                            (dinnerPerDay && parseFloat(dinnerPerDay) > 0)) && (
+                            <div className="flex justify-between">
+                              <span className="text-blue-600">• Meals ({[
+                                breakfastPerDay && parseFloat(breakfastPerDay) > 0 && "breakfast",
+                                lunchPerDay && parseFloat(lunchPerDay) > 0 && "lunch", 
+                                dinnerPerDay && parseFloat(dinnerPerDay) > 0 && "dinner"
+                              ].filter(Boolean).join(", ")}):</span>
+                              <span className="text-blue-900">{formatCurrency(costBreakdown.student.meals)}</span>
+                            </div>
+                          )}
+                          {transportCardTotal && parseFloat(transportCardTotal) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-blue-600">• Transport card:</span>
+                              <span className="text-blue-900">{formatCurrency(costBreakdown.student.transportCard)}</span>
+                            </div>
+                          )}
+                          {studentCoordinationFeeTotal && parseFloat(studentCoordinationFeeTotal) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-blue-600">• Student coordination fee:</span>
+                              <span className="text-blue-900">{formatCurrency(costBreakdown.student.coordinationFee)}</span>
+                            </div>
+                          )}
+                          {airportTransferPerPerson && parseFloat(airportTransferPerPerson) > 0 && (
                             <div className="flex justify-between">
                               <span className="text-blue-600">• Airport transfers:</span>
                               <span className="text-blue-900">{formatCurrency(costBreakdown.student.airportTransfer)}</span>
@@ -447,23 +461,37 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       <div className="bg-green-100/50 p-3 rounded">
                         <h5 className="font-medium text-green-800 mb-2">Teachers ({numberOfTeachers} × {costBreakdown.teacher.totalPerTeacher}€):</h5>
                         <div className="space-y-1 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-green-600">• Accommodation:</span>
-                            <span className="text-green-900">{formatCurrency(costBreakdown.teacher.accommodation)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-green-600">• Meals (breakfast, lunch, dinner):</span>
-                            <span className="text-green-900">{formatCurrency(costBreakdown.teacher.meals)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-green-600">• Transport card:</span>
-                            <span className="text-green-900">{formatCurrency(costBreakdown.teacher.transportCard)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-green-600">• Teacher coordination fee:</span>
-                            <span className="text-green-900">{formatCurrency(costBreakdown.teacher.coordinationFee)}</span>
-                          </div>
-                          {costBreakdown.teacher.airportTransfer > 0 && (
+                          {accommodationPerDay && parseFloat(accommodationPerDay) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-green-600">• Accommodation:</span>
+                              <span className="text-green-900">{formatCurrency(costBreakdown.teacher.accommodation)}</span>
+                            </div>
+                          )}
+                          {((breakfastPerDay && parseFloat(breakfastPerDay) > 0) || 
+                            (lunchPerDay && parseFloat(lunchPerDay) > 0) || 
+                            (dinnerPerDay && parseFloat(dinnerPerDay) > 0)) && (
+                            <div className="flex justify-between">
+                              <span className="text-green-600">• Meals ({[
+                                breakfastPerDay && parseFloat(breakfastPerDay) > 0 && "breakfast",
+                                lunchPerDay && parseFloat(lunchPerDay) > 0 && "lunch", 
+                                dinnerPerDay && parseFloat(dinnerPerDay) > 0 && "dinner"
+                              ].filter(Boolean).join(", ")}):</span>
+                              <span className="text-green-900">{formatCurrency(costBreakdown.teacher.meals)}</span>
+                            </div>
+                          )}
+                          {transportCardTotal && parseFloat(transportCardTotal) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-green-600">• Transport card:</span>
+                              <span className="text-green-900">{formatCurrency(costBreakdown.teacher.transportCard)}</span>
+                            </div>
+                          )}
+                          {teacherCoordinationFeeTotal && parseFloat(teacherCoordinationFeeTotal) > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-green-600">• Teacher coordination fee:</span>
+                              <span className="text-green-900">{formatCurrency(costBreakdown.teacher.coordinationFee)}</span>
+                            </div>
+                          )}
+                          {airportTransferPerPerson && parseFloat(airportTransferPerPerson) > 0 && (
                             <div className="flex justify-between">
                               <span className="text-green-600">• Airport transfers:</span>
                               <span className="text-green-900">{formatCurrency(costBreakdown.teacher.airportTransfer)}</span>
@@ -532,9 +560,11 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
             <Card className="bg-slate-50 p-4">
               <div className="space-y-4">
                 <p className="text-sm text-slate-600 mb-4">
-                  Leave fields empty to use default pricing for the destination. Override with custom rates below:
+                  Enter your custom pricing below. All fields are optional - leave empty for no cost:
                 </p>
                 
+
+
                 {/* Daily Rates */}
                 <div>
                   <h4 className="font-medium text-slate-700 mb-3">Daily Rates (per person per day)</h4>
@@ -544,9 +574,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="accommodationPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Accommodation (€/day)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-accommodation"
+                              checked={accommodationPerDay !== "" && accommodationPerDay !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("accommodationPerDay", "");
+                                } else {
+                                  form.setValue("accommodationPerDay", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Accommodation (€/day)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="35" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(accommodationPerDay !== "" && accommodationPerDay !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -558,9 +605,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="breakfastPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Breakfast (€/day)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-breakfast"
+                              checked={breakfastPerDay !== "" && breakfastPerDay !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("breakfastPerDay", "");
+                                } else {
+                                  form.setValue("breakfastPerDay", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Breakfast (€/day)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="12" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(breakfastPerDay !== "" && breakfastPerDay !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -572,9 +636,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="lunchPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Lunch (€/day)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-lunch"
+                              checked={lunchPerDay !== "" && lunchPerDay !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("lunchPerDay", "");
+                                } else {
+                                  form.setValue("lunchPerDay", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Lunch (€/day)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="16" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(lunchPerDay !== "" && lunchPerDay !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -586,9 +667,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="dinnerPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Dinner (€/day)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-dinner"
+                              checked={dinnerPerDay !== "" && dinnerPerDay !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("dinnerPerDay", "");
+                                } else {
+                                  form.setValue("dinnerPerDay", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Dinner (€/day)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="20" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(dinnerPerDay !== "" && dinnerPerDay !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -606,9 +704,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="transportCardTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Transport Card (€/trip)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-transport"
+                              checked={transportCardTotal !== "" && transportCardTotal !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("transportCardTotal", "");
+                                } else {
+                                  form.setValue("transportCardTotal", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Transport Card (€/trip)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="32" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(transportCardTotal !== "" && transportCardTotal !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -620,9 +735,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="studentCoordinationFeeTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Student Coordination (€/trip)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-student-coord"
+                              checked={studentCoordinationFeeTotal !== "" && studentCoordinationFeeTotal !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("studentCoordinationFeeTotal", "");
+                                } else {
+                                  form.setValue("studentCoordinationFeeTotal", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Student Coordination (€/trip)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="64" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(studentCoordinationFeeTotal !== "" && studentCoordinationFeeTotal !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -634,9 +766,26 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="teacherCoordinationFeeTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Teacher Coordination (€/trip)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-teacher-coord"
+                              checked={teacherCoordinationFeeTotal !== "" && teacherCoordinationFeeTotal !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("teacherCoordinationFeeTotal", "");
+                                } else {
+                                  form.setValue("teacherCoordinationFeeTotal", "0");
+                                }
+                              }}
+                            />
+                            <FormLabel>Teacher Coordination (€/trip)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="64" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(teacherCoordinationFeeTotal !== "" && teacherCoordinationFeeTotal !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -648,9 +797,28 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       name="airportTransferPerPerson"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Airport Transfer (€/person)</FormLabel>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Checkbox 
+                              id="include-airport"
+                              checked={airportTransferPerPerson !== "" && airportTransferPerPerson !== undefined}
+                              onCheckedChange={(checked) => {
+                                if (!checked) {
+                                  form.setValue("airportTransferPerPerson", "");
+                                  form.setValue("airportTransfers", false);
+                                } else {
+                                  form.setValue("airportTransferPerPerson", "0");
+                                  form.setValue("airportTransfers", true);
+                                }
+                              }}
+                            />
+                            <FormLabel>Airport Transfer (€/person)</FormLabel>
+                          </div>
                           <FormControl>
-                            <Input placeholder="40" {...field} />
+                            <Input 
+                              placeholder="0" 
+                              {...field} 
+                              disabled={!(airportTransferPerPerson !== "" && airportTransferPerPerson !== undefined)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
