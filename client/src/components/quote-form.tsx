@@ -560,7 +560,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
             <Card className="bg-slate-50 p-4">
               <div className="space-y-4">
                 <p className="text-sm text-slate-600 mb-4">
-                  Enter your custom pricing below. All fields are optional - leave empty for no cost:
+                  Select each service you want to include by checking the box, then enter your pricing. Only selected services will appear in the quote:
                 </p>
                 
 
