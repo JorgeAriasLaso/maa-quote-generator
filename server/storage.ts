@@ -48,6 +48,11 @@ export class MemStorage implements IStorage {
       id,
       createdAt: new Date(),
       quoteNumber: `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+      // Set defaults for client fields - convert undefined to null
+      taxId: insertQuote.taxId || null,
+      email: insertQuote.email || null,
+      postcode: insertQuote.postcode || null,
+      address: insertQuote.address || null,
       // Set defaults for custom pricing fields - convert undefined to null
       studentAccommodationPerDay: insertQuote.studentAccommodationPerDay || null,
       teacherAccommodationPerDay: insertQuote.teacherAccommodationPerDay || null,
@@ -115,6 +120,11 @@ export class MemStorage implements IStorage {
       ...insertClient,
       createdAt: new Date(),
       updatedAt: new Date(),
+      // Convert undefined to null for optional fields
+      taxId: insertClient.taxId || null,
+      email: insertClient.email || null,
+      postcode: insertClient.postcode || null,
+      address: insertClient.address || null,
     };
     this.clients.set(id, client);
     return client;
@@ -166,11 +176,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createQuote(insertQuote: InsertQuote): Promise<Quote> {
+    const { nanoid } = await import('nanoid');
     const [quote] = await db
       .insert(quotes)
       .values({
         ...insertQuote,
-        quoteNumber: `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+        quoteNumber: `TPQ-${new Date().getFullYear()}-${nanoid(6).toUpperCase()}`,
+        // Handle optional fields
+        taxId: insertQuote.taxId || null,
+        email: insertQuote.email || null,
+        postcode: insertQuote.postcode || null,
+        address: insertQuote.address || null,
       })
       .returning();
     return quote;

@@ -631,7 +631,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
       
       // Generate filename
-      const filename = `${quote.quoteNumber}_${quote.schoolName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
       
       // Download the PDF
       pdf.save(filename);
@@ -1100,7 +1100,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
               <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
               <p className="mb-6 text-gray-800">
-                Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.schoolName}.
+                Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
               </p>
               
               <div className="space-y-2 text-sm font-medium">

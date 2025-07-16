@@ -65,8 +65,8 @@ export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote }: QuoteListPr
                 <CardTitle className="text-lg text-primary">
                   {quote.quoteNumber}
                 </CardTitle>
-                <p className="text-slate-600 font-medium">{quote.schoolName}</p>
-                <p className="text-sm text-slate-500">{quote.contactPerson}</p>
+                <p className="text-slate-600 font-medium">{quote.fiscalName}</p>
+                <p className="text-sm text-slate-500">{quote.email}</p>
               </div>
               <div className="flex gap-2">
                 {onViewQuote && (

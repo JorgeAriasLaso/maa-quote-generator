@@ -178,9 +178,13 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
       duration: "",
       numberOfStudents: 0,
       numberOfTeachers: 0,
-      schoolName: "",
-      contactPerson: "",
-      schoolAddress: "",
+      fiscalName: "",
+      taxId: "",
+      email: "",
+      country: "",
+      city: "",
+      postcode: "",
+      address: "",
       pricePerStudent: "",
       pricePerTeacher: "",
       adhocServices: "[]",
@@ -226,9 +230,13 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
 
   const handleClientSelect = (client: Client) => {
     setSelectedClient(client);
-    form.setValue("schoolName", client.fiscalName);
-    form.setValue("contactPerson", client.email);
-    form.setValue("schoolAddress", `${client.address}, ${client.postcode} ${client.city}, ${client.country}`);
+    form.setValue("fiscalName", client.fiscalName);
+    form.setValue("taxId", client.taxId || "");
+    form.setValue("email", client.email || "");
+    form.setValue("country", client.country);
+    form.setValue("city", client.city);
+    form.setValue("postcode", client.postcode || "");
+    form.setValue("address", client.address || "");
     setSchoolComboboxOpen(false);
   };
 
@@ -346,7 +354,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="schoolName"
+                name="fiscalName"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>School Name</FormLabel>
@@ -374,7 +382,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                             placeholder="Search schools..." 
                             onValueChange={(value) => {
                               if (value && !clients?.find(c => c.fiscalName.toLowerCase() === value.toLowerCase())) {
-                                form.setValue("schoolName", value);
+                                form.setValue("fiscalName", value);
                               }
                             }}
                           />
@@ -415,10 +423,10 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
 
               <FormField
                 control={form.control}
-                name="contactPerson"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Person / Email</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="john.doe@school.edu" {...field} />
                     </FormControl>
@@ -428,23 +436,83 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="schoolAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Address</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="123 School Street, City, Country" 
-                      className="min-h-[80px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter country" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter city" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="postcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postcode</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter postcode" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Enter full address" 
+                        className="min-h-[80px]"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="taxId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tax ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter tax ID (optional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           {/* Basic Trip Information */}

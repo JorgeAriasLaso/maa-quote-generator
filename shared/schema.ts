@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -27,9 +27,15 @@ export const quotes = pgTable("quotes", {
   duration: text("duration").notNull(),
   numberOfStudents: integer("number_of_students").notNull(),
   numberOfTeachers: integer("number_of_teachers").notNull(),
-  schoolName: text("school_name").notNull(),
-  contactPerson: text("contact_person").notNull(),
-  schoolAddress: text("school_address").notNull(),
+  
+  // Client information (matching client database structure)
+  fiscalName: text("fiscal_name").notNull(),
+  taxId: text("tax_id"),
+  email: text("email"),
+  country: text("country").notNull(),
+  city: text("city").notNull(),
+  postcode: text("postcode"),
+  address: text("address"),
   
   // Custom pricing inputs - daily rates
   studentAccommodationPerDay: text("student_accommodation_per_day"),

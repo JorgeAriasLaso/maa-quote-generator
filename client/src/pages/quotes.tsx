@@ -54,10 +54,12 @@ export default function Quotes() {
   // Filter quotes based on search term and filter type
   const filteredQuotes = quotes?.filter(quote => {
     const matchesSearch = searchTerm === "" || 
-      quote.schoolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quote.fiscalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.quoteNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quote.contactPerson.toLowerCase().includes(searchTerm.toLowerCase());
+      (quote.email && quote.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      quote.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quote.country.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter = filterBy === "all" || quote.tripType === filterBy;
 
@@ -199,8 +201,8 @@ export default function Quotes() {
                             <div className="text-sm text-slate-500">{quote.tripType}</div>
                           </td>
                           <td className="p-4">
-                            <div className="font-medium text-slate-900">{quote.schoolName}</div>
-                            <div className="text-sm text-slate-500">{quote.contactPerson}</div>
+                            <div className="font-medium text-slate-900">{quote.fiscalName}</div>
+                            <div className="text-sm text-slate-500">{quote.email}</div>
                           </td>
                           <td className="p-4">
                             <div className="font-medium text-slate-900">{quote.destination}</div>
