@@ -24,10 +24,8 @@ export default function Clients() {
   // Create client mutation
   const createClientMutation = useMutation({
     mutationFn: async (data: InsertClient) => {
-      return apiRequest("/api/clients", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("POST", "/api/clients", data);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -37,10 +35,11 @@ export default function Clients() {
       queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       setIsFormOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Client creation error:", error);
       toast({
         title: "Error",
-        description: "Failed to create client",
+        description: error.message || "Failed to create client",
         variant: "destructive",
       });
     },
@@ -49,10 +48,8 @@ export default function Clients() {
   // Update client mutation
   const updateClientMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertClient }) => {
-      return apiRequest(`/api/clients/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("PATCH", `/api/clients/${id}`, data);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -62,10 +59,11 @@ export default function Clients() {
       queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       setEditingClient(null);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Client update error:", error);
       toast({
         title: "Error",
-        description: "Failed to update client",
+        description: error.message || "Failed to update client",
         variant: "destructive",
       });
     },

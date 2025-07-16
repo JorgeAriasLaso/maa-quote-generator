@@ -30,6 +30,7 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
   });
 
   const handleSubmit = (data: InsertClient) => {
+    console.log("Submitting client data:", data);
     onSubmit(data);
   };
 

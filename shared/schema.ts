@@ -109,7 +109,7 @@ export const insertClientSchema = createInsertSchema(clients).omit({
   updatedAt: true,
 }).extend({
   taxId: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
+  email: z.string().email().or(z.literal("")).optional(),
   postcode: z.string().optional(),
   address: z.string().optional(),
 });
