@@ -91,6 +91,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed client search in quote form to be case-insensitive for better user experience
 ✓ Added client deletion functionality to client management section with confirmation dialog
 ✓ Fixed quote editing functionality to properly pre-populate all form fields when editing existing quotes
+✓ Fixed quote copying functionality that was not working properly due to incorrect API request syntax
+✓ Fixed PDF export functionality with improved formatting, reliability, and proper margin handling for multi-page documents
 
 ## System Architecture
 

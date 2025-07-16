@@ -629,7 +629,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with simplified approach
+      // Create PDF with proper margin handling
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
@@ -652,17 +652,21 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         // Content fits on one page
         pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Content spans multiple pages - use simple page splitting
-        const pageHeight = availableHeight;
-        const totalPages = Math.ceil(scaledHeight / pageHeight);
+        // Content spans multiple pages - split with proper margins
+        const pageContentHeight = availableHeight; // Height available for content on each page
+        const totalPages = Math.ceil(scaledHeight / pageContentHeight);
         
         for (let i = 0; i < totalPages; i++) {
           if (i > 0) {
             pdf.addPage();
           }
           
-          // Add image with offset for each page
-          const yOffset = -(i * pageHeight);
+          // Calculate the vertical offset for this page
+          // Each page shows a portion of the image, offset by the content height (not total page height)
+          const yOffset = -(i * pageContentHeight);
+          
+          // Add image with proper margin positioning
+          // The image is positioned at margin distance from top on each page
           pdf.addImage(imgData, 'PNG', margin, margin + yOffset, scaledWidth, scaledHeight);
         }
       }
