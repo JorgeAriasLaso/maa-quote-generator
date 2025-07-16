@@ -114,7 +114,7 @@ export default function Home() {
       // If we have a current quote or editing an existing quote, update it; otherwise create new one
       if (currentQuote || editQuoteId) {
         const quoteId = currentQuote?.id || editQuoteId;
-        const response = await apiRequest("PUT", `/api/quotes/${quoteId}`, finalData);
+        const response = await apiRequest("PATCH", `/api/quotes/${quoteId}`, finalData);
         return response.json();
       } else {
         const response = await apiRequest("POST", "/api/quotes", finalData);
