@@ -252,6 +252,7 @@ export interface CostBreakdown {
     localTransportation: number;
     coordination: number;
     localCoordinator: number;
+    additionalServices: number;
     totalCosts: number;
   };
   profitability: {
@@ -455,8 +456,16 @@ export function calculateQuoteCost(
   const costTeacherCoord = (internalCosts?.costTeacherCoordination || 0) * numberOfTeachers;
   const costLocalCoord = internalCosts?.costLocalCoordinator || 150;
 
+  // Calculate internal costs for additional services (assume 50% cost ratio as default)
+  const internalAdditionalServicesCosts = adhocServices.reduce((total, service) => {
+    // You can make this configurable later - for now assume 50% of selling price as cost
+    const costRatio = 0.5; // 50% of selling price as internal cost
+    return total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers) * costRatio);
+  }, 0);
+
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 
-                           costLocalTransport + costStudentCoord + costTeacherCoord + costLocalCoord;
+                           costLocalTransport + costStudentCoord + costTeacherCoord + costLocalCoord + 
+                           internalAdditionalServicesCosts;
 
   const internalCostsBreakdown = {
     studentAccommodation: costStudentAccom,
@@ -465,6 +474,7 @@ export function calculateQuoteCost(
     localTransportation: costLocalTransport,
     coordination: costStudentCoord + costTeacherCoord,
     localCoordinator: costLocalCoord,
+    additionalServices: internalAdditionalServicesCosts,
     totalCosts: totalInternalCosts,
   };
 

@@ -1015,7 +1015,8 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                             Meals (€{costBreakdown.internalCosts.meals}), 
                             Transport (€{costBreakdown.internalCosts.localTransportation}), 
                             Coordination (€{costBreakdown.internalCosts.coordination}), 
-                            Local coordinator (€{costBreakdown.internalCosts.localCoordinator})
+                            Local coordinator (€{costBreakdown.internalCosts.localCoordinator}),
+                            Additional services (€{costBreakdown.internalCosts.additionalServices})
                           </div>
                         </div>
                       </div>
