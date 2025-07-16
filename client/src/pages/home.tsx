@@ -56,10 +56,10 @@ export default function Home() {
 
   // Set current quote when quote data is loaded
   useEffect(() => {
-    if (quoteToEdit && !currentQuote) {
+    if (quoteToEdit) {
       setCurrentQuote(quoteToEdit);
     }
-  }, [quoteToEdit, currentQuote]);
+  }, [quoteToEdit]);
 
   const saveQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
