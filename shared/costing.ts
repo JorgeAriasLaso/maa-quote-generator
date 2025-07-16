@@ -356,15 +356,15 @@ export function calculateQuoteCost(
   const studentTotalForAll = studentAccommodation + studentMeals + studentTransportCard + 
     studentCoordinationFee + studentAirportTransfer;
   
-  // Calculate teacher costs (use separate accommodation rate, discount on meals only)
+  // Calculate teacher costs (no discounts applied)
   const teacherAccommodation = teacherAccommodationRate * days * numberOfTeachers;
-  const teacherMeals = (breakfastRate + lunchRate + dinnerRate) * defaultPricing.teacherDiscount * days * numberOfTeachers;
+  const teacherMeals = (breakfastRate + lunchRate + dinnerRate) * days * numberOfTeachers;
   const teacherTransportCard = transportCardTotal * numberOfTeachers;
   const teacherCoordinationFee = teacherCoordinationTotal * numberOfTeachers;
   const teacherAirportTransfer = airportTransferRate * numberOfTeachers;
   
-  const teacherTotalPerTeacher = (teacherAccommodationRate + (breakfastRate + lunchRate + 
-    dinnerRate) * defaultPricing.teacherDiscount) * days + transportCardTotal + teacherCoordinationTotal + 
+  const teacherTotalPerTeacher = (teacherAccommodationRate + breakfastRate + lunchRate + 
+    dinnerRate) * days + transportCardTotal + teacherCoordinationTotal + 
     airportTransferRate;
   const teacherTotalForAll = teacherAccommodation + teacherMeals + teacherTransportCard + 
     teacherCoordinationFee + teacherAirportTransfer;
@@ -381,21 +381,8 @@ export function calculateQuoteCost(
   // Calculate subtotal before discounts
   const subtotal = studentTotalForAll + teacherTotalForAll + additionalServices.total;
   
-  // Apply group discounts
-  const totalParticipants = numberOfStudents + numberOfTeachers;
+  // No group discounts applied
   let groupDiscount: CostBreakdown["groupDiscount"] = null;
-  
-  for (const discount of GROUP_DISCOUNTS.slice().reverse()) {
-    if (totalParticipants >= discount.minSize) {
-      const discountAmount = subtotal * discount.discount;
-      groupDiscount = {
-        percentage: discount.discount * 100,
-        amount: discountAmount,
-        description: discount.description,
-      };
-      break;
-    }
-  }
   
   // Calculate Erasmus+ funding for students and teachers
   const erasmusGroup = ERASMUS_COUNTRY_GROUPS[country];
@@ -478,7 +465,7 @@ export function calculateQuoteCost(
     totalCosts: totalInternalCosts,
   };
 
-  const total = subtotal - (groupDiscount?.amount || 0);
+  const total = subtotal;
   const netCostAfterErasmus = total - (erasmusFunding?.totalFunding || 0);
   
   // Calculate profitability with VAT
