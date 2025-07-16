@@ -434,7 +434,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                           )}
                           {transportCardTotal && parseFloat(transportCardTotal) > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-blue-600">• Transport card:</span>
+                              <span className="text-blue-600">• Local transportation card:</span>
                               <span className="text-blue-900">{formatCurrency(costBreakdown.student.transportCard)}</span>
                             </div>
                           )}
@@ -481,7 +481,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                           )}
                           {transportCardTotal && parseFloat(transportCardTotal) > 0 && (
                             <div className="flex justify-between">
-                              <span className="text-green-600">• Transport card:</span>
+                              <span className="text-green-600">• Local transportation card:</span>
                               <span className="text-green-900">{formatCurrency(costBreakdown.teacher.transportCard)}</span>
                             </div>
                           )}
@@ -747,7 +747,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                                 }
                               }}
                             />
-                            <FormLabel>Transport Card (€/trip)</FormLabel>
+                            <FormLabel>Local Transportation Card (€/trip)</FormLabel>
                           </div>
                           <FormControl>
                             <Input 
