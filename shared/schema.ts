@@ -30,6 +30,7 @@ export const quotes = pgTable("quotes", {
 export const insertQuoteSchema = createInsertSchema(quotes).omit({
   id: true,
   createdAt: true,
+  quoteNumber: true,
 });
 
 export type InsertQuote = z.infer<typeof insertQuoteSchema>;
