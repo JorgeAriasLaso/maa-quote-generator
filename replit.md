@@ -88,6 +88,9 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Updated email address from info@myabroadally.com to maa@myabroadally.com in quote outputs
 ✓ Improved PDF export layout to use full horizontal page width and split content across multiple pages
 ✓ Added delete functionality to quote history with confirmation dialog and trash icon buttons
+✓ Fixed client search in quote form to be case-insensitive for better user experience
+✓ Added client deletion functionality to client management section with confirmation dialog
+✓ Fixed quote editing functionality to properly pre-populate all form fields when editing existing quotes
 
 ## System Architecture
 

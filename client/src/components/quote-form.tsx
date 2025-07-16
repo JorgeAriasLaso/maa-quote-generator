@@ -255,6 +255,74 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
     }
   }, [selectedClient, currentSelectedClient, form]);
 
+  // Effect to populate form when editing an existing quote
+  useEffect(() => {
+    if (currentQuote) {
+      // Basic quote information
+      form.setValue("destination", currentQuote.destination || "");
+      form.setValue("tripType", currentQuote.tripType || "");
+      form.setValue("startDate", currentQuote.startDate || "");
+      form.setValue("endDate", currentQuote.endDate || "");
+      form.setValue("duration", currentQuote.duration || "");
+      form.setValue("numberOfStudents", currentQuote.numberOfStudents || 0);
+      form.setValue("numberOfTeachers", currentQuote.numberOfTeachers || 0);
+      
+      // School/Client information
+      form.setValue("fiscalName", currentQuote.fiscalName || "");
+      form.setValue("taxId", currentQuote.taxId || "");
+      form.setValue("email", currentQuote.email || "");
+      form.setValue("country", currentQuote.country || "");
+      form.setValue("city", currentQuote.city || "");
+      form.setValue("postcode", currentQuote.postcode || "");
+      form.setValue("address", currentQuote.address || "");
+      
+      // Pricing fields
+      form.setValue("pricePerStudent", currentQuote.pricePerStudent?.toString() || "");
+      form.setValue("pricePerTeacher", currentQuote.pricePerTeacher?.toString() || "");
+      form.setValue("adhocServices", currentQuote.adhocServices || "[]");
+      
+      // Service pricing fields
+      form.setValue("studentAccommodationPerDay", currentQuote.studentAccommodationPerDay?.toString() || "");
+      form.setValue("teacherAccommodationPerDay", currentQuote.teacherAccommodationPerDay?.toString() || "");
+      form.setValue("breakfastPerDay", currentQuote.breakfastPerDay?.toString() || "");
+      form.setValue("lunchPerDay", currentQuote.lunchPerDay?.toString() || "");
+      form.setValue("dinnerPerDay", currentQuote.dinnerPerDay?.toString() || "");
+      form.setValue("transportCardTotal", currentQuote.transportCardTotal?.toString() || "");
+      form.setValue("studentCoordinationFeeTotal", currentQuote.studentCoordinationFeeTotal?.toString() || "");
+      form.setValue("teacherCoordinationFeeTotal", currentQuote.teacherCoordinationFeeTotal?.toString() || "");
+      form.setValue("airportTransferPerPerson", currentQuote.airportTransferPerPerson?.toString() || "");
+      
+      // Service inclusion checkboxes
+      form.setValue("travelInsurance", currentQuote.travelInsurance || false);
+      form.setValue("airportTransfers", currentQuote.airportTransfers || false);
+      form.setValue("localTransport", currentQuote.localTransport || false);
+      form.setValue("tourGuide", currentQuote.tourGuide || false);
+      
+      // Internal cost fields
+      form.setValue("costStudentAccommodationPerDay", currentQuote.costStudentAccommodationPerDay?.toString() || "");
+      form.setValue("costTeacherAccommodationPerDay", currentQuote.costTeacherAccommodationPerDay?.toString() || "");
+      form.setValue("costBreakfastPerDay", currentQuote.costBreakfastPerDay?.toString() || "");
+      form.setValue("costLunchPerDay", currentQuote.costLunchPerDay?.toString() || "");
+      form.setValue("costDinnerPerDay", currentQuote.costDinnerPerDay?.toString() || "");
+      form.setValue("costLocalTransportationCard", currentQuote.costLocalTransportationCard?.toString() || "");
+      form.setValue("costStudentCoordination", currentQuote.costStudentCoordination?.toString() || "");
+      form.setValue("costTeacherCoordination", currentQuote.costTeacherCoordination?.toString() || "");
+      form.setValue("costLocalCoordinator", currentQuote.costLocalCoordinator?.toString() || "");
+      form.setValue("costAirportTransfer", currentQuote.costAirportTransfer?.toString() || "");
+      
+      // Handle destination selection
+      if (currentQuote.destination) {
+        const isKnownDestination = Object.values(destinationsByCountry).flat().includes(currentQuote.destination);
+        if (isKnownDestination) {
+          setSelectedDestination(currentQuote.destination);
+        } else {
+          setSelectedDestination("Other");
+          setCustomDestination(currentQuote.destination);
+        }
+      }
+    }
+  }, [currentQuote, form, destinationsByCountry]);
+
   // Watch form values for automatic duration and pricing calculation
   const startDate = form.watch("startDate");
   const endDate = form.watch("endDate");
