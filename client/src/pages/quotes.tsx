@@ -124,11 +124,6 @@ export default function Quotes() {
           <p className="text-slate-600 mt-1">View and manage all travel quotes</p>
         </div>
         <div className="flex gap-2">
-          <Link href="/clients">
-            <Button variant="outline">
-              Client Management
-            </Button>
-          </Link>
           <Link href="/">
             <Button>
               <Plus className="w-4 h-4 mr-2" />

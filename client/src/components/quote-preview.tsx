@@ -731,53 +731,62 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         <div className="flex-1 overflow-y-auto p-8 bg-white">
           <div id="quote-document" className="max-w-4xl mx-auto bg-white print:max-w-none print:w-full">
             {/* Header */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <img 
                 src={logoPath} 
                 alt="My Abroad Ally" 
-                className="h-20 w-20 object-contain mx-auto mb-4"
+                className="h-16 w-16 object-contain mx-auto mb-3"
               />
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Educational Travel Proposal</h1>
-              <p className="text-lg text-slate-600 mb-4">by My Abroad Ally</p>
-              <div className="w-24 h-1 bg-yellow-400 mx-auto"></div>
+              <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
+              <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
+              <div className="w-20 h-1 bg-yellow-400 mx-auto"></div>
             </div>
 
-            {/* Trip Title */}
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-semibold text-slate-800 mb-4">{quote.tripType}</h2>
-              <h3 className="text-xl text-primary font-medium mb-6">{quote.destination}</h3>
-              
-              {/* Main Image */}
-              <div className="rounded-xl overflow-hidden shadow-lg mb-6">
-                <img 
-                  src={getDestinationImage(quote.destination)} 
-                  alt={quote.destination} 
-                  className="w-full h-64 object-cover"
-                />
+            {/* Trip Summary */}
+            <div className="mb-8">
+              <div className="text-center mb-4">
+                <h2 className="text-xl font-semibold text-slate-800 mb-2">{quote.tripType}</h2>
+                <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
-
-              <Card className="bg-slate-50 p-6">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-slate-700">Duration:</span>
-                    <span className="text-slate-600 ml-2">{quote.duration}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-slate-700">Participants:</span>
-                    <span className="text-slate-600 ml-2">{quote.numberOfStudents} Students + {quote.numberOfTeachers} Teachers</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-slate-700">Dates:</span>
-                    <span className="text-slate-600 ml-2">
-                      {new Date(quote.startDate).toLocaleDateString()} - {new Date(quote.endDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-slate-700">Quote #:</span>
-                    <span className="text-slate-600 ml-2">{quote.quoteNumber}</span>
-                  </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {/* Main Image */}
+                <div className="rounded-lg overflow-hidden shadow-md">
+                  <img 
+                    src={getDestinationImage(quote.destination)} 
+                    alt={quote.destination} 
+                    className="w-full h-32 object-cover"
+                  />
                 </div>
-              </Card>
+
+                {/* Trip Details */}
+                <Card className="bg-slate-50 p-4">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Duration:</span>
+                      <span className="text-slate-600">{quote.duration}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Students:</span>
+                      <span className="text-slate-600">{quote.numberOfStudents}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Teachers:</span>
+                      <span className="text-slate-600">{quote.numberOfTeachers}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Dates:</span>
+                      <span className="text-slate-600 text-xs">
+                        {new Date(quote.startDate).toLocaleDateString()} - {new Date(quote.endDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Quote #:</span>
+                      <span className="text-slate-600">{quote.quoteNumber}</span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             </div>
 
             {/* Destination Highlights */}

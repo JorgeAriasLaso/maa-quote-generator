@@ -109,12 +109,6 @@ export default function Clients() {
           <p className="text-slate-600 mt-1">Manage your school clients and their quote history</p>
         </div>
         <div className="flex gap-2">
-          <Link href="/">
-            <Button variant="outline">
-              <Quote className="w-4 h-4 mr-2" />
-              Back to Quotes
-            </Button>
-          </Link>
           <Button variant="outline" onClick={() => setIsImportOpen(true)}>
             <Upload className="w-4 h-4 mr-2" />
             Import CSV

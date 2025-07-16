@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { QuoteForm } from "@/components/quote-form";
 import { QuotePreview } from "@/components/quote-preview";
 import { apiRequest } from "@/lib/queryClient";
@@ -13,11 +13,23 @@ export default function Home() {
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [liveCostBreakdown, setLiveCostBreakdown] = useState<any>(null);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [editQuoteId, setEditQuoteId] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Check for selected client from sessionStorage on component mount
+  // Check for edit parameter in URL and selected client from sessionStorage
   useEffect(() => {
+    // Check for edit parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    if (editId) {
+      const id = parseInt(editId);
+      if (!isNaN(id)) {
+        setEditQuoteId(id);
+      }
+    }
+
+    // Check for selected client from sessionStorage on component mount
     const storedClient = sessionStorage.getItem('selectedClient');
     if (storedClient) {
       try {
@@ -30,6 +42,24 @@ export default function Home() {
       }
     }
   }, []);
+
+  // Load quote data when editing
+  const { data: quoteToEdit, isLoading: isLoadingQuote } = useQuery({
+    queryKey: ["/api/quotes", editQuoteId],
+    queryFn: async () => {
+      if (!editQuoteId) return null;
+      const response = await apiRequest("GET", `/api/quotes/${editQuoteId}`);
+      return response.json();
+    },
+    enabled: !!editQuoteId,
+  });
+
+  // Set current quote when quote data is loaded
+  useEffect(() => {
+    if (quoteToEdit && !currentQuote) {
+      setCurrentQuote(quoteToEdit);
+    }
+  }, [quoteToEdit, currentQuote]);
 
   const saveQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
@@ -81,9 +111,10 @@ export default function Home() {
         pricePerTeacher: costBreakdown.pricePerTeacher.toString(),
       };
 
-      // If we have a current quote, update it; otherwise create new one
-      if (currentQuote) {
-        const response = await apiRequest("PUT", `/api/quotes/${currentQuote.id}`, finalData);
+      // If we have a current quote or editing an existing quote, update it; otherwise create new one
+      if (currentQuote || editQuoteId) {
+        const quoteId = currentQuote?.id || editQuoteId;
+        const response = await apiRequest("PUT", `/api/quotes/${quoteId}`, finalData);
         return response.json();
       } else {
         const response = await apiRequest("POST", "/api/quotes", finalData);
@@ -94,15 +125,15 @@ export default function Home() {
       setCurrentQuote(updatedQuote);
       queryClient.invalidateQueries({ queryKey: ["/api/quotes"] });
       toast({
-        title: currentQuote ? "Quote Updated Successfully" : "Quote Generated Successfully",
-        description: currentQuote 
+        title: (currentQuote || editQuoteId) ? "Quote Updated Successfully" : "Quote Generated Successfully",
+        description: (currentQuote || editQuoteId) 
           ? `Quote ${updatedQuote.quoteNumber} has been updated with your latest changes.`
           : `Quote ${updatedQuote.quoteNumber} has been created and is ready for review.`,
       });
     },
     onError: (error) => {
       toast({
-        title: currentQuote ? "Error Updating Quote" : "Error Creating Quote",
+        title: (currentQuote || editQuoteId) ? "Error Updating Quote" : "Error Creating Quote",
         description: "There was an issue with your quote. Please try again.",
         variant: "destructive",
       });
@@ -115,51 +146,22 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <img 
-                src={logoPath} 
-                alt="My Abroad Ally" 
-                className="h-10 w-10 object-contain"
-              />
-              <h1 className="text-xl font-semibold text-slate-900">My Abroad Ally</h1>
-            </div>
-            <nav className="hidden md:flex space-x-6 items-center">
-              <Link href="/" className="text-primary font-medium">Quote Generator</Link>
-              <Link href="/quotes" className="text-slate-600 hover:text-slate-900">
-                Quote History
-              </Link>
-              <Link href="/clients" className="text-slate-600 hover:text-slate-900">
-                Client Management
-              </Link>
-              <a href="#" className="text-slate-600 hover:text-slate-900">Settings</a>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
+        {/* Left Panel - Quote Builder Form */}
+        <QuoteForm 
+          onSubmit={handleFormSubmit} 
+          isLoading={saveQuoteMutation.isPending}
+          onCostBreakdownChange={setLiveCostBreakdown}
+          currentQuote={currentQuote}
+          selectedClient={selectedClient}
+        />
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
-          {/* Left Panel - Quote Builder Form */}
-          <QuoteForm 
-            onSubmit={handleFormSubmit} 
-            isLoading={saveQuoteMutation.isPending}
-            onCostBreakdownChange={setLiveCostBreakdown}
-            currentQuote={currentQuote}
-            selectedClient={selectedClient}
-          />
-
-          {/* Right Panel - Quote Preview */}
-          <QuotePreview 
-            quote={currentQuote} 
-            costBreakdown={currentQuote ? undefined : liveCostBreakdown} 
-          />
-        </div>
+        {/* Right Panel - Quote Preview */}
+        <QuotePreview 
+          quote={currentQuote} 
+          costBreakdown={currentQuote ? undefined : liveCostBreakdown} 
+        />
       </div>
     </div>
   );
