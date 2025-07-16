@@ -11,9 +11,10 @@ import { useState } from 'react';
 
 interface QuotePreviewProps {
   quote: Quote | null;
+  costBreakdown?: any;
 }
 
-export function QuotePreview({ quote }: QuotePreviewProps) {
+export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   
   // Parse adhoc services from quote
@@ -26,7 +27,7 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
       }
     })() : [];
 
-  const costBreakdown = quote ? calculateQuoteCost(
+  const costBreakdown = externalCostBreakdown || (quote ? calculateQuoteCost(
     quote.destination,
     quote.duration,
     quote.numberOfStudents,
@@ -42,8 +43,19 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
       studentCoordinationFeeTotal: parseFloat(quote.studentCoordinationFeeTotal || "0"),
       teacherCoordinationFeeTotal: parseFloat(quote.teacherCoordinationFeeTotal || "0"),
       airportTransferPerPerson: parseFloat(quote.airportTransferPerPerson || "0"),
+    },
+    {
+      costStudentAccommodationPerDay: parseFloat(quote.costStudentAccommodationPerDay || "0"),
+      costTeacherAccommodationPerDay: parseFloat(quote.costTeacherAccommodationPerDay || "0"),
+      costBreakfastPerDay: parseFloat(quote.costBreakfastPerDay || "0"),
+      costLunchPerDay: parseFloat(quote.costLunchPerDay || "0"),
+      costDinnerPerDay: parseFloat(quote.costDinnerPerDay || "0"),
+      costLocalTransportationCard: parseFloat(quote.costLocalTransportationCard || "0"),
+      costStudentCoordination: parseFloat(quote.costStudentCoordination || "60"),
+      costTeacherCoordination: parseFloat(quote.costTeacherCoordination || "0"),
+      costLocalCoordinator: parseFloat(quote.costLocalCoordinator || "150"),
     }
-  ) : null;
+  ) : null);
 
   const calculateTotal = () => {
     return costBreakdown ? costBreakdown.total : 0;
@@ -932,16 +944,32 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                       <span className="text-2xl font-bold text-primary">€{calculateTotal().toLocaleString()}</span>
                     </div>
                     {costBreakdown && costBreakdown.erasmusFunding && (
-                      <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-green-800">Net Cost After Erasmus+ Funding</span>
-                          <span className="text-lg font-bold text-green-800">
-                            €{costBreakdown.netCostAfterErasmus.toLocaleString()}
-                          </span>
+                      <div className="mt-2 space-y-2">
+                        <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium text-blue-800">Available Erasmus+ Funding</span>
+                            <span className="text-lg font-bold text-blue-800">
+                              €{costBreakdown.erasmusFunding.totalFunding.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-xs text-blue-700 space-y-1">
+                            <div>Students: €{costBreakdown.erasmusFunding.students.totalStudentFunding.toLocaleString()}</div>
+                            <div>Teachers: €{costBreakdown.erasmusFunding.teachers.totalTeacherFunding.toLocaleString()}</div>
+                            <div className="font-medium">Country Group: {costBreakdown.erasmusFunding.group}</div>
+                          </div>
                         </div>
-                        <p className="text-xs text-green-700 mt-1">
-                          Erasmus+ funding can significantly reduce your school's out-of-pocket costs
-                        </p>
+                        
+                        <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium text-green-800">Net Cost After Erasmus+ Funding</span>
+                            <span className="text-lg font-bold text-green-800">
+                              €{costBreakdown.netCostAfterErasmus.toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-xs text-green-700 mt-1">
+                            Your school's out-of-pocket cost after applying for Erasmus+ funding
+                          </p>
+                        </div>
                       </div>
                     )}
                     <p className="text-sm text-slate-600 mt-2">
@@ -992,6 +1020,24 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                               <span className={`text-xl font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                                 {formatCurrency(costBreakdown.profitability.netProfit)}
                               </span>
+                            </div>
+                            
+                            {/* Profit per participant breakdown */}
+                            <div className="border-t border-red-200 pt-2 space-y-1">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-red-700">Profit per Student:</span>
+                                <span className={`font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                                  {quote && quote.numberOfStudents > 0 ? formatCurrency(costBreakdown.profitability.netProfit / quote.numberOfStudents) : '€0'}
+                                </span>
+                              </div>
+                              {quote && quote.numberOfTeachers > 0 && (
+                                <div className="flex justify-between items-center text-sm">
+                                  <span className="text-red-700">Profit per Teacher:</span>
+                                  <span className={`font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                                    {formatCurrency(costBreakdown.profitability.netProfit / quote.numberOfTeachers)}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             <div className="grid grid-cols-2 gap-4 text-xs">
                               <div className="flex justify-between">

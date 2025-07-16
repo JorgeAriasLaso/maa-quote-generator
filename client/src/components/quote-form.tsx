@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
   isLoading: boolean;
+  onCostBreakdownChange?: (costBreakdown: any) => void;
 }
 
 // AdhocServicesSection component
@@ -139,7 +140,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
   );
 }
 
-export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
+export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteFormProps) {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
 
@@ -273,6 +274,13 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
         costLocalCoordinator: costLocalCoordinator ? parseFloat(costLocalCoordinator) : undefined,
       }
     ) : null;
+
+  // Pass cost breakdown to parent component for live preview
+  useEffect(() => {
+    if (onCostBreakdownChange) {
+      onCostBreakdownChange(costBreakdown);
+    }
+  }, [costBreakdown, onCostBreakdownChange]);
 
   // Update pricing fields when calculation changes
   useEffect(() => {

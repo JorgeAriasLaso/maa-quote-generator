@@ -10,6 +10,7 @@ import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
 export default function Home() {
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
+  const [liveCostBreakdown, setLiveCostBreakdown] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -118,10 +119,14 @@ export default function Home() {
           <QuoteForm 
             onSubmit={handleFormSubmit} 
             isLoading={createQuoteMutation.isPending}
+            onCostBreakdownChange={setLiveCostBreakdown}
           />
 
           {/* Right Panel - Quote Preview */}
-          <QuotePreview quote={currentQuote} />
+          <QuotePreview 
+            quote={currentQuote} 
+            costBreakdown={currentQuote ? undefined : liveCostBreakdown} 
+          />
         </div>
       </div>
     </div>
