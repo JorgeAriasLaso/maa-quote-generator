@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { QuoteForm } from "@/components/quote-form";
+import { SimpleQuoteForm } from "@/components/simple-quote-form";
 import { QuotePreview } from "@/components/quote-preview";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -149,13 +150,23 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-8rem)]">
         {/* Left Panel - Quote Builder Form */}
-        <QuoteForm 
-          onSubmit={handleFormSubmit} 
-          isLoading={saveQuoteMutation.isPending}
-          onCostBreakdownChange={setLiveCostBreakdown}
-          currentQuote={currentQuote}
-          selectedClient={selectedClient}
-        />
+        {editQuoteId || currentQuote ? (
+          <SimpleQuoteForm
+            onSubmit={handleFormSubmit}
+            isLoading={saveQuoteMutation.isPending}
+            onCostBreakdownChange={setLiveCostBreakdown}
+            currentQuote={currentQuote}
+            selectedClient={selectedClient}
+          />
+        ) : (
+          <QuoteForm 
+            onSubmit={handleFormSubmit} 
+            isLoading={saveQuoteMutation.isPending}
+            onCostBreakdownChange={setLiveCostBreakdown}
+            currentQuote={currentQuote}
+            selectedClient={selectedClient}
+          />
+        )}
 
         {/* Right Panel - Quote Preview */}
         <QuotePreview 
