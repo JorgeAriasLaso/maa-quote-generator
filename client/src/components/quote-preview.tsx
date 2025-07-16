@@ -39,29 +39,61 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
 
   const getDestinationImage = (destination: string) => {
     const city = destination.toLowerCase();
-    if (city.includes('prague')) {
-      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('madrid')) {
+    // Spain
+    if (city.includes('madrid')) {
       return "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('malaga')) {
+      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('alicante')) {
+      return "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('valladolid')) {
+      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('gijon')) {
+      return "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('barcelona')) {
       return "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // Portugal
+    } else if (city.includes('porto')) {
+      return "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // France  
+    } else if (city.includes('lyon')) {
+      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('paris')) {
       return "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('london')) {
+    // UK
+    } else if (city.includes('bristol')) {
       return "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('rome')) {
+    // Italy
+    } else if (city.includes('bari')) {
       return "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('berlin')) {
+    } else if (city.includes('catania')) {
+      return "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // Czech Republic
+    } else if (city.includes('prague')) {
+      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // Poland
+    } else if (city.includes('krakow')) {
+      return "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('poznan')) {
       return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('amsterdam')) {
+    } else if (city.includes('warsaw')) {
+      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // Hungary
+    } else if (city.includes('budapest')) {
+      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    // Denmark
+    } else if (city.includes('copenhagen')) {
       return "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     }
     return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
   };
 
+
+
   const getDestinationHighlights = (destination: string) => {
     const city = destination.toLowerCase();
     
+    // SPAIN
     if (city.includes('madrid')) {
       return [
         {
@@ -85,50 +117,146 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
           image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
-    } else if (city.includes('prague')) {
+    } else if (city.includes('malaga')) {
       return [
         {
-          title: "Medieval Architecture Marvel",
-          description: "Explore over 1000 years of history through Gothic, Renaissance, and Baroque architecture in one of Europe's best-preserved medieval cities.",
-          image: "https://images.unsplash.com/photo-1519677100203-a0e668c92439?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          title: "Costa del Sol Gateway",
+          description: "Experience the entrepreneurial spirit of southern Spain's tech hub, where tourism innovation meets traditional Andalusian culture.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Modern Tech Hub",
-          description: "Experience Prague as Eastern Europe's Silicon Valley with thriving tech startups, game development studios, and international business centers.",
-          image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          title: "Picasso's Birthplace",
+          description: "Visit the Picasso Museum and explore the artistic heritage of Málaga, fostering creativity and cultural appreciation in students.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Czech Cultural Heritage",
-          description: "Discover unique Czech traditions, sample local cuisine, and learn about the country's peaceful Velvet Revolution and EU integration.",
-          image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          title: "Mediterranean Business Culture",
+          description: "Learn about Spain's tourism industry, port operations, and the growing tech sector in this modern Andalusian city.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Central European Gateway",
-          description: "Perfect location for understanding Central European history, politics, and economics with excellent transport links across the region.",
-          image: "https://images.unsplash.com/photo-1541416938330-1f0b565b1660?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          title: "Historic Moorish Heritage",
+          description: "Discover the Alcazaba fortress and Roman Theatre, exploring Spain's multicultural history and architectural evolution.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
-    } else if (city.includes('barcelona')) {
+    } else if (city.includes('alicante')) {
       return [
         {
-          title: "Architectural Wonderland",
-          description: "Discover Gaudí's masterpieces including Sagrada Familia, Park Güell, and Casa Batlló while studying innovative architectural design and urban planning.",
-          image: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          title: "Mediterranean Innovation Hub",
+          description: "Explore Alicante's growing tech sector and university research facilities, connecting students with Spain's emerging digital economy.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Mediterranean Business Hub",
-          description: "Explore Barcelona's role as a major Mediterranean port and business center, with strong connections to Latin America and North Africa.",
-          image: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Catalan Culture & Innovation",
-          description: "Experience the unique Catalan culture, language, and Barcelona's reputation as a smart city leader in technology and sustainability.",
-          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Olympic Legacy & Sports",
-          description: "Visit Olympic venues from 1992 and learn about Barcelona's transformation into a modern international city and sports destination.",
+          title: "Coastal Business Environment",
+          description: "Study sustainable tourism practices and marine conservation efforts along Spain's beautiful Costa Blanca.",
           image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Valencian Culture & Language",
+          description: "Experience the unique Valencian culture and bilingual environment, enhancing language skills and cultural understanding.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Historic Castle & Port",
+          description: "Visit Santa Bárbara Castle and learn about Mediterranean trade history while exploring modern port operations.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('valladolid')) {
+      return [
+        {
+          title: "Castilian Heritage Capital",
+          description: "Discover the birthplace of Spanish language and literature in this historic Castilian city, perfect for language immersion.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Automotive Industry Center",
+          description: "Visit Renault and other automotive facilities to understand Spain's industrial transformation and modern manufacturing.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "University Town Atmosphere",
+          description: "Experience authentic Spanish student life at one of Spain's oldest universities, fostering academic and cultural exchange.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Golden Age Architecture",
+          description: "Explore Renaissance and Baroque architecture from Spain's imperial period, connecting history with modern Spanish identity.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('gijon')) {
+      return [
+        {
+          title: "Asturian Maritime Heritage",
+          description: "Explore Spain's naval history and modern fishing industry in this vibrant northern Spanish port city.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Industrial Revolution Legacy",
+          description: "Learn about Spain's industrial development through steel production and mining heritage, now transformed into cultural spaces.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Green Spain Experience",
+          description: "Discover sustainable practices and environmental awareness in Spain's greenest region, promoting ecological education.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Celtic & Roman Influences",
+          description: "Explore unique Asturian culture with Celtic traditions and Roman archaeological sites, broadening historical perspectives.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // PORTUGAL
+    else if (city.includes('porto')) {
+      return [
+        {
+          title: "UNESCO World Heritage Center",
+          description: "Explore Porto's historic center, learning about Portuguese architecture, azulejo tiles, and urban planning preservation.",
+          image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Port Wine & Business Tradition",
+          description: "Visit famous port cellars to understand Portuguese export traditions and family business management across generations.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Tech & Innovation Hub",
+          description: "Discover Porto's growing startup ecosystem and tech companies, positioning Portugal as a European innovation center.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Maritime Exploration Legacy",
+          description: "Learn about Portuguese Age of Discovery and modern shipping industry at this historic Atlantic port.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // FRANCE
+    else if (city.includes('lyon')) {
+      return [
+        {
+          title: "Culinary Capital of France",
+          description: "Experience Lyon's renowned gastronomy and learn about French culinary traditions, food science, and hospitality management.",
+          image: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Silk Industry Heritage",
+          description: "Discover Lyon's historical role in silk production and textile innovation, connecting traditional crafts with modern design.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Biotech & Pharmaceutical Hub",
+          description: "Explore Lyon's leadership in life sciences and medical research, inspiring students interested in healthcare and science.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Renaissance Architecture",
+          description: "Walk through Vieux Lyon's Renaissance buildings and learn about French architectural history and urban development.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('paris')) {
@@ -155,8 +283,227 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
         }
       ];
     }
+    // UK
+    else if (city.includes('bristol')) {
+      return [
+        {
+          title: "Engineering & Aerospace Excellence",
+          description: "Visit Airbus facilities and learn about British aerospace innovation, engineering design, and sustainable aviation technology.",
+          image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Maritime Trading History",
+          description: "Explore Bristol's role in historical trade and learn about modern sustainable business practices and ethical commerce.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Creative & Digital Industries",
+          description: "Discover Bristol's thriving creative sector, from BBC production to video game development and digital media.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Environmental Sustainability",
+          description: "Learn about Bristol's Green Capital initiatives and environmental technology, promoting sustainability awareness.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // ITALY
+    else if (city.includes('bari')) {
+      return [
+        {
+          title: "Adriatic Gateway",
+          description: "Explore Bari's role as Italy's gateway to the Balkans and Eastern Europe, understanding Mediterranean trade and cultural exchange.",
+          image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Pugliese Agricultural Excellence",
+          description: "Learn about sustainable agriculture, olive oil production, and Italy's farm-to-table movement in Puglia's fertile lands.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Romanesque Architecture",
+          description: "Visit the Basilica of San Nicola and explore Southern Italian Norman and Byzantine architectural influences.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "University & Research Hub",
+          description: "Experience Bari's academic atmosphere and learn about Italian higher education and Mediterranean research initiatives.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('catania')) {
+      return [
+        {
+          title: "Mount Etna & Volcanic Studies",
+          description: "Study Europe's most active volcano and learn about geological sciences, natural hazard management, and environmental adaptation.",
+          image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Sicilian Cultural Heritage",
+          description: "Explore the unique blend of Greek, Roman, Arab, and Norman influences that shaped Sicily's distinctive culture and architecture.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Technology District",
+          description: "Visit Catania's growing tech sector and learn about Sicily's digital transformation and innovation initiatives.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Mediterranean Agriculture",
+          description: "Study sustainable farming practices, citrus cultivation, and agritourism in Sicily's fertile volcanic soil.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // CZECH REPUBLIC
+    else if (city.includes('prague')) {
+      return [
+        {
+          title: "Medieval Architecture Marvel",
+          description: "Explore over 1000 years of history through Gothic, Renaissance, and Baroque architecture in one of Europe's best-preserved medieval cities.",
+          image: "https://images.unsplash.com/photo-1519677100203-a0e668c92439?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Modern Tech Hub",
+          description: "Experience Prague as Eastern Europe's Silicon Valley with thriving tech startups, game development studios, and international business centers.",
+          image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Czech Cultural Heritage",
+          description: "Discover unique Czech traditions, sample local cuisine, and learn about the country's peaceful Velvet Revolution and EU integration.",
+          image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Central European Gateway",
+          description: "Perfect location for understanding Central European history, politics, and economics with excellent transport links across the region.",
+          image: "https://images.unsplash.com/photo-1541416938330-1f0b565b1660?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // POLAND
+    else if (city.includes('krakow')) {
+      return [
+        {
+          title: "Medieval Royal Capital",
+          description: "Explore Poland's former royal capital with its stunning medieval market square and castle, learning about Central European monarchy.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Academic Excellence",
+          description: "Visit one of Europe's oldest universities, Jagiellonian University, where Copernicus studied, inspiring scientific curiosity.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Historical Reflection",
+          description: "Learn about 20th-century European history through visits to nearby Auschwitz-Birkenau, promoting tolerance and human rights education.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Cultural Renaissance",
+          description: "Experience Kraków's vibrant cultural scene and learn about Poland's post-communist transformation and EU membership journey.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('poznan')) {
+      return [
+        {
+          title: "Trade & Commerce Hub",
+          description: "Explore Poznań's role as Poland's business capital, with international trade fairs and multinational corporate headquarters.",
+          image: "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Automotive Industry Center",
+          description: "Visit Volkswagen and other automotive facilities to understand modern manufacturing and Poland's industrial development.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Renaissance Architecture",
+          description: "Discover beautiful Renaissance and Baroque architecture in the Old Market Square and learn about Polish cultural heritage.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Student City Atmosphere",
+          description: "Experience the vibrant university atmosphere and learn about Polish higher education and youth culture.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('warsaw')) {
+      return [
+        {
+          title: "Modern European Capital",
+          description: "Explore Warsaw's role as Poland's political and economic center, learning about EU politics and post-communist transformation.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Reconstruction & Resilience",
+          description: "Learn about Warsaw's remarkable post-WWII reconstruction and the human spirit's ability to rebuild and preserve cultural heritage.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Financial & Tech Center",
+          description: "Visit Poland's financial district and emerging tech companies, understanding Eastern Europe's economic modernization.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Cultural & Musical Heritage",
+          description: "Explore Chopin's birthplace and Warsaw's rich musical tradition, inspiring artistic appreciation and cultural understanding.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // HUNGARY
+    else if (city.includes('budapest')) {
+      return [
+        {
+          title: "Danube River Capital",
+          description: "Explore the stunning architecture along the Danube, learning about Central European urban planning and cultural preservation.",
+          image: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Thermal Bath Culture",
+          description: "Experience Budapest's unique thermal bath tradition and learn about wellness tourism and traditional Hungarian health practices.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Tech & Innovation Hub",
+          description: "Discover Budapest's growing startup ecosystem and learn about Hungary's digital transformation and EU technology initiatives.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Austro-Hungarian Legacy",
+          description: "Explore the grandeur of the former Austro-Hungarian Empire through palaces, parliament buildings, and cultural institutions.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
+    // DENMARK
+    else if (city.includes('copenhagen')) {
+      return [
+        {
+          title: "Scandinavian Design Capital",
+          description: "Explore Danish design philosophy and learn about sustainable urban planning, hygge culture, and Nordic innovation principles.",
+          image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Green City Leadership",
+          description: "Study Copenhagen's carbon-neutral initiatives, cycling culture, and environmental policies as a model for sustainable cities.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Social Democratic Model",
+          description: "Learn about Danish society, welfare state principles, and work-life balance that makes Denmark one of the world's happiest countries.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Maritime & Viking Heritage",
+          description: "Explore Denmark's maritime history, from Viking expeditions to modern shipping industry and Hans Christian Andersen's literary legacy.",
+          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    }
     
-    // Generic content for other destinations
+    // Generic content for unlisted destinations
     return [
       {
         title: "Educational Excellence",
