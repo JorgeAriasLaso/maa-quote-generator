@@ -14,7 +14,13 @@ export default function Home() {
 
   const createQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
-      const response = await apiRequest("POST", "/api/quotes", data);
+      // Generate quote number and calculate pricing
+      const quoteNumber = `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
+      
+      const response = await apiRequest("POST", "/api/quotes", {
+        ...data,
+        quoteNumber,
+      });
       return response.json();
     },
     onSuccess: (newQuote: Quote) => {

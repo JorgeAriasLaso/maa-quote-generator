@@ -211,36 +211,56 @@ export function calculateQuoteCost(
     airportTransfers: boolean;
     localTransport: boolean;
     tourGuide: boolean;
+  },
+  customPricing?: {
+    accommodationPerDay?: number;
+    breakfastPerDay?: number;
+    lunchPerDay?: number;
+    dinnerPerDay?: number;
+    transportCardTotal?: number;
+    studentCoordinationFeeTotal?: number;
+    teacherCoordinationFeeTotal?: number;
+    airportTransferPerPerson?: number;
   }
 ): CostBreakdown {
   const country = getCountryFromDestination(destination);
-  const pricing = DESTINATION_PRICING[country] || DESTINATION_PRICING["Spain"];
-  const airportTransferRate = AIRPORT_TRANSFER_PRICING[country] || AIRPORT_TRANSFER_PRICING["Spain"];
+  const defaultPricing = DESTINATION_PRICING[country] || DESTINATION_PRICING["Spain"];
+  const defaultAirportTransferRate = AIRPORT_TRANSFER_PRICING[country] || AIRPORT_TRANSFER_PRICING["Spain"];
   const days = parseDuration(duration);
   
+  // Use custom pricing if provided, otherwise use defaults
+  const accommodationRate = customPricing?.accommodationPerDay ?? defaultPricing.accommodation;
+  const breakfastRate = customPricing?.breakfastPerDay ?? defaultPricing.breakfast;
+  const lunchRate = customPricing?.lunchPerDay ?? defaultPricing.lunch;
+  const dinnerRate = customPricing?.dinnerPerDay ?? defaultPricing.dinner;
+  const transportCardTotal = customPricing?.transportCardTotal ?? (defaultPricing.transportCard * days);
+  const studentCoordinationTotal = customPricing?.studentCoordinationFeeTotal ?? (defaultPricing.coordinationFee * days);
+  const teacherCoordinationTotal = customPricing?.teacherCoordinationFeeTotal ?? (defaultPricing.coordinationFee * days);
+  const airportTransferRate = customPricing?.airportTransferPerPerson ?? defaultAirportTransferRate;
+  
   // Calculate student costs
-  const studentAccommodation = pricing.accommodation * days * numberOfStudents;
-  const studentMeals = (pricing.breakfast + pricing.lunch + pricing.dinner) * days * numberOfStudents;
-  const studentTransportCard = pricing.transportCard * days * numberOfStudents;
-  const studentCoordinationFee = pricing.coordinationFee * days * numberOfStudents;
+  const studentAccommodation = accommodationRate * days * numberOfStudents;
+  const studentMeals = (breakfastRate + lunchRate + dinnerRate) * days * numberOfStudents;
+  const studentTransportCard = transportCardTotal * numberOfStudents;
+  const studentCoordinationFee = studentCoordinationTotal * numberOfStudents;
   const studentAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfStudents : 0;
   
-  const studentTotalPerStudent = (pricing.accommodation + pricing.breakfast + pricing.lunch + 
-    pricing.dinner + pricing.transportCard + pricing.coordinationFee) * days + 
+  const studentTotalPerStudent = (accommodationRate + breakfastRate + lunchRate + 
+    dinnerRate) * days + transportCardTotal + studentCoordinationTotal + 
     (services.airportTransfers ? airportTransferRate : 0);
   const studentTotalForAll = studentAccommodation + studentMeals + studentTransportCard + 
     studentCoordinationFee + studentAirportTransfer;
   
-  // Calculate teacher costs (with discount)
-  const teacherDailyCost = (pricing.accommodation + pricing.breakfast + pricing.lunch + 
-    pricing.dinner + pricing.transportCard) * pricing.teacherDiscount + pricing.coordinationFee;
-  const teacherAccommodation = pricing.accommodation * pricing.teacherDiscount * days * numberOfTeachers;
-  const teacherMeals = (pricing.breakfast + pricing.lunch + pricing.dinner) * pricing.teacherDiscount * days * numberOfTeachers;
-  const teacherTransportCard = pricing.transportCard * pricing.teacherDiscount * days * numberOfTeachers;
-  const teacherCoordinationFee = pricing.coordinationFee * days * numberOfTeachers;
+  // Calculate teacher costs (with discount on accommodation and meals only)
+  const teacherAccommodation = accommodationRate * defaultPricing.teacherDiscount * days * numberOfTeachers;
+  const teacherMeals = (breakfastRate + lunchRate + dinnerRate) * defaultPricing.teacherDiscount * days * numberOfTeachers;
+  const teacherTransportCard = transportCardTotal * numberOfTeachers;
+  const teacherCoordinationFee = teacherCoordinationTotal * numberOfTeachers;
   const teacherAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfTeachers : 0;
   
-  const teacherTotalPerTeacher = teacherDailyCost * days + (services.airportTransfers ? airportTransferRate : 0);
+  const teacherTotalPerTeacher = (accommodationRate + breakfastRate + lunchRate + 
+    dinnerRate) * defaultPricing.teacherDiscount * days + transportCardTotal + teacherCoordinationTotal + 
+    (services.airportTransfers ? airportTransferRate : 0);
   const teacherTotalForAll = teacherAccommodation + teacherMeals + teacherTransportCard + 
     teacherCoordinationFee + teacherAirportTransfer;
   

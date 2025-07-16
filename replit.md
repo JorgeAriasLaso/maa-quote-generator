@@ -34,6 +34,11 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Updated costing structure to show individual components (accommodation, meals, transport, coordination fees, airport transfers)
 ✓ Separated student and teacher cost breakdowns with different rates and discount structures
 ✓ Added visual distinction between student costs (blue) and teacher costs (green) in the interface
+✓ Added custom pricing input fields for manual pricing override
+✓ Separated daily rates (accommodation, breakfast, lunch, dinner) and total trip amounts (transport card, coordination fees, airport transfers)
+✓ Updated costing calculation engine to use custom pricing when provided, falling back to default destination-based pricing
+✓ Added comprehensive form fields for manual price inputs with clear labeling and placeholders
+✓ Updated database schema with new custom pricing fields and performed database migration
 
 ## System Architecture
 

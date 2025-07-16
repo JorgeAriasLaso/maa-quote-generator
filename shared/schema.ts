@@ -14,8 +14,23 @@ export const quotes = pgTable("quotes", {
   schoolName: text("school_name").notNull(),
   contactPerson: text("contact_person").notNull(),
   schoolAddress: text("school_address").notNull(),
+  
+  // Custom pricing inputs - daily rates
+  accommodationPerDay: text("accommodation_per_day"),
+  breakfastPerDay: text("breakfast_per_day"),
+  lunchPerDay: text("lunch_per_day"),
+  dinnerPerDay: text("dinner_per_day"),
+  
+  // Custom pricing inputs - total trip amounts
+  transportCardTotal: text("transport_card_total"),
+  studentCoordinationFeeTotal: text("student_coordination_fee_total"),
+  teacherCoordinationFeeTotal: text("teacher_coordination_fee_total"),
+  airportTransferPerPerson: text("airport_transfer_per_person"),
+  
+  // Calculated pricing (auto-generated)
   pricePerStudent: decimal("price_per_student", { precision: 10, scale: 2 }).notNull(),
   pricePerTeacher: text("price_per_teacher").notNull(),
+  
   travelInsurance: boolean("travel_insurance").default(false),
   airportTransfers: boolean("airport_transfers").default(false),
   localTransport: boolean("local_transport").default(false),

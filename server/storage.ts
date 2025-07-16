@@ -34,7 +34,17 @@ export class MemStorage implements IStorage {
       ...insertQuote,
       id,
       createdAt: new Date(),
-      quoteNumber: `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+      quoteNumber: insertQuote.quoteNumber || `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
+      // Set defaults for custom pricing fields
+      accommodationPerDay: insertQuote.accommodationPerDay || null,
+      breakfastPerDay: insertQuote.breakfastPerDay || null,
+      lunchPerDay: insertQuote.lunchPerDay || null,
+      dinnerPerDay: insertQuote.dinnerPerDay || null,
+      transportCardTotal: insertQuote.transportCardTotal || null,
+      studentCoordinationFeeTotal: insertQuote.studentCoordinationFeeTotal || null,
+      teacherCoordinationFeeTotal: insertQuote.teacherCoordinationFeeTotal || null,
+      airportTransferPerPerson: insertQuote.airportTransferPerPerson || null,
+      // Set defaults for boolean fields
       travelInsurance: insertQuote.travelInsurance ?? false,
       airportTransfers: insertQuote.airportTransfers ?? false,
       localTransport: insertQuote.localTransport ?? false,
@@ -85,13 +95,7 @@ export class DatabaseStorage implements IStorage {
   async createQuote(insertQuote: InsertQuote): Promise<Quote> {
     const [quote] = await db
       .insert(quotes)
-      .values({
-        ...insertQuote,
-        travelInsurance: insertQuote.travelInsurance ?? false,
-        airportTransfers: insertQuote.airportTransfers ?? false,
-        localTransport: insertQuote.localTransport ?? false,
-        tourGuide: insertQuote.tourGuide ?? false,
-      })
+      .values(insertQuote)
       .returning();
     return quote;
   }

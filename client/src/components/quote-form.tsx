@@ -104,6 +104,16 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     }
   }, [startDate, endDate, form]);
 
+  // Watch custom pricing fields
+  const accommodationPerDay = form.watch("accommodationPerDay");
+  const breakfastPerDay = form.watch("breakfastPerDay");
+  const lunchPerDay = form.watch("lunchPerDay");
+  const dinnerPerDay = form.watch("dinnerPerDay");
+  const transportCardTotal = form.watch("transportCardTotal");
+  const studentCoordinationFeeTotal = form.watch("studentCoordinationFeeTotal");
+  const teacherCoordinationFeeTotal = form.watch("teacherCoordinationFeeTotal");
+  const airportTransferPerPerson = form.watch("airportTransferPerPerson");
+
   // Calculate pricing when relevant values change
   const costBreakdown = destination && duration && numberOfStudents >= 0 && numberOfTeachers >= 0 ? 
     calculateQuoteCost(
@@ -116,6 +126,16 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
         airportTransfers: airportTransfers || false,
         localTransport: localTransport || false,
         tourGuide: tourGuide || false,
+      },
+      {
+        accommodationPerDay: accommodationPerDay ? parseFloat(accommodationPerDay) : undefined,
+        breakfastPerDay: breakfastPerDay ? parseFloat(breakfastPerDay) : undefined,
+        lunchPerDay: lunchPerDay ? parseFloat(lunchPerDay) : undefined,
+        dinnerPerDay: dinnerPerDay ? parseFloat(dinnerPerDay) : undefined,
+        transportCardTotal: transportCardTotal ? parseFloat(transportCardTotal) : undefined,
+        studentCoordinationFeeTotal: studentCoordinationFeeTotal ? parseFloat(studentCoordinationFeeTotal) : undefined,
+        teacherCoordinationFeeTotal: teacherCoordinationFeeTotal ? parseFloat(teacherCoordinationFeeTotal) : undefined,
+        airportTransferPerPerson: airportTransferPerPerson ? parseFloat(airportTransferPerPerson) : undefined,
       }
     ) : null;
 
@@ -500,6 +520,146 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                 render={({ field }) => <Input {...field} />}
               />
             </div>
+          </div>
+
+          {/* Custom Pricing Inputs */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">
+              <Calculator className="inline h-5 w-5 mr-2" />
+              Custom Pricing (Optional)
+            </h3>
+            
+            <Card className="bg-slate-50 p-4">
+              <div className="space-y-4">
+                <p className="text-sm text-slate-600 mb-4">
+                  Leave fields empty to use default pricing for the destination. Override with custom rates below:
+                </p>
+                
+                {/* Daily Rates */}
+                <div>
+                  <h4 className="font-medium text-slate-700 mb-3">Daily Rates (per person per day)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="accommodationPerDay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Accommodation (€/day)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="35" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="breakfastPerDay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Breakfast (€/day)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="12" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="lunchPerDay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Lunch (€/day)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="16" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="dinnerPerDay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dinner (€/day)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="20" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                
+                {/* Total Trip Amounts */}
+                <div>
+                  <h4 className="font-medium text-slate-700 mb-3">Total Trip Amounts (per person for entire trip)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="transportCardTotal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Transport Card (€/trip)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="32" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="studentCoordinationFeeTotal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Student Coordination (€/trip)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="64" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="teacherCoordinationFeeTotal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Teacher Coordination (€/trip)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="64" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="airportTransferPerPerson"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Airport Transfer (€/person)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="40" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
 
           {/* Additional Options */}
