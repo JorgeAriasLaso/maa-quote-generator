@@ -74,10 +74,9 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     }
   };
 
-  // Watch form values for automatic date/duration calculations
+  // Watch form values for automatic duration calculation
   const startDate = form.watch("startDate");
   const endDate = form.watch("endDate");
-  const duration = form.watch("duration");
 
   // Calculate duration when start and end dates change
   useEffect(() => {
@@ -89,31 +88,14 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       
       if (daysDiff > 0) {
         const newDuration = daysDiff === 1 ? "1 day" : `${daysDiff} days`;
-        if (duration !== newDuration) {
-          form.setValue("duration", newDuration);
-        }
+        form.setValue("duration", newDuration, { shouldValidate: false });
+      } else if (daysDiff <= 0) {
+        form.setValue("duration", "", { shouldValidate: false });
       }
+    } else {
+      form.setValue("duration", "", { shouldValidate: false });
     }
-  }, [startDate, endDate, form, duration]);
-
-  // Calculate end date when start date and duration change
-  useEffect(() => {
-    if (startDate && duration && duration !== "") {
-      // Extract number from duration string (e.g., "7 days" -> 7)
-      const durationMatch = duration.match(/(\d+)/);
-      if (durationMatch) {
-        const days = parseInt(durationMatch[1]);
-        const start = new Date(startDate);
-        const end = new Date(start);
-        end.setDate(start.getDate() + days - 1); // -1 because we include the start day
-        
-        const endDateString = end.toISOString().split('T')[0];
-        if (endDate !== endDateString) {
-          form.setValue("endDate", endDateString);
-        }
-      }
-    }
-  }, [startDate, duration, form, endDate]);
+  }, [startDate, endDate, form]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-y-auto">
