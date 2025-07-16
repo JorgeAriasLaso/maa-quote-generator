@@ -35,7 +35,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     resolver: zodResolver(insertQuoteSchema),
     defaultValues: {
       destination: "",
-      tripType: "Work Experience Mobility",
+      tripType: "",
       startDate: "",
       endDate: "",
       duration: "",

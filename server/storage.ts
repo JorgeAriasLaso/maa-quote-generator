@@ -34,6 +34,7 @@ export class MemStorage implements IStorage {
       ...insertQuote,
       id,
       createdAt: new Date(),
+      quoteNumber: `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
       travelInsurance: insertQuote.travelInsurance ?? false,
       airportTransfers: insertQuote.airportTransfers ?? false,
       localTransport: insertQuote.localTransport ?? false,

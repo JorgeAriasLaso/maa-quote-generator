@@ -38,14 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/quotes", async (req, res) => {
     try {
       const validatedData = insertQuoteSchema.parse(req.body);
-      
-      // Generate quote number
-      const quoteNumber = `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
-      
-      const quote = await storage.createQuote({
-        ...validatedData,
-        quoteNumber,
-      });
+      const quote = await storage.createQuote(validatedData);
 
       res.status(201).json(quote);
     } catch (error) {
