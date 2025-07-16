@@ -394,10 +394,74 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">School Name</label>
+              <Popover open={isClientOpen} onOpenChange={setIsClientOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isClientOpen}
+                    className="w-full justify-between"
+                  >
+                    {selectedClientData ? selectedClientData.fiscalName : (formData.fiscalName || "Select or enter school name...")}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput 
+                      placeholder="Search schools..." 
+                      value={clientQuery}
+                      onValueChange={setClientQuery}
+                    />
+                    <CommandList>
+                      <CommandEmpty>No school found.</CommandEmpty>
+                      <CommandGroup>
+                        {clients?.filter(client => 
+                          client.fiscalName.toLowerCase().includes(clientQuery.toLowerCase())
+                        ).map((client) => (
+                          <CommandItem
+                            key={client.id}
+                            value={client.fiscalName}
+                            onSelect={() => {
+                              setSelectedClientData(client);
+                              updateFormData("fiscalName", client.fiscalName);
+                              updateFormData("taxId", client.taxId || "");
+                              updateFormData("email", client.email || "");
+                              updateFormData("country", client.country || "");
+                              updateFormData("city", client.city || "");
+                              updateFormData("postcode", client.postcode || "");
+                              updateFormData("address", client.address || "");
+                              setIsClientOpen(false);
+                              setClientQuery("");
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedClientData?.id === client.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <div>
+                              <div className="font-medium">{client.fiscalName}</div>
+                              <div className="text-sm text-slate-500">{client.city}, {client.country}</div>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              
+              {/* Manual input option */}
               <Input
                 value={formData.fiscalName}
-                onChange={(e) => updateFormData("fiscalName", e.target.value)}
-                placeholder="Enter school name"
+                onChange={(e) => {
+                  updateFormData("fiscalName", e.target.value);
+                  setSelectedClientData(null);
+                }}
+                placeholder="Or type school name manually"
+                className="mt-2"
               />
             </div>
 
