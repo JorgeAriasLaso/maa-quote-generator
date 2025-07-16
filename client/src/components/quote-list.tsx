@@ -3,16 +3,17 @@ import { type Quote } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, GraduationCap, FileText, Eye, Copy } from "lucide-react";
+import { Calendar, MapPin, Users, GraduationCap, FileText, Eye, Copy, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface QuoteListProps {
   onViewQuote?: (quote: Quote) => void;
   onEditQuote?: (quote: Quote) => void;
   onCopyQuote?: (quote: Quote) => void;
+  onDeleteQuote?: (quote: Quote) => void;
 }
 
-export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote }: QuoteListProps) {
+export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote, onDeleteQuote }: QuoteListProps) {
   const { data: quotes, isLoading } = useQuery<Quote[]>({
     queryKey: ["/api/quotes"],
   });
@@ -96,6 +97,16 @@ export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote }: QuoteListPr
                     onClick={() => onEditQuote(quote)}
                   >
                     Edit
+                  </Button>
+                )}
+                {onDeleteQuote && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDeleteQuote(quote)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 )}
               </div>

@@ -578,24 +578,28 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Set optimal width for PDF export (A4 standard)
+      // Set optimal width for PDF export using full A4 width
       const originalMaxWidth = quoteElement.style.maxWidth;
-      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
-      quoteElement.style.width = '794px';
+      const originalWidth = quoteElement.style.width;
+      quoteElement.style.maxWidth = '210mm'; // Full A4 width
+      quoteElement.style.width = '210mm';
+      quoteElement.style.margin = '0';
+      quoteElement.style.padding = '20px';
       
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 794, // Fixed A4 width
-        height: quoteElement.scrollHeight,
+        width: 794, // A4 width in pixels at 96 DPI
       });
       
-      // Restore original width
+      // Restore original styling
       quoteElement.style.maxWidth = originalMaxWidth;
-      quoteElement.style.width = '';
+      quoteElement.style.width = originalWidth;
+      quoteElement.style.margin = '';
+      quoteElement.style.padding = '';
 
       // Show the header and internal analysis sections again
       if (previewHeader) {
@@ -606,35 +610,61 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Calculate PDF dimensions for optimal A4 layout
-      const imgData = canvas.toDataURL('image/png');
+      // Create PDF with proper page handling
       const pdf = new jsPDF('p', 'mm', 'a4');
-      
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const margin = 10; // 10mm margins
+      
+      // Convert canvas to image data
+      const imgData = canvas.toDataURL('image/png');
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate scaling to use full page width with margins
-      const margin = 10; // 10mm margins
+      // Calculate dimensions to use full page width
       const availableWidth = pdfWidth - (2 * margin);
+      const scaledWidth = availableWidth;
+      const scaledHeight = (imgHeight * availableWidth) / imgWidth;
+      
+      // Check if content fits on one page
       const availableHeight = pdfHeight - (2 * margin);
       
-      const ratio = Math.min(availableWidth / (imgWidth * 0.264583), availableHeight / (imgHeight * 0.264583)); // Convert pixels to mm
-      const scaledWidth = (imgWidth * 0.264583) * ratio;
-      const scaledHeight = (imgHeight * 0.264583) * ratio;
+      if (scaledHeight <= availableHeight) {
+        // Content fits on one page
+        pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
+      } else {
+        // Content needs multiple pages - split the image
+        const pageHeight = availableHeight;
+        const totalPages = Math.ceil(scaledHeight / pageHeight);
+        
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) {
+            pdf.addPage();
+          }
+          
+          // Calculate the portion of the image for this page
+          const sourceY = (i * pageHeight * imgHeight) / scaledHeight;
+          const sourceHeight = Math.min((pageHeight * imgHeight) / scaledHeight, imgHeight - sourceY);
+          const destHeight = Math.min(pageHeight, scaledHeight - (i * pageHeight));
+          
+          // Use jsPDF's built-in image clipping
+          pdf.addImage(
+            imgData, 
+            'PNG', 
+            margin, 
+            margin, 
+            scaledWidth, 
+            scaledHeight,
+            undefined,
+            'FAST',
+            0,
+            -i * pageHeight
+          );
+        }
+      }
       
-      // Center the content with margins
-      const x = margin + (availableWidth - scaledWidth) / 2;
-      const y = margin;
-
-      // Add image to PDF using full available width
-      pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
-      
-      // Generate filename
+      // Generate filename and save
       const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      
-      // Download the PDF
       pdf.save(filename);
       
     } catch (error) {

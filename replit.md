@@ -86,6 +86,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed form validation and display logic for client selection workflow
 ✓ Fixed airport transfer cost calculation in Internal Profitability Analysis - now properly included in total costs
 ✓ Updated email address from info@myabroadally.com to maa@myabroadally.com in quote outputs
+✓ Improved PDF export layout to use full horizontal page width and split content across multiple pages
+✓ Added delete functionality to quote history with confirmation dialog and trash icon buttons
 
 ## System Architecture
 

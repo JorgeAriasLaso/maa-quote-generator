@@ -8,10 +8,11 @@ import { QuotePreview } from "@/components/quote-preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText, Copy } from "lucide-react";
+import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText, Copy, Trash2 } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 
@@ -19,6 +20,7 @@ export default function Quotes() {
   const [viewingQuote, setViewingQuote] = useState<Quote | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
+  const [quoteToDelete, setQuoteToDelete] = useState<Quote | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -51,6 +53,29 @@ export default function Quotes() {
     },
   });
 
+  // Delete quote mutation
+  const deleteQuoteMutation = useMutation({
+    mutationFn: async (quoteId: number) => {
+      const response = await apiRequest("DELETE", `/api/quotes/${quoteId}`);
+      return response;
+    },
+    onSuccess: (_, quoteId) => {
+      toast({
+        title: "Quote Deleted",
+        description: "Quote has been permanently deleted.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/quotes"] });
+      setQuoteToDelete(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete quote. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Filter quotes based on search term and filter type
   const filteredQuotes = quotes?.filter(quote => {
     const matchesSearch = searchTerm === "" || 
@@ -77,6 +102,16 @@ export default function Quotes() {
 
   const handleCopyQuote = (quote: Quote) => {
     copyQuoteMutation.mutate(quote.id);
+  };
+
+  const handleDeleteQuote = (quote: Quote) => {
+    setQuoteToDelete(quote);
+  };
+
+  const confirmDeleteQuote = () => {
+    if (quoteToDelete) {
+      deleteQuoteMutation.mutate(quoteToDelete.id);
+    }
   };
 
   const totalQuotes = quotes?.length || 0;
@@ -250,6 +285,15 @@ export default function Quotes() {
                               >
                                 Edit
                               </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteQuote(quote)}
+                                disabled={deleteQuoteMutation.isPending}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -289,6 +333,31 @@ export default function Quotes() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!quoteToDelete} onOpenChange={() => setQuoteToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Quote</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete quote "{quoteToDelete?.quoteNumber}" for {quoteToDelete?.fiscalName}? 
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteQuoteMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteQuote}
+              disabled={deleteQuoteMutation.isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleteQuoteMutation.isPending ? "Deleting..." : "Delete Quote"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
