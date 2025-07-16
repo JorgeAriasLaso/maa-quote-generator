@@ -43,9 +43,12 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       numberOfTeachers: 0,
       schoolName: "",
       contactPerson: "",
-      schoolAddress: "",
+      schoolStreet: "",
+      schoolCity: "",
+      schoolPostcode: "",
+      schoolCountry: "",
       pricePerStudent: "850",
-      teacherDiscount: "Free (1:10 ratio)",
+      pricePerTeacher: "0",
       travelInsurance: false,
       airportTransfers: false,
       localTransport: false,
@@ -330,23 +333,65 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="schoolAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Address</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="123 Education Street, London, UK" 
-                      className="h-20 resize-none"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="schoolStreet"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street and Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123 Education Street" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="schoolCity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input placeholder="London" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="schoolPostcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postcode</FormLabel>
+                    <FormControl>
+                      <Input placeholder="SW1A 1AA" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="schoolCountry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <FormControl>
+                      <Input placeholder="United Kingdom" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           {/* Pricing */}
@@ -370,23 +415,13 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
               
               <FormField
                 control={form.control}
-                name="teacherDiscount"
+                name="pricePerTeacher"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Teacher Discount</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Free (1:10 ratio)">Free (1:10 ratio)</SelectItem>
-                        <SelectItem value="50% Discount">50% Discount</SelectItem>
-                        <SelectItem value="25% Discount">25% Discount</SelectItem>
-                        <SelectItem value="No Discount">No Discount</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Price per Teacher (€)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

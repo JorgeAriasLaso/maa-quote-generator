@@ -18,17 +18,7 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
     if (!quote) return 0;
     
     const studentPrice = parseFloat(quote.pricePerStudent) * quote.numberOfStudents;
-    let teacherPrice = 0;
-    
-    // Calculate teacher pricing based on discount
-    if (quote.teacherDiscount === "50% Discount") {
-      teacherPrice = parseFloat(quote.pricePerStudent) * quote.numberOfTeachers * 0.5;
-    } else if (quote.teacherDiscount === "25% Discount") {
-      teacherPrice = parseFloat(quote.pricePerStudent) * quote.numberOfTeachers * 0.75;
-    } else if (quote.teacherDiscount === "No Discount") {
-      teacherPrice = parseFloat(quote.pricePerStudent) * quote.numberOfTeachers;
-    }
-    // "Free (1:10 ratio)" = 0
+    const teacherPrice = parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers;
     
     let additionalCosts = 0;
     const totalPeople = quote.numberOfStudents + quote.numberOfTeachers;
@@ -781,16 +771,10 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-700">
-                      {quote.numberOfTeachers} Teachers ({quote.teacherDiscount})
+                      {quote.numberOfTeachers} Teachers @ €{quote.pricePerTeacher} each
                     </span>
-                    <span className="font-semibold text-green-600">
-                      €{quote.teacherDiscount === "Free (1:10 ratio)" ? "0" : 
-                         quote.teacherDiscount === "50% Discount" ? 
-                         (parseFloat(quote.pricePerStudent) * quote.numberOfTeachers * 0.5).toLocaleString() :
-                         quote.teacherDiscount === "25% Discount" ? 
-                         (parseFloat(quote.pricePerStudent) * quote.numberOfTeachers * 0.75).toLocaleString() :
-                         (parseFloat(quote.pricePerStudent) * quote.numberOfTeachers).toLocaleString()
-                      }
+                    <span className="font-semibold text-slate-900">
+                      €{(parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers).toLocaleString()}
                     </span>
                   </div>
                   

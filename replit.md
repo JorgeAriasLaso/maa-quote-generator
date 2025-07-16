@@ -24,6 +24,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Updated destination field to organized dropdown menu with countries as headers
 ✓ Added "Other" option with custom destination input field for non-listed cities
 ✓ Implemented automatic date/duration calculations for improved user experience
+✓ Replaced single school address field with structured address components
+✓ Changed teacher discount to direct price per teacher field
 
 ## System Architecture
 
