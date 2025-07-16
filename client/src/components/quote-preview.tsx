@@ -20,13 +20,8 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
     const studentPrice = parseFloat(quote.pricePerStudent) * quote.numberOfStudents;
     const teacherPrice = parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers;
     
-    let additionalCosts = 0;
-    const totalPeople = quote.numberOfStudents + quote.numberOfTeachers;
-    
-    if (quote.travelInsurance) additionalCosts += 15 * totalPeople;
-    if (quote.airportTransfers) additionalCosts += 120;
-    if (quote.localTransport) additionalCosts += 25 * totalPeople;
-    if (quote.tourGuide) additionalCosts += 200 * parseInt(quote.duration.split(' ')[0] || '7');
+    // TODO: Replace with calculation from quote calculation module
+    let additionalCosts = 0; // Placeholder - will be calculated by quote module
     
     return studentPrice + teacherPrice + additionalCosts;
   };
@@ -782,36 +777,13 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                     <>
                       <div className="border-t border-slate-300 pt-2">
                         <h5 className="font-medium text-slate-700 mb-2">Additional Services:</h5>
-                        {quote.travelInsurance && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Travel Insurance</span>
-                            <span className="text-slate-700">
-                              €{(15 * (quote.numberOfStudents + quote.numberOfTeachers)).toLocaleString()}
-                            </span>
-                          </div>
-                        )}
-                        {quote.airportTransfers && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Airport Transfers</span>
-                            <span className="text-slate-700">€120</span>
-                          </div>
-                        )}
-                        {quote.localTransport && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Local Transport</span>
-                            <span className="text-slate-700">
-                              €{(25 * (quote.numberOfStudents + quote.numberOfTeachers)).toLocaleString()}
-                            </span>
-                          </div>
-                        )}
-                        {quote.tourGuide && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Professional Tour Guide</span>
-                            <span className="text-slate-700">
-                              €{(200 * parseInt(quote.duration.split(' ')[0] || '7')).toLocaleString()}
-                            </span>
-                          </div>
-                        )}
+                        {/* TODO: Replace with dynamic pricing from quote calculation module */}
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-slate-600">Selected Services</span>
+                          <span className="text-slate-700">
+                            €{/* Placeholder - will be calculated by quote module */}TBD
+                          </span>
+                        </div>
                       </div>
                     </>
                   )}

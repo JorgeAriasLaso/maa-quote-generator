@@ -26,6 +26,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented automatic date/duration calculations for improved user experience
 ✓ Replaced single school address field with structured address components
 ✓ Changed teacher discount to direct price per teacher field
+✓ Added placeholder for additional services pricing pending quote calculation module
 
 ## System Architecture
 
