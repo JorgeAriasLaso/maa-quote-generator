@@ -9,6 +9,7 @@ import { CSVImport } from "@/components/csv-import";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Users, Quote, Upload } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -18,6 +19,7 @@ export default function Clients() {
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [viewingQuotes, setViewingQuotes] = useState<number | null>(null);
+  const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
@@ -70,6 +72,30 @@ export default function Clients() {
     },
   });
 
+  // Delete client mutation
+  const deleteClientMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest("DELETE", `/api/clients/${id}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Client deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
+      setDeletingClient(null);
+    },
+    onError: (error) => {
+      console.error("Client deletion error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete client",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Get client quotes
   const { data: clientQuotes, isLoading: quotesLoading } = useQuery({
     queryKey: ["/api/clients", viewingQuotes, "quotes"],
@@ -99,6 +125,16 @@ export default function Clients() {
     sessionStorage.setItem('selectedClient', JSON.stringify(client));
     // Navigate to the home page (quote form)
     setLocation('/');
+  };
+
+  const handleDeleteClient = (client: Client) => {
+    setDeletingClient(client);
+  };
+
+  const confirmDeleteClient = () => {
+    if (deletingClient) {
+      deleteClientMutation.mutate(deletingClient.id);
+    }
   };
 
   return (
@@ -133,6 +169,7 @@ export default function Clients() {
             onEditClient={handleEditClient}
             onViewQuotes={handleViewQuotes}
             onCreateQuote={handleCreateQuote}
+            onDeleteClient={handleDeleteClient}
           />
         </TabsContent>
       </Tabs>
@@ -225,6 +262,31 @@ export default function Clients() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Client Confirmation Dialog */}
+      <AlertDialog open={!!deletingClient} onOpenChange={() => setDeletingClient(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the client{' '}
+              <strong>{deletingClient?.fiscalName}</strong> and all of their associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingClient(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteClient}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleteClientMutation.isPending}
+            >
+              {deleteClientMutation.isPending ? "Deleting..." : "Delete Client"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

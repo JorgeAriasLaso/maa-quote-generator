@@ -5,16 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Mail, MapPin, FileText, Edit, Eye, Search, Plus } from "lucide-react";
+import { Mail, MapPin, FileText, Edit, Eye, Search, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface ClientListProps {
   onEditClient?: (client: Client) => void;
   onViewQuotes?: (clientId: number) => void;
   onCreateQuote?: (client: Client) => void;
+  onDeleteClient?: (client: Client) => void;
 }
 
-export function ClientList({ onEditClient, onViewQuotes, onCreateQuote }: ClientListProps) {
+export function ClientList({ onEditClient, onViewQuotes, onCreateQuote, onDeleteClient }: ClientListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -191,6 +192,17 @@ export function ClientList({ onEditClient, onViewQuotes, onCreateQuote }: Client
                             title="Create new quote"
                           >
                             <Plus className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {onDeleteClient && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onDeleteClient(client)}
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            title="Delete client"
+                          >
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </div>

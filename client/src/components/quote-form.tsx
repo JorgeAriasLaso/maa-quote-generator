@@ -392,7 +392,27 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-[400px] p-0">
-                        <Command>
+                        <Command
+                          filter={(value, search) => {
+                            // Case-insensitive search
+                            const normalizedSearch = search.toLowerCase();
+                            const normalizedValue = value.toLowerCase();
+                            
+                            // Search in fiscal name, city, and country
+                            const client = clients?.find(c => c.fiscalName.toLowerCase() === normalizedValue);
+                            if (client) {
+                              return (
+                                client.fiscalName.toLowerCase().includes(normalizedSearch) ||
+                                client.city.toLowerCase().includes(normalizedSearch) ||
+                                client.country.toLowerCase().includes(normalizedSearch) ||
+                                client.email?.toLowerCase().includes(normalizedSearch) ||
+                                client.taxId?.toLowerCase().includes(normalizedSearch)
+                              ) ? 1 : 0;
+                            }
+                            
+                            return normalizedValue.includes(normalizedSearch) ? 1 : 0;
+                          }}
+                        >
                           <CommandInput 
                             placeholder="Search schools..." 
                             onValueChange={(value) => {
@@ -411,7 +431,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                               {clients?.map((client) => (
                                 <CommandItem
                                   key={client.id}
-                                  value={client.fiscalName}
+                                  value={client.fiscalName.toLowerCase()}
                                   onSelect={() => handleClientSelect(client)}
                                 >
                                   <Check

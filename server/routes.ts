@@ -267,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Client not found" });
       }
 
-      res.status(204).send();
+      res.json({ message: "Client deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete client" });
     }
