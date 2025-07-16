@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Mail, MapPin, FileText, Edit, Eye, Search } from "lucide-react";
+import { Mail, MapPin, FileText, Edit, Eye, Search, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 interface ClientListProps {
   onEditClient?: (client: Client) => void;
   onViewQuotes?: (clientId: number) => void;
+  onCreateQuote?: (client: Client) => void;
 }
 
-export function ClientList({ onEditClient, onViewQuotes }: ClientListProps) {
+export function ClientList({ onEditClient, onViewQuotes, onCreateQuote }: ClientListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -179,6 +180,17 @@ export function ClientList({ onEditClient, onViewQuotes }: ClientListProps) {
                             title="View quotes"
                           >
                             <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {onCreateQuote && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onCreateQuote(client)}
+                            className="h-8 w-8 p-0"
+                            title="Create new quote"
+                          >
+                            <Plus className="h-4 w-4" />
                           </Button>
                         )}
                       </div>

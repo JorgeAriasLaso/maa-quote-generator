@@ -21,6 +21,7 @@ interface QuoteFormProps {
   isLoading: boolean;
   onCostBreakdownChange?: (costBreakdown: any) => void;
   currentQuote?: any;
+  selectedClient?: Client | null;
 }
 
 // AdhocServicesSection component
@@ -145,11 +146,11 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
   );
 }
 
-export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQuote }: QuoteFormProps) {
+export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQuote, selectedClient }: QuoteFormProps) {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
   const [schoolComboboxOpen, setSchoolComboboxOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [currentSelectedClient, setCurrentSelectedClient] = useState<Client | null>(selectedClient || null);
 
   // Fetch clients for autocomplete
   const { data: clients } = useQuery<Client[]>({
@@ -229,7 +230,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   };
 
   const handleClientSelect = (client: Client) => {
-    setSelectedClient(client);
+    setCurrentSelectedClient(client);
     form.setValue("fiscalName", client.fiscalName);
     form.setValue("taxId", client.taxId || "");
     form.setValue("email", client.email || "");
@@ -239,6 +240,20 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
     form.setValue("address", client.address || "");
     setSchoolComboboxOpen(false);
   };
+
+  // Effect to populate form when client is selected from clients page
+  useEffect(() => {
+    if (selectedClient && !currentSelectedClient) {
+      setCurrentSelectedClient(selectedClient);
+      form.setValue("fiscalName", selectedClient.fiscalName);
+      form.setValue("taxId", selectedClient.taxId || "");
+      form.setValue("email", selectedClient.email || "");
+      form.setValue("country", selectedClient.country);
+      form.setValue("city", selectedClient.city);
+      form.setValue("postcode", selectedClient.postcode || "");
+      form.setValue("address", selectedClient.address || "");
+    }
+  }, [selectedClient, currentSelectedClient, form]);
 
   // Watch form values for automatic duration and pricing calculation
   const startDate = form.watch("startDate");
@@ -402,7 +417,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                                   <Check
                                     className={cn(
                                       "mr-2 h-4 w-4",
-                                      selectedClient?.id === client.id ? "opacity-100" : "opacity-0"
+                                      currentSelectedClient?.id === client.id ? "opacity-100" : "opacity-0"
                                     )}
                                   />
                                   <div>

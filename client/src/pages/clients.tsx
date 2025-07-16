@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Users, Quote, Upload } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Clients() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -20,6 +20,7 @@ export default function Clients() {
   const [viewingQuotes, setViewingQuotes] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   // Create client mutation
   const createClientMutation = useMutation({
@@ -93,6 +94,13 @@ export default function Clients() {
     setViewingQuotes(clientId);
   };
 
+  const handleCreateQuote = (client: Client) => {
+    // Store the client data in sessionStorage for the quote form
+    sessionStorage.setItem('selectedClient', JSON.stringify(client));
+    // Navigate to the home page (quote form)
+    setLocation('/');
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -130,6 +138,7 @@ export default function Clients() {
           <ClientList
             onEditClient={handleEditClient}
             onViewQuotes={handleViewQuotes}
+            onCreateQuote={handleCreateQuote}
           />
         </TabsContent>
       </Tabs>

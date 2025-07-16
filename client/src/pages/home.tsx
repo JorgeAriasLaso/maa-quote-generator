@@ -1,19 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QuoteForm } from "@/components/quote-form";
 import { QuotePreview } from "@/components/quote-preview";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { type InsertQuote, type Quote } from "@shared/schema";
+import { type InsertQuote, type Quote, type Client } from "@shared/schema";
 import { calculateQuoteCost } from "@shared/costing";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
 export default function Home() {
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [liveCostBreakdown, setLiveCostBreakdown] = useState<any>(null);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Check for selected client from sessionStorage on component mount
+  useEffect(() => {
+    const storedClient = sessionStorage.getItem('selectedClient');
+    if (storedClient) {
+      try {
+        const client = JSON.parse(storedClient);
+        setSelectedClient(client);
+        // Clear the stored client so it doesn't persist
+        sessionStorage.removeItem('selectedClient');
+      } catch (e) {
+        console.error('Error parsing selected client from sessionStorage:', e);
+      }
+    }
+  }, []);
 
   const saveQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
@@ -135,6 +151,7 @@ export default function Home() {
             isLoading={saveQuoteMutation.isPending}
             onCostBreakdownChange={setLiveCostBreakdown}
             currentQuote={currentQuote}
+            selectedClient={selectedClient}
           />
 
           {/* Right Panel - Quote Preview */}
