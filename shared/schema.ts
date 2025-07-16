@@ -45,6 +45,7 @@ export const quotes = pgTable("quotes", {
   costStudentCoordination: text("cost_student_coordination").default("60"),
   costTeacherCoordination: text("cost_teacher_coordination").default("0"),
   costLocalCoordinator: text("cost_local_coordinator").default("150"),
+  costAirportTransfer: text("cost_airport_transfer"),
   
   quoteNumber: text("quote_number").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -64,6 +65,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   costStudentCoordination: z.string().optional(),
   costTeacherCoordination: z.string().optional(),
   costLocalCoordinator: z.string().optional(),
+  costAirportTransfer: z.string().optional(),
 });
 
 export type InsertQuote = z.infer<typeof insertQuoteSchema>;

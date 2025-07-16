@@ -1160,6 +1160,26 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                     )}
                   />
                 </div>
+                
+                {/* Airport Transfer Costs */}
+                <div>
+                  <h4 className="font-medium text-red-700 mb-3">Airport Transfer Costs</h4>
+                  <div className="grid grid-cols-1 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="costAirportTransfer"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Airport transfer cost (€/person)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="0" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </Card>

@@ -325,6 +325,7 @@ export function calculateQuoteCost(
     costStudentCoordination?: number;
     costTeacherCoordination?: number;
     costLocalCoordinator?: number;
+    costAirportTransfer?: string;
   }
 ): CostBreakdown {
   const country = getCountryFromDestination(destination);
@@ -442,6 +443,9 @@ export function calculateQuoteCost(
   const costStudentCoord = (internalCosts?.costStudentCoordination || 60) * numberOfStudents;
   const costTeacherCoord = (internalCosts?.costTeacherCoordination || 0) * numberOfTeachers;
   const costLocalCoord = internalCosts?.costLocalCoordinator || 150;
+  
+  // Add airport transfer internal costs
+  const costAirportTransfer = (internalCosts?.costAirportTransfer ? parseFloat(internalCosts.costAirportTransfer) : 0) * (numberOfStudents + numberOfTeachers);
 
   // Calculate internal costs for additional services (assume 50% cost ratio as default)
   const internalAdditionalServicesCosts = Array.isArray(adhocServices) ? adhocServices.reduce((total, service) => {
@@ -452,7 +456,7 @@ export function calculateQuoteCost(
 
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 
                            costLocalTransport + costStudentCoord + costTeacherCoord + costLocalCoord + 
-                           internalAdditionalServicesCosts;
+                           costAirportTransfer + internalAdditionalServicesCosts;
 
   const internalCostsBreakdown = {
     studentAccommodation: costStudentAccom,
@@ -461,6 +465,7 @@ export function calculateQuoteCost(
     localTransportation: costLocalTransport,
     coordination: costStudentCoord + costTeacherCoord,
     localCoordinator: costLocalCoord,
+    airportTransfer: costAirportTransfer,
     additionalServices: internalAdditionalServicesCosts,
     totalCosts: totalInternalCosts,
   };

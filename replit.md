@@ -64,6 +64,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed duration calculation to count full days only (Oct 4-7 = 3 days, not 4 days) for accurate costing
 ✓ Fixed teacher meal pricing calculation - teacher discount now only applies when using default pricing, not custom pricing
 ✓ Eliminated all discounts from calculations - removed teacher meal discounts and group discounts for transparent pricing
+✓ Added airport transfer cost input field to internal analysis section for accurate profitability tracking
 
 ## System Architecture
 
