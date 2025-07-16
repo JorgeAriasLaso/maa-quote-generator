@@ -20,18 +20,27 @@ export function ClientList({ onEditClient, onViewQuotes }: ClientListProps) {
     queryKey: ["/api/clients"],
   });
 
-  // Filter clients based on search term
+  // Filter and sort clients based on search term
   const filteredClients = useMemo(() => {
     if (!clients) return [];
-    if (!searchTerm.trim()) return clients;
     
-    const search = searchTerm.toLowerCase();
-    return clients.filter(client => 
-      client.fiscalName.toLowerCase().includes(search) ||
-      client.country.toLowerCase().includes(search) ||
-      client.city.toLowerCase().includes(search) ||
-      client.email?.toLowerCase().includes(search) ||
-      client.taxId?.toLowerCase().includes(search)
+    let filtered = clients;
+    
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      filtered = clients.filter(client => 
+        client.fiscalName.toLowerCase().includes(search) ||
+        client.country.toLowerCase().includes(search) ||
+        client.city.toLowerCase().includes(search) ||
+        client.email?.toLowerCase().includes(search) ||
+        client.taxId?.toLowerCase().includes(search)
+      );
+    }
+    
+    // Sort alphabetically by school name
+    return filtered.sort((a, b) => 
+      a.fiscalName.localeCompare(b.fiscalName, undefined, { sensitivity: 'base' })
     );
   }, [clients, searchTerm]);
 
