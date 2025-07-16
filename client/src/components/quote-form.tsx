@@ -19,25 +19,17 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
 
-  const predefinedDestinations = [
-    "Madrid, Spain",
-    "Málaga, Spain", 
-    "Alicante, Spain",
-    "Valladolid, Spain",
-    "Gijón, Spain",
-    "Porto, Portugal",
-    "Lyon, France",
-    "Paris, France",
-    "Bristol, UK",
-    "Bari, Italy",
-    "Catania, Italy",
-    "Prague, Czech Republic",
-    "Kraków, Poland",
-    "Poznań, Poland",
-    "Warsaw, Poland",
-    "Budapest, Hungary",
-    "Copenhagen, Denmark"
-  ];
+  const destinationsByCountry = {
+    "Spain": ["Madrid", "Málaga", "Alicante", "Valladolid", "Gijón"],
+    "Portugal": ["Porto"],
+    "France": ["Lyon", "Paris"],
+    "United Kingdom": ["Bristol"],
+    "Italy": ["Bari", "Catania"],
+    "Czech Republic": ["Prague"],
+    "Poland": ["Kraków", "Poznań", "Warsaw"],
+    "Hungary": ["Budapest"],
+    "Denmark": ["Copenhagen"]
+  };
 
   const form = useForm<InsertQuote>({
     resolver: zodResolver(insertQuoteSchema),
@@ -107,12 +99,23 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {predefinedDestinations.map((destination) => (
-                            <SelectItem key={destination} value={destination}>
-                              {destination}
-                            </SelectItem>
+                          {Object.entries(destinationsByCountry).map(([country, cities]) => (
+                            <div key={country}>
+                              <div className="px-2 py-1.5 text-sm font-semibold text-slate-600 bg-slate-50">
+                                {country}
+                              </div>
+                              {cities.map((city) => (
+                                <SelectItem key={`${city}, ${country}`} value={`${city}, ${country}`} className="pl-6">
+                                  {city}
+                                </SelectItem>
+                              ))}
+                            </div>
                           ))}
-                          <SelectItem value="Other">Other</SelectItem>
+                          <div className="border-t border-slate-200 mt-1 pt-1">
+                            <SelectItem value="Other" className="font-medium">
+                              Other
+                            </SelectItem>
+                          </div>
                         </SelectContent>
                       </Select>
                       <FormMessage />

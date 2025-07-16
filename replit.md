@@ -21,6 +21,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Created comprehensive city-specific content for 18 European destinations
 ✓ Added PostgreSQL database with Drizzle ORM integration
 ✓ Replaced in-memory storage with persistent database storage
+✓ Updated destination field to organized dropdown menu with countries as headers
+✓ Added "Other" option with custom destination input field for non-listed cities
 
 ## System Architecture
 
