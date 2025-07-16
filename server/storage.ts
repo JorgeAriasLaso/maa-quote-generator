@@ -1,21 +1,34 @@
-import { quotes, type Quote, type InsertQuote } from "@shared/schema";
+import { quotes, clients, type Quote, type InsertQuote, type Client, type InsertClient } from "@shared/schema";
 import { db } from "./db";
 
 export interface IStorage {
+  // Quote operations
   getQuote(id: number): Promise<Quote | undefined>;
   getAllQuotes(): Promise<Quote[]>;
   createQuote(quote: InsertQuote): Promise<Quote>;
   updateQuote(id: number, quote: Partial<InsertQuote>): Promise<Quote | undefined>;
   deleteQuote(id: number): Promise<boolean>;
+  
+  // Client operations
+  getClient(id: number): Promise<Client | undefined>;
+  getAllClients(): Promise<Client[]>;
+  createClient(client: InsertClient): Promise<Client>;
+  updateClient(id: number, client: Partial<InsertClient>): Promise<Client | undefined>;
+  deleteClient(id: number): Promise<boolean>;
+  getClientQuotes(clientId: number): Promise<Quote[]>;
 }
 
 export class MemStorage implements IStorage {
   private quotes: Map<number, Quote>;
-  private currentId: number;
+  private clients: Map<number, Client>;
+  private currentQuoteId: number;
+  private currentClientId: number;
 
   constructor() {
     this.quotes = new Map();
-    this.currentId = 1;
+    this.clients = new Map();
+    this.currentQuoteId = 1;
+    this.currentClientId = 1;
   }
 
   async getQuote(id: number): Promise<Quote | undefined> {
@@ -29,7 +42,7 @@ export class MemStorage implements IStorage {
   }
 
   async createQuote(insertQuote: InsertQuote): Promise<Quote> {
-    const id = this.currentId++;
+    const id = this.currentQuoteId++;
     const quote: Quote = {
       ...insertQuote,
       id,
@@ -58,6 +71,8 @@ export class MemStorage implements IStorage {
       costAirportTransfer: insertQuote.costAirportTransfer || null,
       // Set defaults for adhoc services
       adhocServices: insertQuote.adhocServices || null,
+      // Set clientId to null if undefined
+      clientId: insertQuote.clientId || null,
     };
     this.quotes.set(id, quote);
     return quote;
@@ -80,6 +95,58 @@ export class MemStorage implements IStorage {
 
   async deleteQuote(id: number): Promise<boolean> {
     return this.quotes.delete(id);
+  }
+
+  // Client operations
+  async getClient(id: number): Promise<Client | undefined> {
+    return this.clients.get(id);
+  }
+
+  async getAllClients(): Promise<Client[]> {
+    return Array.from(this.clients.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async createClient(insertClient: InsertClient): Promise<Client> {
+    const id = this.currentClientId++;
+    const client: Client = {
+      ...insertClient,
+      id,
+      email: insertClient.email || null,
+      phone: insertClient.phone || null,
+      notes: insertClient.notes || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.clients.set(id, client);
+    return client;
+  }
+
+  async updateClient(id: number, updateData: Partial<InsertClient>): Promise<Client | undefined> {
+    const existingClient = this.clients.get(id);
+    if (!existingClient) {
+      return undefined;
+    }
+
+    const updatedClient: Client = {
+      ...existingClient,
+      ...updateData,
+      updatedAt: new Date(),
+    };
+
+    this.clients.set(id, updatedClient);
+    return updatedClient;
+  }
+
+  async deleteClient(id: number): Promise<boolean> {
+    return this.clients.delete(id);
+  }
+
+  async getClientQuotes(clientId: number): Promise<Quote[]> {
+    return Array.from(this.quotes.values())
+      .filter(quote => quote.clientId === clientId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 }
 
@@ -131,6 +198,62 @@ export class DatabaseStorage implements IStorage {
       .where(eq(quotes.id, id))
       .returning();
     return result.length > 0;
+  }
+
+  // Client operations
+  async getClient(id: number): Promise<Client | undefined> {
+    const { eq } = await import('drizzle-orm');
+    
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
+    return client || undefined;
+  }
+
+  async getAllClients(): Promise<Client[]> {
+    const { desc } = await import('drizzle-orm');
+    
+    return await db.select().from(clients).orderBy(desc(clients.createdAt));
+  }
+
+  async createClient(insertClient: InsertClient): Promise<Client> {
+    const [client] = await db
+      .insert(clients)
+      .values(insertClient)
+      .returning();
+    return client;
+  }
+
+  async updateClient(id: number, updateData: Partial<InsertClient>): Promise<Client | undefined> {
+    const { eq } = await import('drizzle-orm');
+    
+    const [client] = await db
+      .update(clients)
+      .set({
+        ...updateData,
+        updatedAt: new Date(),
+      })
+      .where(eq(clients.id, id))
+      .returning();
+    return client || undefined;
+  }
+
+  async deleteClient(id: number): Promise<boolean> {
+    const { eq } = await import('drizzle-orm');
+    
+    const result = await db
+      .delete(clients)
+      .where(eq(clients.id, id))
+      .returning();
+    return result.length > 0;
+  }
+
+  async getClientQuotes(clientId: number): Promise<Quote[]> {
+    const { eq, desc } = await import('drizzle-orm');
+    
+    return await db
+      .select()
+      .from(quotes)
+      .where(eq(quotes.clientId, clientId))
+      .orderBy(desc(quotes.createdAt));
   }
 }
 

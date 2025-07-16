@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QuoteForm } from "@/components/quote-form";
 import { QuotePreview } from "@/components/quote-preview";
@@ -111,9 +112,11 @@ export default function Home() {
               />
               <h1 className="text-xl font-semibold text-slate-900">My Abroad Ally</h1>
             </div>
-            <nav className="hidden md:flex space-x-6">
+            <nav className="hidden md:flex space-x-6 items-center">
               <a href="#" className="text-primary font-medium">Quote Generator</a>
-              <a href="#" className="text-slate-600 hover:text-slate-900">Templates</a>
+              <Link href="/clients" className="text-slate-600 hover:text-slate-900">
+                Client Management
+              </Link>
               <a href="#" className="text-slate-600 hover:text-slate-900">History</a>
               <a href="#" className="text-slate-600 hover:text-slate-900">Settings</a>
             </nav>

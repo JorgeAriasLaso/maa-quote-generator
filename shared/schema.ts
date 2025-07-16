@@ -1,9 +1,24 @@
 import { pgTable, text, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Clients table for client management
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  schoolName: text("school_name").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  schoolAddress: text("school_address").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const quotes = pgTable("quotes", {
   id: serial("id").primaryKey(),
+  clientId: integer("client_id").references(() => clients.id),
   destination: text("destination").notNull(),
   tripType: text("trip_type").notNull(),
   startDate: text("start_date").notNull(),
@@ -68,5 +83,28 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   costAirportTransfer: z.string().optional(),
 });
 
+// Relations
+export const clientsRelations = relations(clients, ({ many }) => ({
+  quotes: many(quotes),
+}));
+
+export const quotesRelations = relations(quotes, ({ one }) => ({
+  client: one(clients, {
+    fields: [quotes.clientId],
+    references: [clients.id],
+  }),
+}));
+
+// Client schemas
+export const insertClientSchema = createInsertSchema(clients).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = z.infer<typeof insertClientSchema>;
+
+// Quote schemas
 export type InsertQuote = z.infer<typeof insertQuoteSchema>;
 export type Quote = typeof quotes.$inferSelect;
