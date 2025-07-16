@@ -132,42 +132,46 @@ export default function Clients() {
 
       {/* Create Client Dialog */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="create-client-form">
           <DialogHeader>
             <DialogTitle>Create New Client</DialogTitle>
           </DialogHeader>
-          <ClientForm
-            onSubmit={handleCreateClient}
-            isLoading={createClientMutation.isPending}
-            title=""
-          />
+          <div id="create-client-form">
+            <ClientForm
+              onSubmit={handleCreateClient}
+              isLoading={createClientMutation.isPending}
+              title=""
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Edit Client Dialog */}
       <Dialog open={!!editingClient} onOpenChange={() => setEditingClient(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="edit-client-form">
           <DialogHeader>
             <DialogTitle>Edit Client</DialogTitle>
           </DialogHeader>
           {editingClient && (
-            <ClientForm
-              onSubmit={handleUpdateClient}
-              isLoading={updateClientMutation.isPending}
-              initialData={editingClient}
-              title=""
-            />
+            <div id="edit-client-form">
+              <ClientForm
+                onSubmit={handleUpdateClient}
+                isLoading={updateClientMutation.isPending}
+                initialData={editingClient}
+                title=""
+              />
+            </div>
           )}
         </DialogContent>
       </Dialog>
 
       {/* View Client Quotes Dialog */}
       <Dialog open={!!viewingQuotes} onOpenChange={() => setViewingQuotes(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="client-quotes-list">
           <DialogHeader>
             <DialogTitle>Quote History</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div id="client-quotes-list" className="space-y-4">
             {quotesLoading ? (
               <div className="text-center py-8">Loading quotes...</div>
             ) : !clientQuotes || clientQuotes.length === 0 ? (

@@ -113,11 +113,13 @@ export default function Home() {
               <h1 className="text-xl font-semibold text-slate-900">My Abroad Ally</h1>
             </div>
             <nav className="hidden md:flex space-x-6 items-center">
-              <a href="#" className="text-primary font-medium">Quote Generator</a>
+              <Link href="/" className="text-primary font-medium">Quote Generator</Link>
+              <Link href="/quotes" className="text-slate-600 hover:text-slate-900">
+                Quote History
+              </Link>
               <Link href="/clients" className="text-slate-600 hover:text-slate-900">
                 Client Management
               </Link>
-              <a href="#" className="text-slate-600 hover:text-slate-900">History</a>
               <a href="#" className="text-slate-600 hover:text-slate-900">Settings</a>
             </nav>
           </div>
