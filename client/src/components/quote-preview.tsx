@@ -1,15 +1,19 @@
 import { type Quote } from "@shared/schema";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, ZoomIn, Printer } from "lucide-react";
+import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
 import { CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { useState } from 'react';
 
 interface QuotePreviewProps {
   quote: Quote | null;
 }
 
 export function QuotePreview({ quote }: QuotePreviewProps) {
+  const [isExporting, setIsExporting] = useState(false);
   const calculateTotal = () => {
     if (!quote) return 0;
     
@@ -528,9 +532,72 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
     ];
   };
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export functionality
-    console.log("Export PDF functionality would be implemented here");
+  const handleExportPDF = async () => {
+    if (!quote || isExporting) return;
+    
+    setIsExporting(true);
+    try {
+      // Find the quote document element
+      const quoteElement = document.getElementById('quote-document');
+      if (!quoteElement) {
+        console.error('Quote document element not found');
+        return;
+      }
+
+      // Temporarily hide the preview header and controls for PDF
+      const previewHeader = document.querySelector('.preview-header');
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = 'none';
+      }
+
+      // Create canvas from the quote document
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: quoteElement.scrollWidth,
+        height: quoteElement.scrollHeight,
+      });
+
+      // Show the header again
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = '';
+      }
+
+      // Calculate PDF dimensions
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Calculate scaling to fit content on page
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const scaledWidth = imgWidth * ratio;
+      const scaledHeight = imgHeight * ratio;
+      
+      // Center the content
+      const x = (pdfWidth - scaledWidth) / 2;
+      const y = (pdfHeight - scaledHeight) / 2;
+
+      // Add image to PDF
+      pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
+      
+      // Generate filename
+      const filename = `${quote.quoteNumber}_${quote.schoolName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      
+      // Download the PDF
+      pdf.save(filename);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (!quote) {
@@ -557,7 +624,7 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       <div className="h-full flex flex-col">
         {/* Preview Header */}
-        <div className="bg-slate-50 border-b border-slate-200 px-6 py-4">
+        <div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-slate-900">Quote Preview</h3>
             <div className="flex space-x-2">
@@ -571,10 +638,15 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                 variant="default" 
                 size="sm" 
                 onClick={handleExportPDF}
-                className="bg-primary text-white hover:bg-blue-700"
+                disabled={isExporting}
+                className="bg-primary text-white hover:bg-blue-700 disabled:opacity-50"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Export PDF
+                {isExporting ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                {isExporting ? 'Generating...' : 'Export PDF'}
               </Button>
             </div>
           </div>
@@ -582,7 +654,7 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
 
         {/* Quote Document */}
         <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div className="max-w-2xl mx-auto bg-white">
+          <div id="quote-document" className="max-w-2xl mx-auto bg-white">
             {/* Header */}
             <div className="text-center mb-12">
               <img 
