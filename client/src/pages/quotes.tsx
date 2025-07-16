@@ -31,9 +31,8 @@ export default function Quotes() {
   // Copy quote mutation
   const copyQuoteMutation = useMutation({
     mutationFn: async (quoteId: number) => {
-      return await apiRequest(`/api/quotes/${quoteId}/copy`, {
-        method: "POST",
-      });
+      const response = await apiRequest("POST", `/api/quotes/${quoteId}/copy`);
+      return response.json();
     },
     onSuccess: (newQuote) => {
       toast({
@@ -44,7 +43,8 @@ export default function Quotes() {
       // Navigate to home to edit the new quote
       window.location.href = `/?edit=${newQuote.id}`;
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Copy quote error:", error);
       toast({
         title: "Error",
         description: "Failed to copy quote. Please try again.",
