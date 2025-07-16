@@ -38,9 +38,10 @@ export function CSVImport({ onClose }: CSVImportProps) {
       });
     },
     onError: (error) => {
+      console.error('Import error:', error);
       toast({
         title: "Import Failed",
-        description: "Failed to import CSV data. Please check the format.",
+        description: error?.message || "Failed to import CSV data. Please check the format.",
         variant: "destructive",
       });
     },
@@ -48,8 +49,9 @@ export function CSVImport({ onClose }: CSVImportProps) {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    if (selectedFile && selectedFile.type === "text/csv") {
+    if (selectedFile && (selectedFile.type === "text/csv" || selectedFile.name.endsWith('.csv'))) {
       setFile(selectedFile);
+      setImportResult(null); // Reset previous results
       parseCSV(selectedFile);
     } else {
       toast({
@@ -63,37 +65,75 @@ export function CSVImport({ onClose }: CSVImportProps) {
   const parseCSV = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target?.result as string;
-      const lines = text.split('\n').filter(line => line.trim());
-      
-      if (lines.length < 2) {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          toast({
+            title: "Invalid CSV",
+            description: "CSV file must have at least a header row and one data row.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Better CSV parsing that handles quoted values with commas
+        const parseCSVLine = (line: string) => {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        };
+
+        const headers = parseCSVLine(lines[0]).map(h => h.replace(/"/g, ''));
+        const data = lines.slice(1).map(line => {
+          const values = parseCSVLine(line).map(v => v.replace(/"/g, ''));
+          const row: any = {};
+          headers.forEach((header, index) => {
+            row[header] = values[index] || '';
+          });
+          return row;
+        });
+
+        console.log('Parsed CSV data:', { headers, data });
+        setCsvData(data);
+        setPreview(data.slice(0, 5)); // Show first 5 rows for preview
+      } catch (error) {
+        console.error('CSV parsing error:', error);
         toast({
-          title: "Invalid CSV",
-          description: "CSV file must have at least a header row and one data row.",
+          title: "Parsing Error",
+          description: "Failed to parse CSV file. Please check the format.",
           variant: "destructive",
         });
-        return;
       }
-
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-      const data = lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-        const row: any = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index] || '';
-        });
-        return row;
-      });
-
-      setCsvData(data);
-      setPreview(data.slice(0, 5)); // Show first 5 rows for preview
     };
     reader.readAsText(file);
   };
 
   const handleImport = () => {
     if (csvData.length > 0) {
+      console.log('Importing CSV data:', csvData);
       importMutation.mutate(csvData);
+    } else {
+      toast({
+        title: "No Data",
+        description: "No valid data found to import.",
+        variant: "destructive",
+      });
     }
   };
 
