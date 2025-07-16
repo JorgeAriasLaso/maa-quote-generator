@@ -66,6 +66,9 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Eliminated all discounts from calculations - removed teacher meal discounts and group discounts for transparent pricing
 ✓ Added airport transfer cost input field to internal analysis section for accurate profitability tracking
 ✓ Fixed PDF output width to fit standard A4 page sizing with proper margins and full-width layout
+✓ Implemented quote update functionality - clicking "Generate Quote Preview" now updates existing quotes instead of creating duplicates
+✓ Fixed input field formatting issue where typing "10" showed "010" by setting default values to empty strings instead of "0"
+✓ Updated button text to show "Update Quote Preview" when modifying existing quotes vs "Generate Quote Preview" for new ones
 
 ## System Architecture
 

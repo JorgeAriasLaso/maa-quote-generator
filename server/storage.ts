@@ -35,7 +35,7 @@ export class MemStorage implements IStorage {
       id,
       createdAt: new Date(),
       quoteNumber: `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`,
-      // Set defaults for custom pricing fields
+      // Set defaults for custom pricing fields - convert undefined to null
       studentAccommodationPerDay: insertQuote.studentAccommodationPerDay || null,
       teacherAccommodationPerDay: insertQuote.teacherAccommodationPerDay || null,
       breakfastPerDay: insertQuote.breakfastPerDay || null,
@@ -45,6 +45,17 @@ export class MemStorage implements IStorage {
       studentCoordinationFeeTotal: insertQuote.studentCoordinationFeeTotal || null,
       teacherCoordinationFeeTotal: insertQuote.teacherCoordinationFeeTotal || null,
       airportTransferPerPerson: insertQuote.airportTransferPerPerson || null,
+      // Set defaults for internal cost fields
+      costStudentAccommodationPerDay: insertQuote.costStudentAccommodationPerDay || null,
+      costTeacherAccommodationPerDay: insertQuote.costTeacherAccommodationPerDay || null,
+      costBreakfastPerDay: insertQuote.costBreakfastPerDay || null,
+      costLunchPerDay: insertQuote.costLunchPerDay || null,
+      costDinnerPerDay: insertQuote.costDinnerPerDay || null,
+      costLocalTransportationCard: insertQuote.costLocalTransportationCard || null,
+      costStudentCoordination: insertQuote.costStudentCoordination || null,
+      costTeacherCoordination: insertQuote.costTeacherCoordination || null,
+      costLocalCoordinator: insertQuote.costLocalCoordinator || null,
+      costAirportTransfer: insertQuote.costAirportTransfer || null,
       // Set defaults for adhoc services
       adhocServices: insertQuote.adhocServices || null,
     };

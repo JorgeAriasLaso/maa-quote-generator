@@ -14,7 +14,7 @@ export default function Home() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const createQuoteMutation = useMutation({
+  const saveQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
       // Parse adhoc services if they exist
       let adhocServices = [];
@@ -54,6 +54,7 @@ export default function Home() {
           costStudentCoordination: parseFloat(data.costStudentCoordination || "60"),
           costTeacherCoordination: parseFloat(data.costTeacherCoordination || "0"),
           costLocalCoordinator: parseFloat(data.costLocalCoordinator || "150"),
+          costAirportTransfer: data.costAirportTransfer || "0",
         }
       );
 
@@ -63,29 +64,37 @@ export default function Home() {
         pricePerTeacher: costBreakdown.pricePerTeacher.toString(),
       };
 
-      const response = await apiRequest("POST", "/api/quotes", finalData);
-      return response.json();
+      // If we have a current quote, update it; otherwise create new one
+      if (currentQuote) {
+        const response = await apiRequest("PUT", `/api/quotes/${currentQuote.id}`, finalData);
+        return response.json();
+      } else {
+        const response = await apiRequest("POST", "/api/quotes", finalData);
+        return response.json();
+      }
     },
-    onSuccess: (newQuote: Quote) => {
-      setCurrentQuote(newQuote);
+    onSuccess: (updatedQuote: Quote) => {
+      setCurrentQuote(updatedQuote);
       queryClient.invalidateQueries({ queryKey: ["/api/quotes"] });
       toast({
-        title: "Quote Generated Successfully",
-        description: `Quote ${newQuote.quoteNumber} has been created and is ready for review.`,
+        title: currentQuote ? "Quote Updated Successfully" : "Quote Generated Successfully",
+        description: currentQuote 
+          ? `Quote ${updatedQuote.quoteNumber} has been updated with your latest changes.`
+          : `Quote ${updatedQuote.quoteNumber} has been created and is ready for review.`,
       });
     },
     onError: (error) => {
       toast({
-        title: "Error Creating Quote",
-        description: "There was an issue generating your quote. Please try again.",
+        title: currentQuote ? "Error Updating Quote" : "Error Creating Quote",
+        description: "There was an issue with your quote. Please try again.",
         variant: "destructive",
       });
-      console.error("Failed to create quote:", error);
+      console.error("Failed to save quote:", error);
     },
   });
 
   const handleFormSubmit = (data: InsertQuote) => {
-    createQuoteMutation.mutate(data);
+    saveQuoteMutation.mutate(data);
   };
 
   return (
@@ -118,8 +127,9 @@ export default function Home() {
           {/* Left Panel - Quote Builder Form */}
           <QuoteForm 
             onSubmit={handleFormSubmit} 
-            isLoading={createQuoteMutation.isPending}
+            isLoading={saveQuoteMutation.isPending}
             onCostBreakdownChange={setLiveCostBreakdown}
+            currentQuote={currentQuote}
           />
 
           {/* Right Panel - Quote Preview */}

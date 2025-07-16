@@ -16,6 +16,7 @@ interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
   isLoading: boolean;
   onCostBreakdownChange?: (costBreakdown: any) => void;
+  currentQuote?: any;
 }
 
 // AdhocServicesSection component
@@ -89,7 +90,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
                 </label>
                 <Input
                   type="number"
-                  placeholder="0"
+                  placeholder="0.00"
                   value={service.pricePerPerson || ""}
                   onChange={(e) => updateService(index, "pricePerPerson", parseFloat(e.target.value) || 0)}
                 />
@@ -140,7 +141,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
   );
 }
 
-export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteFormProps) {
+export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQuote }: QuoteFormProps) {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
 
@@ -169,9 +170,29 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
       schoolName: "",
       contactPerson: "",
       schoolAddress: "",
-      pricePerStudent: "850",
-      pricePerTeacher: "0",
+      pricePerStudent: "",
+      pricePerTeacher: "",
       adhocServices: "[]",
+      // Set all pricing fields to empty strings to avoid "010" issue
+      studentAccommodationPerDay: "",
+      teacherAccommodationPerDay: "",
+      breakfastPerDay: "",
+      lunchPerDay: "",
+      dinnerPerDay: "",
+      transportCardTotal: "",
+      studentCoordinationFeeTotal: "",
+      teacherCoordinationFeeTotal: "",
+      airportTransferPerPerson: "",
+      costStudentAccommodationPerDay: "",
+      costTeacherAccommodationPerDay: "",
+      costBreakfastPerDay: "",
+      costLunchPerDay: "",
+      costDinnerPerDay: "",
+      costLocalTransportationCard: "",
+      costStudentCoordination: "",
+      costTeacherCoordination: "",
+      costLocalCoordinator: "",
+      costAirportTransfer: "",
     },
   });
 
@@ -733,7 +754,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(studentAccommodationPerDay !== "" && studentAccommodationPerDay !== undefined)}
                             />
@@ -764,7 +785,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(teacherAccommodationPerDay !== "" && teacherAccommodationPerDay !== undefined)}
                             />
@@ -795,7 +816,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(breakfastPerDay !== "" && breakfastPerDay !== undefined)}
                             />
@@ -826,7 +847,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(lunchPerDay !== "" && lunchPerDay !== undefined)}
                             />
@@ -857,7 +878,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(dinnerPerDay !== "" && dinnerPerDay !== undefined)}
                             />
@@ -894,7 +915,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                           </div>
                           <FormControl>
                             <Input 
-                              placeholder="0" 
+                              placeholder="0.00" 
                               {...field} 
                               disabled={!(transportCardTotal !== "" && transportCardTotal !== undefined)}
                             />
@@ -1125,7 +1146,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                       <FormItem>
                         <FormLabel>Student coordination cost (€/student)</FormLabel>
                         <FormControl>
-                          <Input placeholder="60" {...field} />
+                          <Input placeholder="60.00" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1139,7 +1160,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                       <FormItem>
                         <FormLabel>Teacher coordination cost (€/teacher)</FormLabel>
                         <FormControl>
-                          <Input placeholder="0" {...field} />
+                          <Input placeholder="0.00" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1153,7 +1174,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                       <FormItem>
                         <FormLabel>Local coordinator cost (€/trip)</FormLabel>
                         <FormControl>
-                          <Input placeholder="150" {...field} />
+                          <Input placeholder="150.00" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1172,7 +1193,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                         <FormItem>
                           <FormLabel>Airport transfer cost (€/person)</FormLabel>
                           <FormControl>
-                            <Input placeholder="0" {...field} />
+                            <Input placeholder="0.00" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1192,7 +1213,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
               disabled={isLoading}
             >
               <Wand2 className="mr-2 h-4 w-4" />
-              {isLoading ? "Generating..." : "Generate Quote Preview"}
+{isLoading ? (currentQuote ? "Updating..." : "Generating...") : (currentQuote ? "Update Quote Preview" : "Generate Quote Preview")}
             </Button>
           </div>
         </form>
