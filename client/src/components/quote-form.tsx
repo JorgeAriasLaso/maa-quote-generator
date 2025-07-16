@@ -219,7 +219,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
       const start = new Date(startDate);
       const end = new Date(endDate);
       const timeDiff = end.getTime() - start.getTime();
-      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Number of full days between dates
       
       if (daysDiff > 0) {
         const newDuration = daysDiff === 1 ? "1 day" : `${daysDiff} days`;
