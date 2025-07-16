@@ -55,6 +55,10 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Standard costs: Student coordination €60, Teacher coordination €0, Local coordinator €150
 ✓ Fixed array handling issue in additional services cost calculation to prevent crashes
 ✓ Added real-time internal cost tracking in quote form for live profitability updates
+✓ Fixed undefined variable crash (accommodationPerDay references) in cost breakdown display
+✓ Implemented live cost breakdown updates from form to preview for real-time profitability analysis
+✓ Added profit per student and profit per teacher calculations in profitability section
+✓ Enhanced Erasmus+ funding display with detailed student/teacher breakdown and country group information
 
 ## System Architecture
 

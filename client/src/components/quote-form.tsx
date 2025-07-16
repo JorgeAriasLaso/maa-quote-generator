@@ -557,7 +557,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                       <div className="bg-blue-100/50 p-3 rounded">
                         <h5 className="font-medium text-blue-800 mb-2">Students ({numberOfStudents} × {costBreakdown.student.totalPerStudent}€):</h5>
                         <div className="space-y-1 text-xs">
-                          {accommodationPerDay && parseFloat(accommodationPerDay) > 0 && (
+                          {studentAccommodationPerDay && parseFloat(studentAccommodationPerDay) > 0 && (
                             <div className="flex justify-between">
                               <span className="text-blue-600">• Accommodation:</span>
                               <span className="text-blue-900">{formatCurrency(costBreakdown.student.accommodation)}</span>
@@ -604,7 +604,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange }: QuoteF
                       <div className="bg-green-100/50 p-3 rounded">
                         <h5 className="font-medium text-green-800 mb-2">Teachers ({numberOfTeachers} × {costBreakdown.teacher.totalPerTeacher}€):</h5>
                         <div className="space-y-1 text-xs">
-                          {accommodationPerDay && parseFloat(accommodationPerDay) > 0 && (
+                          {teacherAccommodationPerDay && parseFloat(teacherAccommodationPerDay) > 0 && (
                             <div className="flex justify-between">
                               <span className="text-green-600">• Accommodation:</span>
                               <span className="text-green-900">{formatCurrency(costBreakdown.teacher.accommodation)}</span>
