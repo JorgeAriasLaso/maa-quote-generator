@@ -38,47 +38,134 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
   };
 
   const getDestinationImage = (destination: string) => {
-    if (destination.toLowerCase().includes('prague')) {
+    const city = destination.toLowerCase();
+    if (city.includes('prague')) {
       return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('madrid')) {
+      return "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('barcelona')) {
+      return "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('paris')) {
+      return "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('london')) {
+      return "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('rome')) {
+      return "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('berlin')) {
+      return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('amsterdam')) {
+      return "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     }
     return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
   };
 
   const getDestinationHighlights = (destination: string) => {
-    if (destination.toLowerCase().includes('prague')) {
+    const city = destination.toLowerCase();
+    
+    if (city.includes('madrid')) {
       return [
         {
-          title: "Rich Historical Heritage",
+          title: "Spain's Dynamic Capital",
+          description: "Experience Madrid's vibrant business culture and modern European economy while exploring the heart of Spanish politics, finance, and innovation.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "World-Class Art & Culture",
+          description: "Visit the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance.",
+          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Spanish Language Immersion",
+          description: "Practice Spanish in its native environment while engaging with local professionals and experiencing authentic Spanish hospitality and culture.",
+          image: "https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Historic Royal Heritage",
+          description: "Explore the Royal Palace, Plaza Mayor, and Retiro Park while learning about Spain's rich history and its role in global exploration and trade.",
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('prague')) {
+      return [
+        {
+          title: "Medieval Architecture Marvel",
           description: "Explore over 1000 years of history through Gothic, Renaissance, and Baroque architecture in one of Europe's best-preserved medieval cities.",
           image: "https://images.unsplash.com/photo-1519677100203-a0e668c92439?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Modern Business Hub",
-          description: "Experience Prague as a thriving European business center with opportunities in technology, finance, and international commerce.",
+          title: "Modern Tech Hub",
+          description: "Experience Prague as Eastern Europe's Silicon Valley with thriving tech startups, game development studios, and international business centers.",
           image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Cultural Immersion",
-          description: "Engage with local Czech culture, language, and traditions while developing global citizenship and cross-cultural communication skills.",
+          title: "Czech Cultural Heritage",
+          description: "Discover unique Czech traditions, sample local cuisine, and learn about the country's peaceful Velvet Revolution and EU integration.",
           image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
-          title: "Safe & Accessible",
-          description: "Prague offers excellent safety standards, efficient public transport, and English-speaking support for international student groups.",
+          title: "Central European Gateway",
+          description: "Perfect location for understanding Central European history, politics, and economics with excellent transport links across the region.",
           image: "https://images.unsplash.com/photo-1541416938330-1f0b565b1660?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('barcelona')) {
+      return [
+        {
+          title: "Architectural Wonderland",
+          description: "Discover Gaudí's masterpieces including Sagrada Familia, Park Güell, and Casa Batlló while studying innovative architectural design and urban planning.",
+          image: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Mediterranean Business Hub",
+          description: "Explore Barcelona's role as a major Mediterranean port and business center, with strong connections to Latin America and North Africa.",
+          image: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Catalan Culture & Innovation",
+          description: "Experience the unique Catalan culture, language, and Barcelona's reputation as a smart city leader in technology and sustainability.",
+          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Olympic Legacy & Sports",
+          description: "Visit Olympic venues from 1992 and learn about Barcelona's transformation into a modern international city and sports destination.",
+          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        }
+      ];
+    } else if (city.includes('paris')) {
+      return [
+        {
+          title: "Global Business Capital",
+          description: "Experience Paris as a major global financial center and headquarters for luxury brands, fashion houses, and multinational corporations.",
+          image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Cultural & Artistic Heritage",
+          description: "Visit world-renowned museums like the Louvre and Musée d'Orsay while exploring French art, literature, and intellectual traditions.",
+          image: "https://images.unsplash.com/photo-1471623432079-b009d30b6729?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "European Union Hub",
+          description: "Learn about French politics, EU policies, and international diplomacy in the city that hosts numerous international organizations.",
+          image: "https://images.unsplash.com/photo-1522582324369-2dfc36bd9275?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+        },
+        {
+          title: "Innovation & Technology",
+          description: "Discover Paris's growing tech scene in Station F and La Défense business district, balancing tradition with cutting-edge innovation.",
+          image: "https://images.unsplash.com/photo-1549144511-f099e773c147?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     }
     
+    // Generic content for other destinations
     return [
       {
         title: "Educational Excellence",
-        description: "Immerse students in real-world learning experiences that complement classroom education with practical application.",
+        description: "Immerse students in real-world learning experiences that complement classroom education with practical application in this unique destination.",
         image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
       },
       {
         title: "Cultural Discovery",
-        description: "Broaden horizons through authentic cultural exchanges and meaningful interactions with local communities.",
+        description: "Broaden horizons through authentic cultural exchanges and meaningful interactions with local communities and traditions.",
         image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
       },
       {
