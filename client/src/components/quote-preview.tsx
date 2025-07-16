@@ -1,4 +1,5 @@
 import { type Quote } from "@shared/schema";
+import { calculateQuoteCost, formatCurrency } from "@shared/costing";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
@@ -14,16 +15,21 @@ interface QuotePreviewProps {
 
 export function QuotePreview({ quote }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const costBreakdown = quote ? calculateQuoteCost(
+    quote.destination,
+    quote.duration,
+    quote.numberOfStudents,
+    quote.numberOfTeachers,
+    {
+      travelInsurance: quote.travelInsurance || false,
+      airportTransfers: quote.airportTransfers || false,
+      localTransport: quote.localTransport || false,
+      tourGuide: quote.tourGuide || false,
+    }
+  ) : null;
+
   const calculateTotal = () => {
-    if (!quote) return 0;
-    
-    const studentPrice = parseFloat(quote.pricePerStudent) * quote.numberOfStudents;
-    const teacherPrice = parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers;
-    
-    // TODO: Replace with calculation from quote calculation module
-    let additionalCosts = 0; // Placeholder - will be calculated by quote module
-    
-    return studentPrice + teacherPrice + additionalCosts;
+    return costBreakdown ? costBreakdown.total : 0;
   };
 
   const getDestinationImage = (destination: string) => {
@@ -773,19 +779,49 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                     </span>
                   </div>
                   
-                  {(quote.travelInsurance || quote.airportTransfers || quote.localTransport || quote.tourGuide) && (
+                  {costBreakdown && costBreakdown.additionalServices.total > 0 && (
                     <>
                       <div className="border-t border-slate-300 pt-2">
                         <h5 className="font-medium text-slate-700 mb-2">Additional Services:</h5>
-                        {/* TODO: Replace with dynamic pricing from quote calculation module */}
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-600">Selected Services</span>
-                          <span className="text-slate-700">
-                            €{/* Placeholder - will be calculated by quote module */}TBD
-                          </span>
+                        {costBreakdown.additionalServices.travelInsurance > 0 && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-slate-600">Travel Insurance</span>
+                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.travelInsurance)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.additionalServices.airportTransfers > 0 && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-slate-600">Airport Transfers</span>
+                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.airportTransfers)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.additionalServices.localTransport > 0 && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-slate-600">Local Transport Pass</span>
+                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.localTransport)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.additionalServices.tourGuide > 0 && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-slate-600">Tour Guide</span>
+                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.tourGuide)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-slate-200 mt-1">
+                          <span className="text-slate-600">Services Subtotal</span>
+                          <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.total)}</span>
                         </div>
                       </div>
                     </>
+                  )}
+                  
+                  {costBreakdown && costBreakdown.groupDiscount && (
+                    <div className="border-t border-slate-300 pt-2">
+                      <div className="flex justify-between items-center text-sm text-green-700">
+                        <span>{costBreakdown.groupDiscount.description}</span>
+                        <span className="font-medium">-{formatCurrency(costBreakdown.groupDiscount.amount)}</span>
+                      </div>
+                    </div>
                   )}
                   
                   <div className="border-t border-slate-300 pt-4">

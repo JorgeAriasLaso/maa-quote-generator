@@ -1,13 +1,15 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuoteSchema, type InsertQuote } from "@shared/schema";
+import { calculateQuoteCost, formatCurrency } from "@shared/costing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Wand2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Wand2, Calculator } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface QuoteFormProps {
@@ -71,9 +73,17 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     }
   };
 
-  // Watch form values for automatic duration calculation
+  // Watch form values for automatic duration and pricing calculation
   const startDate = form.watch("startDate");
   const endDate = form.watch("endDate");
+  const destination = form.watch("destination");
+  const duration = form.watch("duration");
+  const numberOfStudents = form.watch("numberOfStudents");
+  const numberOfTeachers = form.watch("numberOfTeachers");
+  const travelInsurance = form.watch("travelInsurance");
+  const airportTransfers = form.watch("airportTransfers");
+  const localTransport = form.watch("localTransport");
+  const tourGuide = form.watch("tourGuide");
 
   // Calculate duration when start and end dates change
   useEffect(() => {
@@ -93,6 +103,29 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       form.setValue("duration", "", { shouldValidate: false });
     }
   }, [startDate, endDate, form]);
+
+  // Calculate pricing when relevant values change
+  const costBreakdown = destination && duration && numberOfStudents >= 0 && numberOfTeachers >= 0 ? 
+    calculateQuoteCost(
+      destination,
+      duration,
+      numberOfStudents,
+      numberOfTeachers,
+      {
+        travelInsurance: travelInsurance || false,
+        airportTransfers: airportTransfers || false,
+        localTransport: localTransport || false,
+        tourGuide: tourGuide || false,
+      }
+    ) : null;
+
+  // Update pricing fields when calculation changes
+  useEffect(() => {
+    if (costBreakdown) {
+      form.setValue("pricePerStudent", costBreakdown.pricePerStudent.toString(), { shouldValidate: false });
+      form.setValue("pricePerTeacher", costBreakdown.pricePerTeacher.toString(), { shouldValidate: false });
+    }
+  }, [costBreakdown, form]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-y-auto">
@@ -334,35 +367,74 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
 
           {/* Pricing */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">Pricing</h3>
+            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">
+              <Calculator className="inline h-5 w-5 mr-2" />
+              Pricing & Cost Breakdown
+            </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {costBreakdown ? (
+              <Card className="bg-blue-50 p-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-sm font-medium text-blue-800">Price per Student:</span>
+                      <div className="text-2xl font-bold text-blue-900">{formatCurrency(costBreakdown.pricePerStudent)}</div>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-blue-800">Price per Teacher:</span>
+                      <div className="text-2xl font-bold text-blue-900">{formatCurrency(costBreakdown.pricePerTeacher)}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-blue-200 pt-4">
+                    <h4 className="font-semibold text-blue-900 mb-3">Cost Breakdown:</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Base cost ({numberOfStudents} students):</span>
+                        <span className="font-medium text-blue-900">{formatCurrency(costBreakdown.baseStudentCost)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Teachers cost ({numberOfTeachers} teachers):</span>
+                        <span className="font-medium text-blue-900">{formatCurrency(costBreakdown.teacherCost)}</span>
+                      </div>
+                      {costBreakdown.additionalServices.total > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-blue-700">Additional services:</span>
+                          <span className="font-medium text-blue-900">{formatCurrency(costBreakdown.additionalServices.total)}</span>
+                        </div>
+                      )}
+                      {costBreakdown.groupDiscount && (
+                        <div className="flex justify-between text-green-700">
+                          <span>Group discount ({costBreakdown.groupDiscount.percentage}%):</span>
+                          <span className="font-medium">-{formatCurrency(costBreakdown.groupDiscount.amount)}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-blue-200 pt-2 flex justify-between">
+                        <span className="font-semibold text-blue-900">Total:</span>
+                        <span className="text-xl font-bold text-blue-900">{formatCurrency(costBreakdown.total)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ) : (
+              <Card className="bg-slate-50 p-6 text-center">
+                <Calculator className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                <p className="text-slate-600">Complete the form above to see pricing calculation</p>
+              </Card>
+            )}
+            
+            {/* Hidden form fields for pricing data */}
+            <div className="hidden">
               <FormField
                 control={form.control}
                 name="pricePerStudent"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price per Student (€)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="850" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => <Input {...field} />}
               />
-              
               <FormField
                 control={form.control}
                 name="pricePerTeacher"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price per Teacher (€)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="0" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => <Input {...field} />}
               />
             </div>
           </div>

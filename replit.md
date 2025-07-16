@@ -24,9 +24,13 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Updated destination field to organized dropdown menu with countries as headers
 ✓ Added "Other" option with custom destination input field for non-listed cities
 ✓ Implemented automatic date/duration calculations for improved user experience
-✓ Replaced single school address field with structured address components
+✓ Reverted to single school address field for simplified data entry
 ✓ Changed teacher discount to direct price per teacher field
-✓ Added placeholder for additional services pricing pending quote calculation module
+✓ Created comprehensive costing calculation module with real-time pricing
+✓ Added automatic pricing based on destination, duration, group size, and services
+✓ Implemented group discounts for larger groups (5-12% off for 30+ participants)
+✓ Added detailed cost breakdowns in both form and quote preview
+✓ Replaced "TBD" placeholders with accurate pricing calculations
 
 ## System Architecture
 
@@ -71,9 +75,10 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 - `DELETE /api/quotes/:id` - Delete quote
 
 ### Frontend Components
-- **QuoteForm**: Comprehensive form for creating new quotes
-- **QuotePreview**: Professional-looking quote display with calculations
+- **QuoteForm**: Comprehensive form with real-time pricing calculations
+- **QuotePreview**: Professional quote display with detailed cost breakdowns
 - **Home**: Main application page with form and preview
+- **Costing Module**: Intelligent pricing engine with destination-based rates
 - Extensive UI component library from shadcn/ui
 
 ### Storage Strategy
