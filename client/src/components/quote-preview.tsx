@@ -661,13 +661,34 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             pdf.addPage();
           }
           
-          // Calculate the vertical offset for this page
-          // Each page shows a portion of the image, offset by the content height (not total page height)
-          const yOffset = -(i * pageContentHeight);
+          // Calculate source rectangle from the original image for this page
+          const sourceY = (i * pageContentHeight * imgHeight) / scaledHeight;
+          const sourceHeight = Math.min(
+            (pageContentHeight * imgHeight) / scaledHeight,
+            imgHeight - sourceY
+          );
+          
+          // Scale back to match the target dimensions
+          const targetHeight = (sourceHeight * scaledHeight) / imgHeight;
+          
+          // Create a temporary canvas for this page slice
+          const pageCanvas = document.createElement('canvas');
+          const pageCtx = pageCanvas.getContext('2d');
+          
+          pageCanvas.width = imgWidth;
+          pageCanvas.height = sourceHeight;
+          
+          // Draw the slice from the original canvas
+          pageCtx?.drawImage(
+            canvas,
+            0, sourceY, imgWidth, sourceHeight,
+            0, 0, imgWidth, sourceHeight
+          );
+          
+          const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
           
           // Add image with proper margin positioning
-          // The image is positioned at margin distance from top on each page
-          pdf.addImage(imgData, 'PNG', margin, margin + yOffset, scaledWidth, scaledHeight);
+          pdf.addImage(pageImgData, 'PNG', margin, margin, scaledWidth, targetHeight);
         }
       }
       

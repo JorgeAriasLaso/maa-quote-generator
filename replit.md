@@ -102,6 +102,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Created dual form system: QuoteForm (React Hook Form) for new quotes, SimpleQuoteForm (controlled inputs) for editing/copying quotes
 ✓ Fixed infinite loop in home.tsx useEffect that was causing browser freezing after quote copy operations
 ✓ Added complete Internal Profitability Analysis section to SimpleQuoteForm to maintain feature parity with original form
+✓ Fixed PDF export margin issues with improved page splitting algorithm that maintains proper 15mm margins on all pages
+✓ Added client selection functionality to SimpleQuoteForm with dropdown search and auto-populate features
 
 ## System Architecture
 
