@@ -117,7 +117,7 @@ export function ClientList({ onEditClient, onViewQuotes }: ClientListProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[30%]">School Name</TableHead>
+                <TableHead className="w-[30%]">Client Name</TableHead>
                 <TableHead className="w-[15%]">Country</TableHead>
                 <TableHead className="w-[25%]">Email</TableHead>
                 <TableHead className="w-[15%]">City</TableHead>
