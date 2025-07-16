@@ -136,7 +136,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       <Select onValueChange={handleDestinationChange} value={selectedDestination}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select destination" />
+                            <SelectValue placeholder="Select" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -173,7 +173,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select trip type" />
+                            <SelectValue placeholder="Select" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -377,7 +377,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select discount" />
+                          <SelectValue placeholder="Select" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
