@@ -45,8 +45,6 @@ export default function Quotes() {
   };
 
   const totalQuotes = quotes?.length || 0;
-  const totalStudents = quotes?.reduce((sum, quote) => sum + quote.numberOfStudents, 0) || 0;
-  const totalTeachers = quotes?.reduce((sum, quote) => sum + quote.numberOfTeachers, 0) || 0;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -70,48 +68,18 @@ export default function Quotes() {
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Total Quotes</p>
-                <p className="text-2xl font-bold text-slate-900">{totalQuotes}</p>
-              </div>
-              <QuoteIcon className="h-8 w-8 text-primary" />
+      {/* Statistics Card */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-slate-600">Total Quotes</p>
+              <p className="text-2xl font-bold text-slate-900">{totalQuotes}</p>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Total Students</p>
-                <p className="text-2xl font-bold text-slate-900">{totalStudents}</p>
-              </div>
-              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-semibold text-sm">S</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Total Teachers</p>
-                <p className="text-2xl font-bold text-slate-900">{totalTeachers}</p>
-              </div>
-              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-semibold text-sm">T</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <QuoteIcon className="h-8 w-8 text-primary" />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filters and Search */}
       <Card>
@@ -173,87 +141,81 @@ export default function Quotes() {
         {isLoading ? (
           <div className="text-center py-8">Loading quotes...</div>
         ) : filteredQuotes && filteredQuotes.length > 0 ? (
-          <div className="space-y-4">
-            {filteredQuotes.map((quote) => (
-              <Card key={quote.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-primary">{quote.quoteNumber}</h3>
-                      <p className="text-slate-600 font-medium">{quote.schoolName}</p>
-                      <p className="text-sm text-slate-500">{quote.contactPerson}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewQuote(quote)}
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditQuote(quote)}
-                      >
-                        Edit
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-slate-500" />
-                      <span className="font-medium">{quote.destination}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4 text-slate-500" />
-                      <span>{quote.startDate} - {quote.endDate}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-slate-500" />
-                      <span>{quote.numberOfStudents} students</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm">
-                      <GraduationCap className="h-4 w-4 text-slate-500" />
-                      <span>{quote.numberOfTeachers} teachers</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="secondary" className="bg-blue-50 text-blue-700">
-                        {quote.tripType}
-                      </Badge>
-                      <Badge variant="outline">
-                        {quote.duration}
-                      </Badge>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className="text-lg font-semibold text-slate-900">
-                        €{quote.pricePerStudent}/student
-                      </div>
-                      <div className="text-sm text-slate-600">
-                        €{quote.pricePerTeacher}/teacher
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 pt-3 border-t border-slate-100">
-                    <div className="flex justify-between items-center text-xs text-slate-500">
-                      <span>Created {format(new Date(quote.createdAt), "MMM d, yyyy 'at' HH:mm")}</span>
-                      <span className="text-slate-400">#{quote.id}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                      <th className="text-left p-4 font-medium text-slate-700">Quote Number</th>
+                      <th className="text-left p-4 font-medium text-slate-700">School</th>
+                      <th className="text-left p-4 font-medium text-slate-700">Destination</th>
+                      <th className="text-left p-4 font-medium text-slate-700">Total</th>
+                      <th className="text-left p-4 font-medium text-slate-700">Date</th>
+                      <th className="text-right p-4 font-medium text-slate-700">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredQuotes.map((quote) => {
+                      const totalCost = (parseFloat(quote.pricePerStudent) * quote.numberOfStudents) + 
+                                       (parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers);
+                      return (
+                        <tr key={quote.id} className="border-b border-slate-100 hover:bg-slate-50">
+                          <td className="p-4">
+                            <div className="font-medium text-primary">{quote.quoteNumber}</div>
+                            <div className="text-sm text-slate-500">{quote.tripType}</div>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-medium text-slate-900">{quote.schoolName}</div>
+                            <div className="text-sm text-slate-500">{quote.contactPerson}</div>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-medium text-slate-900">{quote.destination}</div>
+                            <div className="text-sm text-slate-500">
+                              {quote.numberOfStudents} students, {quote.numberOfTeachers} teachers
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-semibold text-lg text-slate-900">
+                              €{totalCost.toFixed(2)}
+                            </div>
+                            <div className="text-sm text-slate-500">{quote.duration}</div>
+                          </td>
+                          <td className="p-4">
+                            <div className="text-sm text-slate-700">
+                              {format(new Date(quote.createdAt), "MMM d, yyyy")}
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              {format(new Date(quote.createdAt), "HH:mm")}
+                            </div>
+                          </td>
+                          <td className="p-4 text-right">
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleViewQuote(quote)}
+                              >
+                                <Eye className="w-4 h-4 mr-1" />
+                                View
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditQuote(quote)}
+                              >
+                                Edit
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardContent className="p-8 text-center">
