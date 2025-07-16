@@ -457,11 +457,11 @@ export function calculateQuoteCost(
   const costLocalCoord = internalCosts?.costLocalCoordinator || 150;
 
   // Calculate internal costs for additional services (assume 50% cost ratio as default)
-  const internalAdditionalServicesCosts = adhocServices.reduce((total, service) => {
+  const internalAdditionalServicesCosts = Array.isArray(adhocServices) ? adhocServices.reduce((total, service) => {
     // You can make this configurable later - for now assume 50% of selling price as cost
     const costRatio = 0.5; // 50% of selling price as internal cost
     return total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers) * costRatio);
-  }, 0);
+  }, 0) : 0;
 
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 
                            costLocalTransport + costStudentCoord + costTeacherCoord + costLocalCoord + 

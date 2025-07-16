@@ -231,6 +231,17 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     }
   }, [startDate, endDate, form]);
 
+  // Get internal cost fields for profitability calculation
+  const costStudentAccommodationPerDay = form.watch("costStudentAccommodationPerDay");
+  const costTeacherAccommodationPerDay = form.watch("costTeacherAccommodationPerDay");
+  const costBreakfastPerDay = form.watch("costBreakfastPerDay");
+  const costLunchPerDay = form.watch("costLunchPerDay");
+  const costDinnerPerDay = form.watch("costDinnerPerDay");
+  const costLocalTransportationCard = form.watch("costLocalTransportationCard");
+  const costStudentCoordination = form.watch("costStudentCoordination");
+  const costTeacherCoordination = form.watch("costTeacherCoordination");
+  const costLocalCoordinator = form.watch("costLocalCoordinator");
+
   // Calculate pricing when relevant values change
   const costBreakdown = destination && duration && numberOfStudents >= 0 && numberOfTeachers >= 0 ? 
     calculateQuoteCost(
@@ -238,12 +249,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       duration,
       numberOfStudents,
       numberOfTeachers,
-      {
-        travelInsurance: travelInsurance || false,
-        airportTransfers: airportTransfers || false,
-        localTransport: localTransport || false,
-        tourGuide: tourGuide || false,
-      },
+      [], // Empty array for adhocServices in the form calculation
       {
         studentAccommodationPerDay: studentAccommodationPerDay ? parseFloat(studentAccommodationPerDay) : undefined,
         teacherAccommodationPerDay: teacherAccommodationPerDay ? parseFloat(teacherAccommodationPerDay) : undefined,
@@ -254,6 +260,17 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
         studentCoordinationFeeTotal: studentCoordinationFeeTotal ? parseFloat(studentCoordinationFeeTotal) : undefined,
         teacherCoordinationFeeTotal: teacherCoordinationFeeTotal ? parseFloat(teacherCoordinationFeeTotal) : undefined,
         airportTransferPerPerson: airportTransferPerPerson ? parseFloat(airportTransferPerPerson) : undefined,
+      },
+      {
+        costStudentAccommodationPerDay: costStudentAccommodationPerDay ? parseFloat(costStudentAccommodationPerDay) : undefined,
+        costTeacherAccommodationPerDay: costTeacherAccommodationPerDay ? parseFloat(costTeacherAccommodationPerDay) : undefined,
+        costBreakfastPerDay: costBreakfastPerDay ? parseFloat(costBreakfastPerDay) : undefined,
+        costLunchPerDay: costLunchPerDay ? parseFloat(costLunchPerDay) : undefined,
+        costDinnerPerDay: costDinnerPerDay ? parseFloat(costDinnerPerDay) : undefined,
+        costLocalTransportationCard: costLocalTransportationCard ? parseFloat(costLocalTransportationCard) : undefined,
+        costStudentCoordination: costStudentCoordination ? parseFloat(costStudentCoordination) : undefined,
+        costTeacherCoordination: costTeacherCoordination ? parseFloat(costTeacherCoordination) : undefined,
+        costLocalCoordinator: costLocalCoordinator ? parseFloat(costLocalCoordinator) : undefined,
       }
     ) : null;
 

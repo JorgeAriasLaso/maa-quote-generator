@@ -53,6 +53,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented real-time profit margin calculations with color-coded indicators (green >20%, yellow >10%, red <10%)
 ✓ Added detailed cost breakdown display showing revenue vs costs with net profit analysis
 ✓ Standard costs: Student coordination €60, Teacher coordination €0, Local coordinator €150
+✓ Fixed array handling issue in additional services cost calculation to prevent crashes
+✓ Added real-time internal cost tracking in quote form for live profitability updates
 
 ## System Architecture
 
