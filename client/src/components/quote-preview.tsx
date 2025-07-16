@@ -762,21 +762,80 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
               
               <Card className="bg-slate-50 p-6">
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">
-                      {quote.numberOfStudents} Students @ €{quote.pricePerStudent} each
-                    </span>
-                    <span className="font-semibold text-slate-900">
-                      €{(parseFloat(quote.pricePerStudent) * quote.numberOfStudents).toLocaleString()}
-                    </span>
+                  {/* Students breakdown */}
+                  <div className="bg-blue-50 p-4 rounded mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-slate-700">
+                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent})
+                      </span>
+                      <span className="text-slate-900 font-bold">
+                        {formatCurrency(costBreakdown?.student.totalForAllStudents || 0)}
+                      </span>
+                    </div>
+                    {costBreakdown && (
+                      <div className="space-y-1 text-xs text-slate-600">
+                        <div className="flex justify-between">
+                          <span>• Accommodation:</span>
+                          <span>{formatCurrency(costBreakdown.student.accommodation)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Meals (breakfast, lunch, dinner):</span>
+                          <span>{formatCurrency(costBreakdown.student.meals)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Transport card:</span>
+                          <span>{formatCurrency(costBreakdown.student.transportCard)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Student coordination fee:</span>
+                          <span>{formatCurrency(costBreakdown.student.coordinationFee)}</span>
+                        </div>
+                        {costBreakdown.student.airportTransfer > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Airport transfers:</span>
+                            <span>{formatCurrency(costBreakdown.student.airportTransfer)}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-700">
-                      {quote.numberOfTeachers} Teachers @ €{quote.pricePerTeacher} each
-                    </span>
-                    <span className="font-semibold text-slate-900">
-                      €{(parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers).toLocaleString()}
-                    </span>
+                  
+                  {/* Teachers breakdown */}
+                  <div className="bg-green-50 p-4 rounded mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium text-slate-700">
+                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher})
+                      </span>
+                      <span className="text-slate-900 font-bold">
+                        {formatCurrency(costBreakdown?.teacher.totalForAllTeachers || 0)}
+                      </span>
+                    </div>
+                    {costBreakdown && (
+                      <div className="space-y-1 text-xs text-slate-600">
+                        <div className="flex justify-between">
+                          <span>• Accommodation:</span>
+                          <span>{formatCurrency(costBreakdown.teacher.accommodation)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Meals (breakfast, lunch, dinner):</span>
+                          <span>{formatCurrency(costBreakdown.teacher.meals)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Transport card:</span>
+                          <span>{formatCurrency(costBreakdown.teacher.transportCard)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Teacher coordination fee:</span>
+                          <span>{formatCurrency(costBreakdown.teacher.coordinationFee)}</span>
+                        </div>
+                        {costBreakdown.teacher.airportTransfer > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Airport transfers:</span>
+                            <span>{formatCurrency(costBreakdown.teacher.airportTransfer)}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   
                   {costBreakdown && costBreakdown.additionalServices.total > 0 && (

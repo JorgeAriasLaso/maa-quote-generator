@@ -1,29 +1,121 @@
 import type { Quote } from "./schema";
 
-// Base pricing configuration by destination country
+// Detailed cost breakdown by destination - per student per day
 export const DESTINATION_PRICING = {
   // Central/Eastern Europe - Lower cost
-  "Czech Republic": { basePrice: 65, teacherDiscount: 0.8 },
-  "Hungary": { basePrice: 60, teacherDiscount: 0.8 },
-  "Poland": { basePrice: 58, teacherDiscount: 0.8 },
+  "Czech Republic": {
+    accommodation: 25,
+    breakfast: 8,
+    lunch: 12,
+    dinner: 15,
+    transportCard: 3,
+    coordinationFee: 7,
+    teacherDiscount: 0.8,
+  },
+  "Hungary": {
+    accommodation: 22,
+    breakfast: 7,
+    lunch: 10,
+    dinner: 13,
+    transportCard: 2.5,
+    coordinationFee: 6,
+    teacherDiscount: 0.8,
+  },
+  "Poland": {
+    accommodation: 20,
+    breakfast: 6,
+    lunch: 9,
+    dinner: 12,
+    transportCard: 2,
+    coordinationFee: 6,
+    teacherDiscount: 0.8,
+  },
   
   // Western Europe - Medium cost
-  "Denmark": { basePrice: 85, teacherDiscount: 0.7 },
-  "Portugal": { basePrice: 70, teacherDiscount: 0.75 },
-  "Spain": { basePrice: 75, teacherDiscount: 0.75 },
+  "Denmark": {
+    accommodation: 45,
+    breakfast: 15,
+    lunch: 20,
+    dinner: 25,
+    transportCard: 5,
+    coordinationFee: 10,
+    teacherDiscount: 0.7,
+  },
+  "Portugal": {
+    accommodation: 30,
+    breakfast: 10,
+    lunch: 15,
+    dinner: 18,
+    transportCard: 3,
+    coordinationFee: 8,
+    teacherDiscount: 0.75,
+  },
+  "Spain": {
+    accommodation: 35,
+    breakfast: 12,
+    lunch: 16,
+    dinner: 20,
+    transportCard: 4,
+    coordinationFee: 8,
+    teacherDiscount: 0.75,
+  },
   
   // Premium destinations - Higher cost
-  "France": { basePrice: 90, teacherDiscount: 0.7 },
-  "Italy": { basePrice: 88, teacherDiscount: 0.7 },
-  "United Kingdom": { basePrice: 95, teacherDiscount: 0.65 },
-  "UK": { basePrice: 95, teacherDiscount: 0.65 },
+  "France": {
+    accommodation: 50,
+    breakfast: 18,
+    lunch: 22,
+    dinner: 28,
+    transportCard: 6,
+    coordinationFee: 12,
+    teacherDiscount: 0.7,
+  },
+  "Italy": {
+    accommodation: 45,
+    breakfast: 15,
+    lunch: 20,
+    dinner: 25,
+    transportCard: 5,
+    coordinationFee: 10,
+    teacherDiscount: 0.7,
+  },
+  "United Kingdom": {
+    accommodation: 55,
+    breakfast: 20,
+    lunch: 25,
+    dinner: 30,
+    transportCard: 7,
+    coordinationFee: 15,
+    teacherDiscount: 0.65,
+  },
+  "UK": {
+    accommodation: 55,
+    breakfast: 20,
+    lunch: 25,
+    dinner: 30,
+    transportCard: 7,
+    coordinationFee: 15,
+    teacherDiscount: 0.65,
+  },
+} as const;
+
+// Airport transfer pricing by destination
+export const AIRPORT_TRANSFER_PRICING = {
+  "Czech Republic": 30,
+  "Hungary": 25,
+  "Poland": 22,
+  "Denmark": 45,
+  "Portugal": 35,
+  "Spain": 40,
+  "France": 50,
+  "Italy": 45,
+  "United Kingdom": 55,
+  "UK": 55,
 } as const;
 
 // Additional services pricing
 export const ADDITIONAL_SERVICES = {
   travelInsurance: { perPerson: 15, description: "Comprehensive travel insurance" },
-  airportTransfers: { total: 120, description: "Round-trip airport transfers" },
-  localTransport: { perPerson: 25, description: "Local transport pass" },
   tourGuide: { perDay: 80, description: "Professional tour guide" },
 } as const;
 
@@ -53,14 +145,26 @@ export const DURATION_PRICING = {
 } as const;
 
 export interface CostBreakdown {
-  baseStudentCost: number;
-  baseCostPerStudent: number;
-  teacherCost: number;
-  baseCostPerTeacher: number;
+  student: {
+    accommodation: number;
+    meals: number; // breakfast + lunch + dinner
+    transportCard: number;
+    coordinationFee: number;
+    airportTransfer: number;
+    totalPerStudent: number;
+    totalForAllStudents: number;
+  };
+  teacher: {
+    accommodation: number;
+    meals: number; // breakfast + lunch + dinner
+    transportCard: number;
+    coordinationFee: number;
+    airportTransfer: number;
+    totalPerTeacher: number;
+    totalForAllTeachers: number;
+  };
   additionalServices: {
     travelInsurance: number;
-    airportTransfers: number;
-    localTransport: number;
     tourGuide: number;
     total: number;
   };
@@ -111,37 +215,47 @@ export function calculateQuoteCost(
 ): CostBreakdown {
   const country = getCountryFromDestination(destination);
   const pricing = DESTINATION_PRICING[country] || DESTINATION_PRICING["Spain"];
+  const airportTransferRate = AIRPORT_TRANSFER_PRICING[country] || AIRPORT_TRANSFER_PRICING["Spain"];
   const days = parseDuration(duration);
   
-  // Get duration multiplier
-  const durationMultiplier = DURATION_PRICING[days as keyof typeof DURATION_PRICING] || 
-    (days <= 14 ? days * 0.5 + 0.5 : 8.0);
+  // Calculate student costs
+  const studentAccommodation = pricing.accommodation * days * numberOfStudents;
+  const studentMeals = (pricing.breakfast + pricing.lunch + pricing.dinner) * days * numberOfStudents;
+  const studentTransportCard = pricing.transportCard * days * numberOfStudents;
+  const studentCoordinationFee = pricing.coordinationFee * days * numberOfStudents;
+  const studentAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfStudents : 0;
   
-  // Calculate base costs
-  const baseCostPerStudent = pricing.basePrice * durationMultiplier;
-  const baseCostPerTeacher = baseCostPerStudent * pricing.teacherDiscount;
+  const studentTotalPerStudent = (pricing.accommodation + pricing.breakfast + pricing.lunch + 
+    pricing.dinner + pricing.transportCard + pricing.coordinationFee) * days + 
+    (services.airportTransfers ? airportTransferRate : 0);
+  const studentTotalForAll = studentAccommodation + studentMeals + studentTransportCard + 
+    studentCoordinationFee + studentAirportTransfer;
   
-  const baseStudentCost = baseCostPerStudent * numberOfStudents;
-  const teacherCost = baseCostPerTeacher * numberOfTeachers;
+  // Calculate teacher costs (with discount)
+  const teacherDailyCost = (pricing.accommodation + pricing.breakfast + pricing.lunch + 
+    pricing.dinner + pricing.transportCard) * pricing.teacherDiscount + pricing.coordinationFee;
+  const teacherAccommodation = pricing.accommodation * pricing.teacherDiscount * days * numberOfTeachers;
+  const teacherMeals = (pricing.breakfast + pricing.lunch + pricing.dinner) * pricing.teacherDiscount * days * numberOfTeachers;
+  const teacherTransportCard = pricing.transportCard * pricing.teacherDiscount * days * numberOfTeachers;
+  const teacherCoordinationFee = pricing.coordinationFee * days * numberOfTeachers;
+  const teacherAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfTeachers : 0;
+  
+  const teacherTotalPerTeacher = teacherDailyCost * days + (services.airportTransfers ? airportTransferRate : 0);
+  const teacherTotalForAll = teacherAccommodation + teacherMeals + teacherTransportCard + 
+    teacherCoordinationFee + teacherAirportTransfer;
   
   // Calculate additional services
   const additionalServices = {
     travelInsurance: services.travelInsurance ? 
       ADDITIONAL_SERVICES.travelInsurance.perPerson * (numberOfStudents + numberOfTeachers) : 0,
-    airportTransfers: services.airportTransfers ? ADDITIONAL_SERVICES.airportTransfers.total : 0,
-    localTransport: services.localTransport ? 
-      ADDITIONAL_SERVICES.localTransport.perPerson * (numberOfStudents + numberOfTeachers) : 0,
     tourGuide: services.tourGuide ? ADDITIONAL_SERVICES.tourGuide.perDay * days : 0,
     total: 0,
   };
   
-  additionalServices.total = additionalServices.travelInsurance + 
-    additionalServices.airportTransfers + 
-    additionalServices.localTransport + 
-    additionalServices.tourGuide;
+  additionalServices.total = additionalServices.travelInsurance + additionalServices.tourGuide;
   
   // Calculate subtotal before discounts
-  const subtotal = baseStudentCost + teacherCost + additionalServices.total;
+  const subtotal = studentTotalForAll + teacherTotalForAll + additionalServices.total;
   
   // Apply group discounts
   const totalParticipants = numberOfStudents + numberOfTeachers;
@@ -162,16 +276,30 @@ export function calculateQuoteCost(
   const total = subtotal - (groupDiscount?.amount || 0);
   
   return {
-    baseStudentCost,
-    baseCostPerStudent,
-    teacherCost,
-    baseCostPerTeacher,
+    student: {
+      accommodation: studentAccommodation,
+      meals: studentMeals,
+      transportCard: studentTransportCard,
+      coordinationFee: studentCoordinationFee,
+      airportTransfer: studentAirportTransfer,
+      totalPerStudent: Math.round(studentTotalPerStudent),
+      totalForAllStudents: studentTotalForAll,
+    },
+    teacher: {
+      accommodation: teacherAccommodation,
+      meals: teacherMeals,
+      transportCard: teacherTransportCard,
+      coordinationFee: teacherCoordinationFee,
+      airportTransfer: teacherAirportTransfer,
+      totalPerTeacher: Math.round(teacherTotalPerTeacher),
+      totalForAllTeachers: teacherTotalForAll,
+    },
     additionalServices,
     groupDiscount,
     subtotal,
     total,
-    pricePerStudent: Math.round(baseCostPerStudent),
-    pricePerTeacher: Math.round(baseCostPerTeacher),
+    pricePerStudent: Math.round(studentTotalPerStudent),
+    pricePerTeacher: Math.round(teacherTotalPerTeacher),
   };
 }
 

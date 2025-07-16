@@ -31,6 +31,9 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented group discounts for larger groups (5-12% off for 30+ participants)
 ✓ Added detailed cost breakdowns in both form and quote preview
 ✓ Replaced "TBD" placeholders with accurate pricing calculations
+✓ Updated costing structure to show individual components (accommodation, meals, transport, coordination fees, airport transfers)
+✓ Separated student and teacher cost breakdowns with different rates and discount structures
+✓ Added visual distinction between student costs (blue) and teacher costs (green) in the interface
 
 ## System Architecture
 
