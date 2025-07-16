@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Wand2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
@@ -70,6 +70,47 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       form.setValue("destination", value);
     }
   };
+
+  // Watch form values for automatic date/duration calculations
+  const startDate = form.watch("startDate");
+  const endDate = form.watch("endDate");
+  const duration = form.watch("duration");
+
+  // Calculate duration when start and end dates change
+  useEffect(() => {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const timeDiff = end.getTime() - start.getTime();
+      const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+      
+      if (daysDiff > 0) {
+        const newDuration = daysDiff === 1 ? "1 day" : `${daysDiff} days`;
+        if (duration !== newDuration) {
+          form.setValue("duration", newDuration);
+        }
+      }
+    }
+  }, [startDate, endDate, form, duration]);
+
+  // Calculate end date when start date and duration change
+  useEffect(() => {
+    if (startDate && duration && duration !== "") {
+      // Extract number from duration string (e.g., "7 days" -> 7)
+      const durationMatch = duration.match(/(\d+)/);
+      if (durationMatch) {
+        const days = parseInt(durationMatch[1]);
+        const start = new Date(startDate);
+        const end = new Date(start);
+        end.setDate(start.getDate() + days - 1); // -1 because we include the start day
+        
+        const endDateString = end.toISOString().split('T')[0];
+        if (endDate !== endDateString) {
+          form.setValue("endDate", endDateString);
+        }
+      }
+    }
+  }, [startDate, duration, form, endDate]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-y-auto">

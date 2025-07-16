@@ -23,6 +23,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Replaced in-memory storage with persistent database storage
 ✓ Updated destination field to organized dropdown menu with countries as headers
 ✓ Added "Other" option with custom destination input field for non-listed cities
+✓ Implemented automatic date/duration calculations for improved user experience
 
 ## System Architecture
 
