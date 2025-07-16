@@ -258,57 +258,60 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   // Effect to populate form when editing an existing quote
   useEffect(() => {
     if (currentQuote) {
-      // Basic quote information
-      form.setValue("destination", currentQuote.destination || "");
-      form.setValue("tripType", currentQuote.tripType || "");
-      form.setValue("startDate", currentQuote.startDate || "");
-      form.setValue("endDate", currentQuote.endDate || "");
-      form.setValue("duration", currentQuote.duration || "");
-      form.setValue("numberOfStudents", currentQuote.numberOfStudents || 0);
-      form.setValue("numberOfTeachers", currentQuote.numberOfTeachers || 0);
-      
-      // School/Client information
-      form.setValue("fiscalName", currentQuote.fiscalName || "");
-      form.setValue("taxId", currentQuote.taxId || "");
-      form.setValue("email", currentQuote.email || "");
-      form.setValue("country", currentQuote.country || "");
-      form.setValue("city", currentQuote.city || "");
-      form.setValue("postcode", currentQuote.postcode || "");
-      form.setValue("address", currentQuote.address || "");
-      
-      // Pricing fields
-      form.setValue("pricePerStudent", currentQuote.pricePerStudent?.toString() || "");
-      form.setValue("pricePerTeacher", currentQuote.pricePerTeacher?.toString() || "");
-      form.setValue("adhocServices", currentQuote.adhocServices || "[]");
-      
-      // Service pricing fields
-      form.setValue("studentAccommodationPerDay", currentQuote.studentAccommodationPerDay?.toString() || "");
-      form.setValue("teacherAccommodationPerDay", currentQuote.teacherAccommodationPerDay?.toString() || "");
-      form.setValue("breakfastPerDay", currentQuote.breakfastPerDay?.toString() || "");
-      form.setValue("lunchPerDay", currentQuote.lunchPerDay?.toString() || "");
-      form.setValue("dinnerPerDay", currentQuote.dinnerPerDay?.toString() || "");
-      form.setValue("transportCardTotal", currentQuote.transportCardTotal?.toString() || "");
-      form.setValue("studentCoordinationFeeTotal", currentQuote.studentCoordinationFeeTotal?.toString() || "");
-      form.setValue("teacherCoordinationFeeTotal", currentQuote.teacherCoordinationFeeTotal?.toString() || "");
-      form.setValue("airportTransferPerPerson", currentQuote.airportTransferPerPerson?.toString() || "");
-      
-      // Service inclusion checkboxes
-      form.setValue("travelInsurance", currentQuote.travelInsurance || false);
-      form.setValue("airportTransfers", currentQuote.airportTransfers || false);
-      form.setValue("localTransport", currentQuote.localTransport || false);
-      form.setValue("tourGuide", currentQuote.tourGuide || false);
-      
-      // Internal cost fields
-      form.setValue("costStudentAccommodationPerDay", currentQuote.costStudentAccommodationPerDay?.toString() || "");
-      form.setValue("costTeacherAccommodationPerDay", currentQuote.costTeacherAccommodationPerDay?.toString() || "");
-      form.setValue("costBreakfastPerDay", currentQuote.costBreakfastPerDay?.toString() || "");
-      form.setValue("costLunchPerDay", currentQuote.costLunchPerDay?.toString() || "");
-      form.setValue("costDinnerPerDay", currentQuote.costDinnerPerDay?.toString() || "");
-      form.setValue("costLocalTransportationCard", currentQuote.costLocalTransportationCard?.toString() || "");
-      form.setValue("costStudentCoordination", currentQuote.costStudentCoordination?.toString() || "");
-      form.setValue("costTeacherCoordination", currentQuote.costTeacherCoordination?.toString() || "");
-      form.setValue("costLocalCoordinator", currentQuote.costLocalCoordinator?.toString() || "");
-      form.setValue("costAirportTransfer", currentQuote.costAirportTransfer?.toString() || "");
+      // Use form.reset to properly update all fields and trigger re-renders
+      form.reset({
+        // Basic quote information
+        destination: currentQuote.destination || "",
+        tripType: currentQuote.tripType || "",
+        startDate: currentQuote.startDate || "",
+        endDate: currentQuote.endDate || "",
+        duration: currentQuote.duration || "",
+        numberOfStudents: currentQuote.numberOfStudents || 0,
+        numberOfTeachers: currentQuote.numberOfTeachers || 0,
+        
+        // School/Client information
+        fiscalName: currentQuote.fiscalName || "",
+        taxId: currentQuote.taxId || "",
+        email: currentQuote.email || "",
+        country: currentQuote.country || "",
+        city: currentQuote.city || "",
+        postcode: currentQuote.postcode || "",
+        address: currentQuote.address || "",
+        
+        // Pricing fields
+        pricePerStudent: currentQuote.pricePerStudent?.toString() || "",
+        pricePerTeacher: currentQuote.pricePerTeacher?.toString() || "",
+        adhocServices: currentQuote.adhocServices || "[]",
+        
+        // Service pricing fields
+        studentAccommodationPerDay: currentQuote.studentAccommodationPerDay?.toString() || "",
+        teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay?.toString() || "",
+        breakfastPerDay: currentQuote.breakfastPerDay?.toString() || "",
+        lunchPerDay: currentQuote.lunchPerDay?.toString() || "",
+        dinnerPerDay: currentQuote.dinnerPerDay?.toString() || "",
+        transportCardTotal: currentQuote.transportCardTotal?.toString() || "",
+        studentCoordinationFeeTotal: currentQuote.studentCoordinationFeeTotal?.toString() || "",
+        teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal?.toString() || "",
+        airportTransferPerPerson: currentQuote.airportTransferPerPerson?.toString() || "",
+        
+        // Service inclusion checkboxes
+        travelInsurance: currentQuote.travelInsurance || false,
+        airportTransfers: currentQuote.airportTransfers || false,
+        localTransport: currentQuote.localTransport || false,
+        tourGuide: currentQuote.tourGuide || false,
+        
+        // Internal cost fields
+        costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay?.toString() || "",
+        costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay?.toString() || "",
+        costBreakfastPerDay: currentQuote.costBreakfastPerDay?.toString() || "",
+        costLunchPerDay: currentQuote.costLunchPerDay?.toString() || "",
+        costDinnerPerDay: currentQuote.costDinnerPerDay?.toString() || "",
+        costLocalTransportationCard: currentQuote.costLocalTransportationCard?.toString() || "",
+        costStudentCoordination: currentQuote.costStudentCoordination?.toString() || "",
+        costTeacherCoordination: currentQuote.costTeacherCoordination?.toString() || "",
+        costLocalCoordinator: currentQuote.costLocalCoordinator?.toString() || "",
+        costAirportTransfer: currentQuote.costAirportTransfer?.toString() || "",
+      });
       
       // Handle destination selection
       if (currentQuote.destination) {

@@ -94,6 +94,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed quote copying functionality that was not working properly due to incorrect API request syntax
 ✓ Fixed PDF export functionality with improved formatting, reliability, and proper margin handling for multi-page documents
 ✓ Fixed quote update error when copying and editing quotes - corrected HTTP method mismatch (PUT vs PATCH)
+✓ Fixed form field editing issue after copying quotes - form fields now properly enable when editing copied quotes
 
 ## System Architecture
 
