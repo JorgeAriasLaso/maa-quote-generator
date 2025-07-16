@@ -982,6 +982,163 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
           {/* Additional Services */}
           <AdhocServicesSection form={form} numberOfStudents={numberOfStudents} numberOfTeachers={numberOfTeachers} />
 
+          {/* Internal Cost Analysis */}
+          <Card className="p-6 bg-red-50 border-red-200">
+            <h3 className="text-lg font-semibold text-red-800 mb-4 flex items-center">
+              <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+              Internal Cost Analysis (For Profitability)
+            </h3>
+            <p className="text-sm text-red-700 mb-4">
+              Enter your actual costs to calculate trip profitability. This section is for internal use only.
+            </p>
+            
+            <div className="space-y-6">
+              {/* Accommodation Costs */}
+              <div>
+                <h4 className="font-medium text-red-700 mb-3">Accommodation Costs (per night)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="costStudentAccommodationPerDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Student accommodation cost (€/night)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costTeacherAccommodationPerDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Teacher accommodation cost (€/night)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Meal Costs */}
+              <div>
+                <h4 className="font-medium text-red-700 mb-3">Meal Costs (per person per day)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="costBreakfastPerDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Breakfast cost (€/day)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costLunchPerDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lunch cost (€/day)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costDinnerPerDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Dinner cost (€/day)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Other Costs */}
+              <div>
+                <h4 className="font-medium text-red-700 mb-3">Other Costs</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="costLocalTransportationCard"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Local transportation cost (€/person)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costStudentCoordination"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Student coordination cost (€/student)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="60" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costTeacherCoordination"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Teacher coordination cost (€/teacher)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="costLocalCoordinator"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Local coordinator cost (€/trip)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="150" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+
           {/* Generate Button */}
           <div className="pt-6 border-t border-slate-200">
             <Button 

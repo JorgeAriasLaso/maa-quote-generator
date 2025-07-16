@@ -245,6 +245,21 @@ export interface CostBreakdown {
     };
     totalFunding: number;
   } | null;
+  internalCosts: {
+    studentAccommodation: number;
+    teacherAccommodation: number;
+    meals: number;
+    localTransportation: number;
+    coordination: number;
+    localCoordinator: number;
+    totalCosts: number;
+  };
+  profitability: {
+    revenue: number;
+    costs: number;
+    profit: number;
+    marginPercentage: number;
+  };
   subtotal: number;
   total: number;
   netCostAfterErasmus: number;
@@ -295,6 +310,17 @@ export function calculateQuoteCost(
     studentCoordinationFeeTotal?: number;
     teacherCoordinationFeeTotal?: number;
     airportTransferPerPerson?: number;
+  },
+  internalCosts?: {
+    costStudentAccommodationPerDay?: number;
+    costTeacherAccommodationPerDay?: number;
+    costBreakfastPerDay?: number;
+    costLunchPerDay?: number;
+    costDinnerPerDay?: number;
+    costLocalTransportationCard?: number;
+    costStudentCoordination?: number;
+    costTeacherCoordination?: number;
+    costLocalCoordinator?: number;
   }
 ): CostBreakdown {
   const country = getCountryFromDestination(destination);
@@ -415,8 +441,45 @@ export function calculateQuoteCost(
     };
   }
 
+  // Calculate internal costs for profitability analysis
+  const costStudentAccom = (internalCosts?.costStudentAccommodationPerDay || 0) * days * numberOfStudents;
+  const costTeacherAccom = (internalCosts?.costTeacherAccommodationPerDay || 0) * days * numberOfTeachers;
+  const costBreakfast = (internalCosts?.costBreakfastPerDay || 0) * days * (numberOfStudents + numberOfTeachers);
+  const costLunch = (internalCosts?.costLunchPerDay || 0) * days * (numberOfStudents + numberOfTeachers);
+  const costDinner = (internalCosts?.costDinnerPerDay || 0) * days * (numberOfStudents + numberOfTeachers);
+  const costLocalTransport = (internalCosts?.costLocalTransportationCard || 0) * (numberOfStudents + numberOfTeachers);
+  const costStudentCoord = (internalCosts?.costStudentCoordination || 60) * numberOfStudents;
+  const costTeacherCoord = (internalCosts?.costTeacherCoordination || 0) * numberOfTeachers;
+  const costLocalCoord = internalCosts?.costLocalCoordinator || 150;
+
+  const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 
+                           costLocalTransport + costStudentCoord + costTeacherCoord + costLocalCoord;
+
+  const internalCostsBreakdown = {
+    studentAccommodation: costStudentAccom,
+    teacherAccommodation: costTeacherAccom,
+    meals: costBreakfast + costLunch + costDinner,
+    localTransportation: costLocalTransport,
+    coordination: costStudentCoord + costTeacherCoord,
+    localCoordinator: costLocalCoord,
+    totalCosts: totalInternalCosts,
+  };
+
   const total = subtotal - (groupDiscount?.amount || 0);
   const netCostAfterErasmus = total - (erasmusFunding?.totalFunding || 0);
+  
+  // Calculate profitability
+  const revenue = total;
+  const costs = totalInternalCosts;
+  const profit = revenue - costs;
+  const marginPercentage = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+  const profitability = {
+    revenue,
+    costs,
+    profit,
+    marginPercentage,
+  };
   
   return {
     student: {
@@ -440,6 +503,8 @@ export function calculateQuoteCost(
     additionalServices,
     groupDiscount,
     erasmusFunding,
+    internalCosts: internalCostsBreakdown,
+    profitability,
     subtotal,
     total,
     netCostAfterErasmus: Math.round(netCostAfterErasmus),

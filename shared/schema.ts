@@ -34,6 +34,18 @@ export const quotes = pgTable("quotes", {
   
   // Custom adhoc services (JSON array of {name: string, pricePerPerson: number})
   adhocServices: text("adhoc_services"),
+  
+  // Internal cost tracking for profitability analysis
+  costStudentAccommodationPerDay: text("cost_student_accommodation_per_day"),
+  costTeacherAccommodationPerDay: text("cost_teacher_accommodation_per_day"),
+  costBreakfastPerDay: text("cost_breakfast_per_day"),
+  costLunchPerDay: text("cost_lunch_per_day"),
+  costDinnerPerDay: text("cost_dinner_per_day"),
+  costLocalTransportationCard: text("cost_local_transportation_card"),
+  costStudentCoordination: text("cost_student_coordination").default("60"),
+  costTeacherCoordination: text("cost_teacher_coordination").default("0"),
+  costLocalCoordinator: text("cost_local_coordinator").default("150"),
+  
   quoteNumber: text("quote_number").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -42,6 +54,16 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   id: true,
   createdAt: true,
   quoteNumber: true,
+}).extend({
+  costStudentAccommodationPerDay: z.string().optional(),
+  costTeacherAccommodationPerDay: z.string().optional(),
+  costBreakfastPerDay: z.string().optional(),
+  costLunchPerDay: z.string().optional(),
+  costDinnerPerDay: z.string().optional(),
+  costLocalTransportationCard: z.string().optional(),
+  costStudentCoordination: z.string().optional(),
+  costTeacherCoordination: z.string().optional(),
+  costLocalCoordinator: z.string().optional(),
 });
 
 export type InsertQuote = z.infer<typeof insertQuoteSchema>;

@@ -42,6 +42,17 @@ export default function Home() {
           studentCoordinationFeeTotal: parseFloat(data.studentCoordinationFeeTotal || "0"),
           teacherCoordinationFeeTotal: parseFloat(data.teacherCoordinationFeeTotal || "0"),
           airportTransferPerPerson: parseFloat(data.airportTransferPerPerson || "0"),
+        },
+        {
+          costStudentAccommodationPerDay: parseFloat(data.costStudentAccommodationPerDay || "0"),
+          costTeacherAccommodationPerDay: parseFloat(data.costTeacherAccommodationPerDay || "0"),
+          costBreakfastPerDay: parseFloat(data.costBreakfastPerDay || "0"),
+          costLunchPerDay: parseFloat(data.costLunchPerDay || "0"),
+          costDinnerPerDay: parseFloat(data.costDinnerPerDay || "0"),
+          costLocalTransportationCard: parseFloat(data.costLocalTransportationCard || "0"),
+          costStudentCoordination: parseFloat(data.costStudentCoordination || "60"),
+          costTeacherCoordination: parseFloat(data.costTeacherCoordination || "0"),
+          costLocalCoordinator: parseFloat(data.costLocalCoordinator || "150"),
         }
       );
 

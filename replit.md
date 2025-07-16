@@ -48,6 +48,11 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Added funding rates for students (€66/€46, €57/€40, €48/€34) and teachers (€117/€82, €104/€73, €91/€64) across three country groups
 ✓ Created duration-based funding calculations (different rates for days 1-14 vs 15+) to help compare quoted prices against available school funding
 ✓ Erasmus funding display shows schools potential funding amounts to help justify trip value and encourage bookings
+✓ Added comprehensive internal cost analysis section for profitability tracking
+✓ Created separate cost input fields for accommodation, meals, transport, and coordination fees
+✓ Implemented real-time profit margin calculations with color-coded indicators (green >20%, yellow >10%, red <10%)
+✓ Added detailed cost breakdown display showing revenue vs costs with net profit analysis
+✓ Standard costs: Student coordination €60, Teacher coordination €0, Local coordinator €150
 
 ## System Architecture
 

@@ -948,6 +948,59 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                       All-inclusive package with accommodation, meals, activities, and support
                     </p>
                   </div>
+                  
+                  {/* Internal Profitability Analysis */}
+                  {costBreakdown && costBreakdown.profitability && costBreakdown.internalCosts.totalCosts > 0 && (
+                    <div className="border-t border-slate-300 pt-4">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-red-800 mb-3 flex items-center">
+                          <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+                          Internal Profitability Analysis
+                        </h4>
+                        
+                        <div className="space-y-3 text-sm">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-red-700 font-medium">Revenue:</span>
+                              <div className="text-lg font-bold text-green-700">
+                                {formatCurrency(costBreakdown.profitability.revenue)}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-red-700 font-medium">Total Costs:</span>
+                              <div className="text-lg font-bold text-red-700">
+                                {formatCurrency(costBreakdown.profitability.costs)}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t border-red-200 pt-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-red-700 font-medium">Net Profit:</span>
+                              <span className={`text-lg font-bold ${costBreakdown.profitability.profit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                                {formatCurrency(costBreakdown.profitability.profit)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center mt-1">
+                              <span className="text-red-700 font-medium">Profit Margin:</span>
+                              <span className={`font-bold ${costBreakdown.profitability.marginPercentage >= 20 ? 'text-green-700' : costBreakdown.profitability.marginPercentage >= 10 ? 'text-yellow-600' : 'text-red-700'}`}>
+                                {costBreakdown.profitability.marginPercentage.toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="text-xs text-red-600 bg-red-100 p-2 rounded">
+                            <strong>Cost Breakdown:</strong> Student accommodation (€{costBreakdown.internalCosts.studentAccommodation}), 
+                            Teacher accommodation (€{costBreakdown.internalCosts.teacherAccommodation}), 
+                            Meals (€{costBreakdown.internalCosts.meals}), 
+                            Transport (€{costBreakdown.internalCosts.localTransportation}), 
+                            Coordination (€{costBreakdown.internalCosts.coordination}), 
+                            Local coordinator (€{costBreakdown.internalCosts.localCoordinator})
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Card>
             </div>
