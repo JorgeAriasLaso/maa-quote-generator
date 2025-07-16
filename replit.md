@@ -96,6 +96,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed quote update error when copying and editing quotes - corrected HTTP method mismatch (PUT vs PATCH)
 ✓ Fixed form field editing issue after copying quotes - form fields now properly enable when editing copied quotes
 ✓ Removed disabled logic from all pricing input fields to ensure they are always editable regardless of checkbox state
+✓ Completely removed checkbox logic from all pricing fields - all input fields are now always editable and visible
+✓ Fixed form reset issue by properly handling string values including "0" and empty strings in form data population
 
 ## System Architecture
 

@@ -313,13 +313,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         costAirportTransfer: currentQuote.costAirportTransfer || "",
       };
       
-      console.log("Form data being reset with:", formData);
       form.reset(formData);
-      
-      // Force form to re-render with proper values
-      setTimeout(() => {
-        console.log("Current form values after reset:", form.getValues());
-      }, 100);
       
       // Handle destination selection
       if (currentQuote.destination) {
@@ -341,6 +335,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   const duration = form.watch("duration");
   const numberOfStudents = form.watch("numberOfStudents");
   const numberOfTeachers = form.watch("numberOfTeachers");
+  // Watch values for pricing calculations
   const studentAccommodationPerDay = form.watch("studentAccommodationPerDay");
   const teacherAccommodationPerDay = form.watch("teacherAccommodationPerDay");
   const breakfastPerDay = form.watch("breakfastPerDay");
@@ -1002,20 +997,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="studentAccommodationPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-student-accommodation"
-                              checked={!!(studentAccommodationPerDay && studentAccommodationPerDay !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("studentAccommodationPerDay", "");
-                                } else {
-                                  form.setValue("studentAccommodationPerDay", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Student Accommodation (€/day)</FormLabel>
-                          </div>
+                          <FormLabel>Student Accommodation (€/day)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1032,20 +1014,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="teacherAccommodationPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-teacher-accommodation"
-                              checked={!!(teacherAccommodationPerDay && teacherAccommodationPerDay !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("teacherAccommodationPerDay", "");
-                                } else {
-                                  form.setValue("teacherAccommodationPerDay", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Teacher Accommodation (€/day)</FormLabel>
-                          </div>
+                          <FormLabel>Teacher Accommodation (€/day)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1062,20 +1031,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="breakfastPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-breakfast"
-                              checked={!!(breakfastPerDay && breakfastPerDay !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("breakfastPerDay", "");
-                                } else {
-                                  form.setValue("breakfastPerDay", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Breakfast (€/day)</FormLabel>
-                          </div>
+                          <FormLabel>Breakfast (€/day)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1092,20 +1048,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="lunchPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-lunch"
-                              checked={!!(lunchPerDay && lunchPerDay !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("lunchPerDay", "");
-                                } else {
-                                  form.setValue("lunchPerDay", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Lunch (€/day)</FormLabel>
-                          </div>
+                          <FormLabel>Lunch (€/day)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1122,20 +1065,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="dinnerPerDay"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-dinner"
-                              checked={!!(dinnerPerDay && dinnerPerDay !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("dinnerPerDay", "");
-                                } else {
-                                  form.setValue("dinnerPerDay", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Dinner (€/day)</FormLabel>
-                          </div>
+                          <FormLabel>Dinner (€/day)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1158,20 +1088,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="transportCardTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-transport"
-                              checked={!!(transportCardTotal && transportCardTotal !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("transportCardTotal", "");
-                                } else {
-                                  form.setValue("transportCardTotal", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Local Transportation Card (€/trip)</FormLabel>
-                          </div>
+                          <FormLabel>Local Transportation Card (€/trip)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0.00" 
@@ -1188,20 +1105,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="studentCoordinationFeeTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-student-coord"
-                              checked={!!(studentCoordinationFeeTotal && studentCoordinationFeeTotal !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("studentCoordinationFeeTotal", "");
-                                } else {
-                                  form.setValue("studentCoordinationFeeTotal", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Student Coordination (€/trip)</FormLabel>
-                          </div>
+                          <FormLabel>Student Coordination (€/trip)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0" 
@@ -1218,20 +1122,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="teacherCoordinationFeeTotal"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-teacher-coord"
-                              checked={!!(teacherCoordinationFeeTotal && teacherCoordinationFeeTotal !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("teacherCoordinationFeeTotal", "");
-                                } else {
-                                  form.setValue("teacherCoordinationFeeTotal", "0");
-                                }
-                              }}
-                            />
-                            <FormLabel>Teacher Coordination (€/trip)</FormLabel>
-                          </div>
+                          <FormLabel>Teacher Coordination (€/trip)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0" 
@@ -1248,22 +1139,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       name="airportTransferPerPerson"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Checkbox 
-                              id="include-airport"
-                              checked={!!(airportTransferPerPerson && airportTransferPerPerson !== "")}
-                              onCheckedChange={(checked) => {
-                                if (!checked) {
-                                  form.setValue("airportTransferPerPerson", "");
-                                  form.setValue("airportTransfers", false);
-                                } else {
-                                  form.setValue("airportTransferPerPerson", "0");
-                                  form.setValue("airportTransfers", true);
-                                }
-                              }}
-                            />
-                            <FormLabel>Airport Transfer (€/person)</FormLabel>
-                          </div>
+                          <FormLabel>Airport Transfer (€/person)</FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="0" 
