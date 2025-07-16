@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertQuoteSchema, type InsertQuote } from "@shared/schema";
+import { insertQuoteSchema, type InsertQuote, type Client } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
-import { Wand2, Calculator, Plus, Trash2 } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Wand2, Calculator, Plus, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
@@ -144,6 +148,13 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
 export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQuote }: QuoteFormProps) {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
+  const [schoolComboboxOpen, setSchoolComboboxOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
+  // Fetch clients for autocomplete
+  const { data: clients } = useQuery<Client[]>({
+    queryKey: ["/api/clients"],
+  });
 
   const destinationsByCountry = {
     "Czech Republic": ["Prague"],
@@ -211,6 +222,14 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
     if (selectedDestination === "Other") {
       form.setValue("destination", value);
     }
+  };
+
+  const handleClientSelect = (client: Client) => {
+    setSelectedClient(client);
+    form.setValue("schoolName", client.fiscalName);
+    form.setValue("contactPerson", client.email);
+    form.setValue("schoolAddress", `${client.address}, ${client.postcode} ${client.city}, ${client.country}`);
+    setSchoolComboboxOpen(false);
   };
 
   // Watch form values for automatic duration and pricing calculation
@@ -320,6 +339,114 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* School Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">School Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="schoolName"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>School Name</FormLabel>
+                    <Popover open={schoolComboboxOpen} onOpenChange={setSchoolComboboxOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? field.value
+                              : "Select school or type to search..."}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[400px] p-0">
+                        <Command>
+                          <CommandInput 
+                            placeholder="Search schools..." 
+                            onValueChange={(value) => {
+                              if (value && !clients?.find(c => c.fiscalName.toLowerCase() === value.toLowerCase())) {
+                                form.setValue("schoolName", value);
+                              }
+                            }}
+                          />
+                          <CommandList>
+                            <CommandEmpty>
+                              <div className="p-2 text-sm text-slate-600">
+                                No schools found. You can still type a custom school name.
+                              </div>
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {clients?.map((client) => (
+                                <CommandItem
+                                  key={client.id}
+                                  value={client.fiscalName}
+                                  onSelect={() => handleClientSelect(client)}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedClient?.id === client.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  <div>
+                                    <div className="font-medium">{client.fiscalName}</div>
+                                    <div className="text-sm text-slate-500">{client.city}, {client.country}</div>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="contactPerson"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Person / Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="john.doe@school.edu" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="schoolAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School Address</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="123 School Street, City, Country" 
+                      className="min-h-[80px]"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           {/* Basic Trip Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">Trip Details</h3>
@@ -500,54 +627,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
             </div>
           </div>
 
-          {/* School Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">School Information</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="schoolName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>School Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Westminster High School" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="contactPerson"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Person</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ms. Sarah Johnson" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
-            <FormField
-              control={form.control}
-              name="schoolAddress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="123 Education Street, London, SW1A 1AA, United Kingdom" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
 
           {/* Pricing */}
           <div className="space-y-4">
