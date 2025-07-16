@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Wand2 } from "lucide-react";
+import { useState } from "react";
 
 interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
@@ -15,6 +16,29 @@ interface QuoteFormProps {
 }
 
 export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
+  const [selectedDestination, setSelectedDestination] = useState("");
+  const [customDestination, setCustomDestination] = useState("");
+
+  const predefinedDestinations = [
+    "Madrid, Spain",
+    "Málaga, Spain", 
+    "Alicante, Spain",
+    "Valladolid, Spain",
+    "Gijón, Spain",
+    "Porto, Portugal",
+    "Lyon, France",
+    "Paris, France",
+    "Bristol, UK",
+    "Bari, Italy",
+    "Catania, Italy",
+    "Prague, Czech Republic",
+    "Kraków, Poland",
+    "Poznań, Poland",
+    "Warsaw, Poland",
+    "Budapest, Hungary",
+    "Copenhagen, Denmark"
+  ];
+
   const form = useForm<InsertQuote>({
     resolver: zodResolver(insertQuoteSchema),
     defaultValues: {
@@ -38,6 +62,23 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
     },
   });
 
+  const handleDestinationChange = (value: string) => {
+    setSelectedDestination(value);
+    if (value === "Other") {
+      form.setValue("destination", customDestination);
+    } else {
+      form.setValue("destination", value);
+      setCustomDestination("");
+    }
+  };
+
+  const handleCustomDestinationChange = (value: string) => {
+    setCustomDestination(value);
+    if (selectedDestination === "Other") {
+      form.setValue("destination", value);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-y-auto">
       <div className="mb-6">
@@ -51,45 +92,82 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">Trip Details</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="destination"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Destination</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Prague, Czechia" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="destination"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Destination</FormLabel>
+                      <Select onValueChange={handleDestinationChange} value={selectedDestination}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select destination" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {predefinedDestinations.map((destination) => (
+                            <SelectItem key={destination} value={destination}>
+                              {destination}
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="tripType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trip Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select trip type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
+                          <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
+                          <SelectItem value="School Exchange">School Exchange</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               
-              <FormField
-                control={form.control}
-                name="tripType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Trip Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+              {selectedDestination === "Other" && (
+                <FormField
+                  control={form.control}
+                  name="destination"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Custom Destination *</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select trip type" />
-                        </SelectTrigger>
+                        <Input 
+                          placeholder="Enter city, country" 
+                          value={customDestination}
+                          onChange={(e) => {
+                            handleCustomDestinationChange(e.target.value);
+                          }}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
-                        <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
-                        <SelectItem value="School Exchange">School Exchange</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
