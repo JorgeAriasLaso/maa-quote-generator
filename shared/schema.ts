@@ -6,12 +6,13 @@ import { z } from "zod";
 // Clients table for client management
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
-  schoolName: text("school_name").notNull(),
-  contactPerson: text("contact_person").notNull(),
-  email: text("email"),
-  phone: text("phone"),
-  schoolAddress: text("school_address").notNull(),
-  notes: text("notes"),
+  fiscalName: text("fiscal_name").notNull(),
+  taxId: text("tax_id").notNull(),
+  email: text("email").notNull(),
+  country: text("country").notNull(),
+  city: text("city").notNull(),
+  postcode: text("postcode").notNull(),
+  address: text("address").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -19,12 +19,13 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
   const form = useForm<InsertClient>({
     resolver: zodResolver(insertClientSchema),
     defaultValues: {
-      schoolName: initialData?.schoolName || "",
-      contactPerson: initialData?.contactPerson || "",
+      fiscalName: initialData?.fiscalName || "",
+      taxId: initialData?.taxId || "",
       email: initialData?.email || "",
-      phone: initialData?.phone || "",
-      schoolAddress: initialData?.schoolAddress || "",
-      notes: initialData?.notes || "",
+      country: initialData?.country || "",
+      city: initialData?.city || "",
+      postcode: initialData?.postcode || "",
+      address: initialData?.address || "",
     },
   });
 
@@ -43,12 +44,12 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="schoolName"
+                name="fiscalName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>School Name *</FormLabel>
+                    <FormLabel>Fiscal Name *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter school name" {...field} />
+                      <Input placeholder="Enter official company/school name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -57,12 +58,12 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
 
               <FormField
                 control={form.control}
-                name="contactPerson"
+                name="taxId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Person *</FormLabel>
+                    <FormLabel>Tax ID *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter contact person name" {...field} />
+                      <Input placeholder="Enter tax identification number" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -74,7 +75,7 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email *</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="contact@school.edu" {...field} />
                     </FormControl>
@@ -85,12 +86,40 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
 
               <FormField
                 control={form.control}
-                name="phone"
+                name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>Country *</FormLabel>
                     <FormControl>
-                      <Input placeholder="+1 (555) 123-4567" {...field} />
+                      <Input placeholder="Enter country" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter city" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="postcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postcode *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter postal code" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -100,32 +129,14 @@ export function ClientForm({ onSubmit, isLoading, initialData, title = "Client I
 
             <FormField
               control={form.control}
-              name="schoolAddress"
+              name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>School Address *</FormLabel>
+                  <FormLabel>Address *</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Enter full school address"
+                      placeholder="Enter full address"
                       className="min-h-[80px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Additional notes about the client (preferences, special requirements, etc.)"
-                      className="min-h-[100px]"
                       {...field} 
                     />
                   </FormControl>

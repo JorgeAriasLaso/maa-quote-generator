@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { type Quote } from "@shared/schema";
 import { QuoteList } from "@/components/quote-list";
 import { QuotePreview } from "@/components/quote-preview";
@@ -9,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText } from "lucide-react";
+import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText, Copy } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 
@@ -17,9 +19,36 @@ export default function Quotes() {
   const [viewingQuote, setViewingQuote] = useState<Quote | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBy, setFilterBy] = useState("all");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: quotes, isLoading } = useQuery<Quote[]>({
     queryKey: ["/api/quotes"],
+  });
+
+  // Copy quote mutation
+  const copyQuoteMutation = useMutation({
+    mutationFn: async (quoteId: number) => {
+      return await apiRequest(`/api/quotes/${quoteId}/copy`, {
+        method: "POST",
+      });
+    },
+    onSuccess: (newQuote) => {
+      toast({
+        title: "Quote Copied",
+        description: `Quote ${newQuote.quoteNumber} has been created. You can now edit it.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/quotes"] });
+      // Navigate to home to edit the new quote
+      window.location.href = `/?edit=${newQuote.id}`;
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to copy quote. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   // Filter quotes based on search term and filter type
@@ -40,8 +69,12 @@ export default function Quotes() {
   };
 
   const handleEditQuote = (quote: Quote) => {
-    // Navigate to home with quote data (we could implement this later)
+    // Navigate to home with quote data
     window.location.href = `/?edit=${quote.id}`;
+  };
+
+  const handleCopyQuote = (quote: Quote) => {
+    copyQuoteMutation.mutate(quote.id);
   };
 
   const totalQuotes = quotes?.length || 0;
@@ -198,6 +231,15 @@ export default function Quotes() {
                               >
                                 <Eye className="w-4 h-4 mr-1" />
                                 View
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleCopyQuote(quote)}
+                                disabled={copyQuoteMutation.isPending}
+                              >
+                                <Copy className="w-4 h-4 mr-1" />
+                                Copy
                               </Button>
                               <Button
                                 variant="outline"

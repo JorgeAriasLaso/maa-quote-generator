@@ -5,15 +5,17 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ClientForm } from "@/components/client-form";
 import { ClientList } from "@/components/client-list";
+import { CSVImport } from "@/components/csv-import";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Users, Quote } from "lucide-react";
+import { Plus, Users, Quote, Upload } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Clients() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [viewingQuotes, setViewingQuotes] = useState<number | null>(null);
   const { toast } = useToast();
@@ -107,6 +109,10 @@ export default function Clients() {
               Back to Quotes
             </Button>
           </Link>
+          <Button variant="outline" onClick={() => setIsImportOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Import CSV
+          </Button>
           <Button onClick={() => setIsFormOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Client
@@ -203,6 +209,18 @@ export default function Clients() {
                 ))}
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import CSV Dialog */}
+      <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="csv-import-content">
+          <DialogHeader>
+            <DialogTitle>Import Clients from CSV</DialogTitle>
+          </DialogHeader>
+          <div id="csv-import-content">
+            <CSVImport onClose={() => setIsImportOpen(false)} />
           </div>
         </DialogContent>
       </Dialog>

@@ -111,11 +111,8 @@ export class MemStorage implements IStorage {
   async createClient(insertClient: InsertClient): Promise<Client> {
     const id = this.currentClientId++;
     const client: Client = {
-      ...insertClient,
       id,
-      email: insertClient.email || null,
-      phone: insertClient.phone || null,
-      notes: insertClient.notes || null,
+      ...insertClient,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

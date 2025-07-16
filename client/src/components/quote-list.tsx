@@ -3,15 +3,16 @@ import { type Quote } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, GraduationCap, FileText, Eye } from "lucide-react";
+import { Calendar, MapPin, Users, GraduationCap, FileText, Eye, Copy } from "lucide-react";
 import { format } from "date-fns";
 
 interface QuoteListProps {
   onViewQuote?: (quote: Quote) => void;
   onEditQuote?: (quote: Quote) => void;
+  onCopyQuote?: (quote: Quote) => void;
 }
 
-export function QuoteList({ onViewQuote, onEditQuote }: QuoteListProps) {
+export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote }: QuoteListProps) {
   const { data: quotes, isLoading } = useQuery<Quote[]>({
     queryKey: ["/api/quotes"],
   });
@@ -76,6 +77,16 @@ export function QuoteList({ onViewQuote, onEditQuote }: QuoteListProps) {
                   >
                     <Eye className="w-4 h-4 mr-1" />
                     View
+                  </Button>
+                )}
+                {onCopyQuote && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onCopyQuote(quote)}
+                  >
+                    <Copy className="w-4 h-4 mr-1" />
+                    Copy
                   </Button>
                 )}
                 {onEditQuote && (
