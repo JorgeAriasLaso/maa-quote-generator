@@ -43,10 +43,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       numberOfTeachers: 0,
       schoolName: "",
       contactPerson: "",
-      schoolStreet: "",
-      schoolCity: "",
-      schoolPostcode: "",
-      schoolCountry: "",
+      schoolAddress: "",
       pricePerStudent: "850",
       pricePerTeacher: "0",
       travelInsurance: false,
@@ -320,65 +317,19 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="schoolStreet"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street and Number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="123 Education Street" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="schoolCity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input placeholder="London" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="schoolPostcode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Postcode</FormLabel>
-                    <FormControl>
-                      <Input placeholder="SW1A 1AA" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="schoolCountry"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <FormControl>
-                      <Input placeholder="United Kingdom" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="schoolAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="123 Education Street, London, SW1A 1AA, United Kingdom" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Pricing */}
