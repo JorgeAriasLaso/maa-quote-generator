@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertQuoteSchema, type InsertQuote } from "@shared/schema";
-import { calculateQuoteCost, formatCurrency } from "@shared/costing";
+import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,134 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
-import { Wand2, Calculator } from "lucide-react";
+import { Wand2, Calculator, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface QuoteFormProps {
   onSubmit: (data: InsertQuote) => void;
   isLoading: boolean;
+}
+
+// AdhocServicesSection component
+interface AdhocServicesSectionProps {
+  form: any;
+  numberOfStudents: number;
+  numberOfTeachers: number;
+}
+
+function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: AdhocServicesSectionProps) {
+  const [services, setServices] = useState<AdhocService[]>([]);
+
+  // Parse existing adhoc services from form
+  useEffect(() => {
+    const adhocServicesValue = form.getValues("adhocServices");
+    if (adhocServicesValue) {
+      try {
+        const parsed = JSON.parse(adhocServicesValue);
+        setServices(parsed);
+      } catch (e) {
+        setServices([]);
+      }
+    }
+  }, [form]);
+
+  // Update form when services change
+  useEffect(() => {
+    form.setValue("adhocServices", JSON.stringify(services));
+  }, [services, form]);
+
+  const addService = () => {
+    setServices([...services, { name: "", pricePerPerson: 0 }]);
+  };
+
+  const removeService = (index: number) => {
+    setServices(services.filter((_, i) => i !== index));
+  };
+
+  const updateService = (index: number, field: keyof AdhocService, value: string | number) => {
+    const updated = [...services];
+    updated[index] = { ...updated[index], [field]: value };
+    setServices(updated);
+  };
+
+  const totalParticipants = numberOfStudents + numberOfTeachers;
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">
+        Additional Services
+      </h3>
+
+      <div className="space-y-4">
+        {services.map((service, index) => (
+          <Card key={index} className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Service Description
+                </label>
+                <Input
+                  placeholder="e.g., Travel Insurance, Tour Guide"
+                  value={service.name}
+                  onChange={(e) => updateService(index, "name", e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Price per Person (€)
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={service.pricePerPerson || ""}
+                  onChange={(e) => updateService(index, "pricePerPerson", parseFloat(e.target.value) || 0)}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-slate-600">
+                  Total: <span className="font-medium">
+                    {formatCurrency(service.pricePerPerson * totalParticipants)}
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => removeService(index)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addService}
+          className="w-full"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add Service
+        </Button>
+
+        {services.length > 0 && (
+          <div className="bg-slate-50 p-4 rounded-lg">
+            <div className="text-sm font-medium text-slate-700">
+              Total Additional Services: 
+              <span className="ml-2 text-primary font-bold">
+                {formatCurrency(services.reduce((total, service) => 
+                  total + (service.pricePerPerson * totalParticipants), 0))}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
@@ -48,11 +170,7 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
       schoolAddress: "",
       pricePerStudent: "850",
       pricePerTeacher: "0",
-      travelInsurance: false,
-      airportTransfers: false,
-      localTransport: false,
-      tourGuide: false,
-      quoteNumber: "",
+      adhocServices: "[]",
     },
   });
 
@@ -861,84 +979,8 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
             </Card>
           </div>
 
-          {/* Additional Options */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">Additional Services</h3>
-            
-            <div className="space-y-3">
-              <FormField
-                control={form.control}
-                name="travelInsurance"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Travel Insurance (€15 per person)</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="airportTransfers"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Airport Transfers (€120 total)</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="localTransport"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Local Transport Pass (€25 per person)</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="tourGuide"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Professional Tour Guide (€200 per day)</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
+          {/* Additional Services */}
+          <AdhocServicesSection form={form} numberOfStudents={numberOfStudents} numberOfTeachers={numberOfTeachers} />
 
           {/* Generate Button */}
           <div className="pt-6 border-t border-slate-200">

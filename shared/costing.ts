@@ -126,6 +126,63 @@ export const GROUP_DISCOUNTS = [
   { minSize: 50, discount: 0.12, description: "12% discount for groups of 50+" },
 ] as const;
 
+// Erasmus+ funding rates per day
+export const ERASMUS_FUNDING = {
+  students: {
+    "Group 1": { days1to14: 66, day15plus: 46 }, // Norway, Denmark, Luxembourg, Iceland, Sweden, Ireland, Finland, Liechtenstein
+    "Group 2": { days1to14: 57, day15plus: 40 }, // Netherlands, Austria, Belgium, France, Germany, Italy, Spain, Cyprus, Greece, Malta, Portugal
+    "Group 3": { days1to14: 48, day15plus: 34 }, // Slovenia, Estonia, Latvia, Croatia, Slovakia, Czech Republic, Lithuania, Turkey, Hungary, Poland, Romania, Bulgaria, North Macedonia, Serbia
+  },
+  teachers: {
+    "Group 1": { days1to14: 117, day15plus: 82 }, // Norway, Denmark, Luxembourg, Iceland, Sweden, Ireland, Finland, Liechtenstein
+    "Group 2": { days1to14: 104, day15plus: 73 }, // Netherlands, Austria, Belgium, France, Germany, Italy, Spain, Cyprus, Greece, Malta, Portugal
+    "Group 3": { days1to14: 91, day15plus: 64 }, // Slovenia, Estonia, Latvia, Croatia, Slovakia, Czech Republic, Lithuania, Turkey, Hungary, Poland, Romania, Bulgaria, North Macedonia, Serbia
+  }
+};
+
+// Map destinations to Erasmus funding groups
+export const ERASMUS_COUNTRY_GROUPS = {
+  // Group 1 - High cost countries
+  "Norway": "Group 1",
+  "Denmark": "Group 1", 
+  "Luxembourg": "Group 1",
+  "Iceland": "Group 1",
+  "Sweden": "Group 1",
+  "Ireland": "Group 1",
+  "Finland": "Group 1",
+  "Liechtenstein": "Group 1",
+  
+  // Group 2 - Medium cost countries
+  "Netherlands": "Group 2",
+  "Austria": "Group 2",
+  "Belgium": "Group 2", 
+  "France": "Group 2",
+  "Germany": "Group 2",
+  "Italy": "Group 2",
+  "Spain": "Group 2",
+  "Cyprus": "Group 2",
+  "Greece": "Group 2",
+  "Malta": "Group 2",
+  "Portugal": "Group 2",
+  "United Kingdom": "Group 2", // Treating UK as Group 2 for calculation purposes
+  
+  // Group 3 - Lower cost countries
+  "Slovenia": "Group 3",
+  "Estonia": "Group 3",
+  "Latvia": "Group 3",
+  "Croatia": "Group 3",
+  "Slovakia": "Group 3",
+  "Czech Republic": "Group 3",
+  "Lithuania": "Group 3",
+  "Turkey": "Group 3",
+  "Hungary": "Group 3",
+  "Poland": "Group 3",
+  "Romania": "Group 3",
+  "Bulgaria": "Group 3",
+  "North Macedonia": "Group 3",
+  "Serbia": "Group 3",
+};
+
 // Duration multipliers
 export const DURATION_PRICING = {
   1: 1.0,
@@ -164,8 +221,7 @@ export interface CostBreakdown {
     totalForAllTeachers: number;
   };
   additionalServices: {
-    travelInsurance: number;
-    tourGuide: number;
+    adhocServices: number;
     total: number;
   };
   groupDiscount: {
@@ -173,8 +229,25 @@ export interface CostBreakdown {
     amount: number;
     description: string;
   } | null;
+  erasmusFunding: {
+    group: string;
+    students: {
+      dailyRate1to14: number;
+      dailyRate15plus: number;
+      fundingPerStudent: number;
+      totalStudentFunding: number;
+    };
+    teachers: {
+      dailyRate1to14: number;
+      dailyRate15plus: number;
+      fundingPerTeacher: number;
+      totalTeacherFunding: number;
+    };
+    totalFunding: number;
+  } | null;
   subtotal: number;
   total: number;
+  netCostAfterErasmus: number;
   pricePerStudent: number;
   pricePerTeacher: number;
 }
@@ -201,17 +274,17 @@ function parseDuration(duration: string): number {
   return match ? parseInt(match[1]) : 7;
 }
 
+export interface AdhocService {
+  name: string;
+  pricePerPerson: number;
+}
+
 export function calculateQuoteCost(
   destination: string,
   duration: string,
   numberOfStudents: number,
   numberOfTeachers: number,
-  services: {
-    travelInsurance: boolean;
-    airportTransfers: boolean;
-    localTransport: boolean;
-    tourGuide: boolean;
-  },
+  adhocServices: AdhocService[] = [],
   customPricing?: {
     studentAccommodationPerDay?: number;
     teacherAccommodationPerDay?: number;
@@ -245,11 +318,11 @@ export function calculateQuoteCost(
   const studentMeals = (breakfastRate + lunchRate + dinnerRate) * days * numberOfStudents;
   const studentTransportCard = transportCardTotal * numberOfStudents;
   const studentCoordinationFee = studentCoordinationTotal * numberOfStudents;
-  const studentAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfStudents : 0;
+  const studentAirportTransfer = airportTransferRate * numberOfStudents;
   
   const studentTotalPerStudent = (studentAccommodationRate + breakfastRate + lunchRate + 
     dinnerRate) * days + transportCardTotal + studentCoordinationTotal + 
-    (services.airportTransfers ? airportTransferRate : 0);
+    airportTransferRate;
   const studentTotalForAll = studentAccommodation + studentMeals + studentTransportCard + 
     studentCoordinationFee + studentAirportTransfer;
   
@@ -258,23 +331,22 @@ export function calculateQuoteCost(
   const teacherMeals = (breakfastRate + lunchRate + dinnerRate) * defaultPricing.teacherDiscount * days * numberOfTeachers;
   const teacherTransportCard = transportCardTotal * numberOfTeachers;
   const teacherCoordinationFee = teacherCoordinationTotal * numberOfTeachers;
-  const teacherAirportTransfer = services.airportTransfers ? airportTransferRate * numberOfTeachers : 0;
+  const teacherAirportTransfer = airportTransferRate * numberOfTeachers;
   
   const teacherTotalPerTeacher = (teacherAccommodationRate + (breakfastRate + lunchRate + 
     dinnerRate) * defaultPricing.teacherDiscount) * days + transportCardTotal + teacherCoordinationTotal + 
-    (services.airportTransfers ? airportTransferRate : 0);
+    airportTransferRate;
   const teacherTotalForAll = teacherAccommodation + teacherMeals + teacherTransportCard + 
     teacherCoordinationFee + teacherAirportTransfer;
   
-  // Calculate additional services
+  // Calculate adhoc services
   const additionalServices = {
-    travelInsurance: services.travelInsurance ? 
-      ADDITIONAL_SERVICES.travelInsurance.perPerson * (numberOfStudents + numberOfTeachers) : 0,
-    tourGuide: services.tourGuide ? ADDITIONAL_SERVICES.tourGuide.perDay * days : 0,
+    adhocServices: adhocServices.reduce((total, service) => 
+      total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0),
     total: 0,
   };
   
-  additionalServices.total = additionalServices.travelInsurance + additionalServices.tourGuide;
+  additionalServices.total = additionalServices.adhocServices;
   
   // Calculate subtotal before discounts
   const subtotal = studentTotalForAll + teacherTotalForAll + additionalServices.total;
@@ -295,7 +367,56 @@ export function calculateQuoteCost(
     }
   }
   
+  // Calculate Erasmus+ funding for students and teachers
+  const erasmusGroup = ERASMUS_COUNTRY_GROUPS[country];
+  let erasmusFunding = null;
+  
+  if (erasmusGroup && ERASMUS_FUNDING.students[erasmusGroup] && ERASMUS_FUNDING.teachers[erasmusGroup]) {
+    const studentRates = ERASMUS_FUNDING.students[erasmusGroup];
+    const teacherRates = ERASMUS_FUNDING.teachers[erasmusGroup];
+    
+    // Calculate student funding based on trip duration
+    let fundingPerStudent = 0;
+    if (days <= 14) {
+      fundingPerStudent = studentRates.days1to14 * days;
+    } else {
+      // First 14 days at higher rate, remaining days at lower rate
+      fundingPerStudent = (studentRates.days1to14 * 14) + (studentRates.day15plus * (days - 14));
+    }
+    
+    // Calculate teacher funding based on trip duration
+    let fundingPerTeacher = 0;
+    if (days <= 14) {
+      fundingPerTeacher = teacherRates.days1to14 * days;
+    } else {
+      // First 14 days at higher rate, remaining days at lower rate
+      fundingPerTeacher = (teacherRates.days1to14 * 14) + (teacherRates.day15plus * (days - 14));
+    }
+    
+    const totalStudentFunding = fundingPerStudent * numberOfStudents;
+    const totalTeacherFunding = fundingPerTeacher * numberOfTeachers;
+    const totalFunding = totalStudentFunding + totalTeacherFunding;
+    
+    erasmusFunding = {
+      group: `Erasmus+ ${erasmusGroup}`,
+      students: {
+        dailyRate1to14: studentRates.days1to14,
+        dailyRate15plus: studentRates.day15plus,
+        fundingPerStudent: fundingPerStudent,
+        totalStudentFunding: totalStudentFunding,
+      },
+      teachers: {
+        dailyRate1to14: teacherRates.days1to14,
+        dailyRate15plus: teacherRates.day15plus,
+        fundingPerTeacher: fundingPerTeacher,
+        totalTeacherFunding: totalTeacherFunding,
+      },
+      totalFunding: totalFunding,
+    };
+  }
+
   const total = subtotal - (groupDiscount?.amount || 0);
+  const netCostAfterErasmus = total - (erasmusFunding?.totalFunding || 0);
   
   return {
     student: {
@@ -318,8 +439,10 @@ export function calculateQuoteCost(
     },
     additionalServices,
     groupDiscount,
+    erasmusFunding,
     subtotal,
     total,
+    netCostAfterErasmus: Math.round(netCostAfterErasmus),
     pricePerStudent: Math.round(studentTotalPerStudent),
     pricePerTeacher: Math.round(teacherTotalPerTeacher),
   };

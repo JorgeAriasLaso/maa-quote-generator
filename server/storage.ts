@@ -45,11 +45,8 @@ export class MemStorage implements IStorage {
       studentCoordinationFeeTotal: insertQuote.studentCoordinationFeeTotal || null,
       teacherCoordinationFeeTotal: insertQuote.teacherCoordinationFeeTotal || null,
       airportTransferPerPerson: insertQuote.airportTransferPerPerson || null,
-      // Set defaults for boolean fields
-      travelInsurance: insertQuote.travelInsurance ?? false,
-      airportTransfers: insertQuote.airportTransfers ?? false,
-      localTransport: insertQuote.localTransport ?? false,
-      tourGuide: insertQuote.tourGuide ?? false,
+      // Set defaults for adhoc services
+      adhocServices: insertQuote.adhocServices || null,
     };
     this.quotes.set(id, quote);
     return quote;

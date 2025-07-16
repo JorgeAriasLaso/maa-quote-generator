@@ -1,5 +1,5 @@
 import { type Quote } from "@shared/schema";
-import { calculateQuoteCost, formatCurrency } from "@shared/costing";
+import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
@@ -15,16 +15,33 @@ interface QuotePreviewProps {
 
 export function QuotePreview({ quote }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
+  
+  // Parse adhoc services from quote
+  const adhocServices: AdhocService[] = quote?.adhocServices ? 
+    (() => {
+      try {
+        return JSON.parse(quote.adhocServices);
+      } catch (e) {
+        return [];
+      }
+    })() : [];
+
   const costBreakdown = quote ? calculateQuoteCost(
     quote.destination,
     quote.duration,
     quote.numberOfStudents,
     quote.numberOfTeachers,
+    adhocServices,
     {
-      travelInsurance: quote.travelInsurance || false,
-      airportTransfers: quote.airportTransfers || false,
-      localTransport: quote.localTransport || false,
-      tourGuide: quote.tourGuide || false,
+      studentAccommodationPerDay: parseFloat(quote.studentAccommodationPerDay || "0"),
+      teacherAccommodationPerDay: parseFloat(quote.teacherAccommodationPerDay || "0"),
+      breakfastPerDay: parseFloat(quote.breakfastPerDay || "0"),
+      lunchPerDay: parseFloat(quote.lunchPerDay || "0"),
+      dinnerPerDay: parseFloat(quote.dinnerPerDay || "0"),
+      transportCardTotal: parseFloat(quote.transportCardTotal || "0"),
+      studentCoordinationFeeTotal: parseFloat(quote.studentCoordinationFeeTotal || "0"),
+      teacherCoordinationFeeTotal: parseFloat(quote.teacherCoordinationFeeTotal || "0"),
+      airportTransferPerPerson: parseFloat(quote.airportTransferPerPerson || "0"),
     }
   ) : null;
 
@@ -842,34 +859,24 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                     <>
                       <div className="border-t border-slate-300 pt-2">
                         <h5 className="font-medium text-slate-700 mb-2">Additional Services:</h5>
-                        {costBreakdown.additionalServices.travelInsurance > 0 && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Travel Insurance</span>
-                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.travelInsurance)}</span>
-                          </div>
+                        {adhocServices.length > 0 ? (
+                          <>
+                            {adhocServices.map((service, index) => (
+                              <div key={index} className="flex justify-between items-center text-sm">
+                                <span className="text-slate-600">{service.name}</span>
+                                <span className="text-slate-700">
+                                  {formatCurrency(service.pricePerPerson * (quote.numberOfStudents + quote.numberOfTeachers))}
+                                </span>
+                              </div>
+                            ))}
+                            <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-slate-200 mt-1">
+                              <span className="text-slate-600">Services Subtotal</span>
+                              <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.total)}</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-sm text-slate-500 italic">No additional services selected</div>
                         )}
-                        {costBreakdown.additionalServices.airportTransfers > 0 && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Airport Transfers</span>
-                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.airportTransfers)}</span>
-                          </div>
-                        )}
-                        {costBreakdown.additionalServices.localTransport > 0 && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Local Transport Pass</span>
-                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.localTransport)}</span>
-                          </div>
-                        )}
-                        {costBreakdown.additionalServices.tourGuide > 0 && (
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-600">Tour Guide</span>
-                            <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.tourGuide)}</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-slate-200 mt-1">
-                          <span className="text-slate-600">Services Subtotal</span>
-                          <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.total)}</span>
-                        </div>
                       </div>
                     </>
                   )}
@@ -883,11 +890,60 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
                     </div>
                   )}
                   
+                  {costBreakdown && costBreakdown.erasmusFunding && (
+                    <div className="border-t border-slate-300 pt-2">
+                      <h5 className="font-medium text-green-700 mb-2">Erasmus+ Funding Available:</h5>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-600">Student funding ({quote.numberOfStudents} students)</span>
+                          <span className="text-green-700 font-medium">
+                            +{formatCurrency(costBreakdown.erasmusFunding.students.totalStudentFunding)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-slate-500 ml-4">
+                          €{costBreakdown.erasmusFunding.students.dailyRate1to14}/day (days 1-14), 
+                          €{costBreakdown.erasmusFunding.students.dailyRate15plus}/day (day 15+)
+                        </div>
+                        {quote.numberOfTeachers > 0 && (
+                          <>
+                            <div className="flex justify-between items-center">
+                              <span className="text-slate-600">Teacher funding ({quote.numberOfTeachers} teachers)</span>
+                              <span className="text-green-700 font-medium">
+                                +{formatCurrency(costBreakdown.erasmusFunding.teachers.totalTeacherFunding)}
+                              </span>
+                            </div>
+                            <div className="text-xs text-slate-500 ml-4">
+                              €{costBreakdown.erasmusFunding.teachers.dailyRate1to14}/day (days 1-14), 
+                              €{costBreakdown.erasmusFunding.teachers.dailyRate15plus}/day (day 15+)
+                            </div>
+                          </>
+                        )}
+                        <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-green-200 mt-1">
+                          <span className="text-green-700">Total Erasmus+ Funding</span>
+                          <span className="text-green-700 font-bold">+{formatCurrency(costBreakdown.erasmusFunding.totalFunding)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="border-t border-slate-300 pt-4">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-slate-900">Total Investment</span>
                       <span className="text-2xl font-bold text-primary">€{calculateTotal().toLocaleString()}</span>
                     </div>
+                    {costBreakdown && costBreakdown.erasmusFunding && (
+                      <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-green-800">Net Cost After Erasmus+ Funding</span>
+                          <span className="text-lg font-bold text-green-800">
+                            €{costBreakdown.netCostAfterErasmus.toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-xs text-green-700 mt-1">
+                          Your school can apply for Erasmus+ funding to significantly reduce trip costs
+                        </p>
+                      </div>
+                    )}
                     <p className="text-sm text-slate-600 mt-2">
                       All-inclusive package with accommodation, meals, activities, and support
                     </p>

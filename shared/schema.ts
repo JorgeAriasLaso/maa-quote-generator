@@ -32,10 +32,8 @@ export const quotes = pgTable("quotes", {
   pricePerStudent: decimal("price_per_student", { precision: 10, scale: 2 }).notNull(),
   pricePerTeacher: text("price_per_teacher").notNull(),
   
-  travelInsurance: boolean("travel_insurance").default(false),
-  airportTransfers: boolean("airport_transfers").default(false),
-  localTransport: boolean("local_transport").default(false),
-  tourGuide: boolean("tour_guide").default(false),
+  // Custom adhoc services (JSON array of {name: string, pricePerPerson: number})
+  adhocServices: text("adhoc_services"),
   quoteNumber: text("quote_number").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

@@ -5,6 +5,7 @@ import { QuotePreview } from "@/components/quote-preview";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type InsertQuote, type Quote } from "@shared/schema";
+import { calculateQuoteCost } from "@shared/costing";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
 export default function Home() {
@@ -14,10 +15,43 @@ export default function Home() {
 
   const createQuoteMutation = useMutation({
     mutationFn: async (data: InsertQuote) => {
-      // Generate quote number and calculate pricing
-      const quoteNumber = `TPQ-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
-      
-      const response = await apiRequest("POST", "/api/quotes", data);
+      // Parse adhoc services if they exist
+      let adhocServices = [];
+      if (data.adhocServices) {
+        try {
+          adhocServices = JSON.parse(data.adhocServices);
+        } catch (e) {
+          adhocServices = [];
+        }
+      }
+
+      // Calculate cost with new adhoc services
+      const costBreakdown = calculateQuoteCost(
+        data.destination,
+        data.duration,
+        data.numberOfStudents,
+        data.numberOfTeachers,
+        adhocServices,
+        {
+          studentAccommodationPerDay: parseFloat(data.studentAccommodationPerDay || "0"),
+          teacherAccommodationPerDay: parseFloat(data.teacherAccommodationPerDay || "0"),
+          breakfastPerDay: parseFloat(data.breakfastPerDay || "0"),
+          lunchPerDay: parseFloat(data.lunchPerDay || "0"),
+          dinnerPerDay: parseFloat(data.dinnerPerDay || "0"),
+          transportCardTotal: parseFloat(data.transportCardTotal || "0"),
+          studentCoordinationFeeTotal: parseFloat(data.studentCoordinationFeeTotal || "0"),
+          teacherCoordinationFeeTotal: parseFloat(data.teacherCoordinationFeeTotal || "0"),
+          airportTransferPerPerson: parseFloat(data.airportTransferPerPerson || "0"),
+        }
+      );
+
+      const finalData = {
+        ...data,
+        pricePerStudent: costBreakdown.pricePerStudent.toString(),
+        pricePerTeacher: costBreakdown.pricePerTeacher.toString(),
+      };
+
+      const response = await apiRequest("POST", "/api/quotes", finalData);
       return response.json();
     },
     onSuccess: (newQuote: Quote) => {
