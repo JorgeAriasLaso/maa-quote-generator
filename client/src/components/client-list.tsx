@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Client } from "@shared/schema";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Calendar, FileText } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Mail, MapPin, FileText, Edit, Eye, Search } from "lucide-react";
 import { format } from "date-fns";
-import { Link } from "wouter";
 
 interface ClientListProps {
   onEditClient?: (client: Client) => void;
@@ -14,115 +14,173 @@ interface ClientListProps {
 }
 
 export function ClientList({ onEditClient, onViewQuotes }: ClientListProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  
   const { data: clients, isLoading } = useQuery<Client[]>({
     queryKey: ["/api/clients"],
   });
 
+  // Filter clients based on search term
+  const filteredClients = useMemo(() => {
+    if (!clients) return [];
+    if (!searchTerm.trim()) return clients;
+    
+    const search = searchTerm.toLowerCase();
+    return clients.filter(client => 
+      client.fiscalName.toLowerCase().includes(search) ||
+      client.country.toLowerCase().includes(search) ||
+      client.city.toLowerCase().includes(search) ||
+      client.email?.toLowerCase().includes(search) ||
+      client.taxId?.toLowerCase().includes(search)
+    );
+  }, [clients, searchTerm]);
+
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-slate-200 rounded w-1/3 mb-2"></div>
-              <div className="h-3 bg-slate-200 rounded w-1/2 mb-4"></div>
-              <div className="space-y-2">
-                <div className="h-3 bg-slate-200 rounded w-full"></div>
-                <div className="h-3 bg-slate-200 rounded w-2/3"></div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  if (!clients || clients.length === 0) {
-    return (
       <Card>
-        <CardContent className="p-8 text-center">
-          <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-          <h3 className="text-lg font-medium text-slate-900 mb-2">No clients yet</h3>
-          <p className="text-slate-500 mb-4">Get started by creating your first client.</p>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="grid grid-cols-4 gap-4">
+                <div className="h-4 bg-slate-200 rounded"></div>
+                <div className="h-4 bg-slate-200 rounded"></div>
+                <div className="h-4 bg-slate-200 rounded"></div>
+                <div className="h-4 bg-slate-200 rounded"></div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     );
   }
 
-  return (
-    <div className="space-y-4">
-      {clients.map((client) => (
-        <Card key={client.id} className="hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle className="text-lg">{client.schoolName}</CardTitle>
-                <p className="text-slate-600 font-medium">{client.contactPerson}</p>
-              </div>
-              <div className="flex gap-2">
-                {onEditClient && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onEditClient(client)}
-                  >
-                    Edit
-                  </Button>
-                )}
-                {onViewQuotes && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewQuotes(client.id)}
-                  >
-                    View Quotes
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-2">
-              {client.email && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Mail className="h-4 w-4" />
-                  <a href={`mailto:${client.email}`} className="hover:underline">
-                    {client.email}
-                  </a>
-                </div>
-              )}
-              
-              {client.phone && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Phone className="h-4 w-4" />
-                  <a href={`tel:${client.phone}`} className="hover:underline">
-                    {client.phone}
-                  </a>
-                </div>
-              )}
-              
-              <div className="flex items-start gap-2 text-sm text-slate-600">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>{client.schoolAddress}</span>
-              </div>
-              
-              {client.notes && (
-                <div className="bg-slate-50 p-3 rounded-md mt-3">
-                  <p className="text-sm text-slate-700">{client.notes}</p>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-2 text-xs text-slate-500 pt-2">
-                <Calendar className="h-3 w-3" />
-                <span>Created {format(new Date(client.createdAt), "MMM d, yyyy")}</span>
-                {client.updatedAt !== client.createdAt && (
-                  <span>• Updated {format(new Date(client.updatedAt), "MMM d, yyyy")}</span>
-                )}
-              </div>
-            </div>
+  if (!clients || clients.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search clients by name, country, city, email or tax ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <FileText className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No clients yet</h3>
+            <p className="text-slate-500 mb-4">Get started by creating your first client.</p>
           </CardContent>
         </Card>
-      ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Search Bar */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Input
+            placeholder="Search clients by name, country, city, email or tax ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
+      {/* Results Summary */}
+      <div className="flex justify-between items-center text-sm text-slate-600">
+        <span>
+          {filteredClients.length} of {clients.length} clients
+          {searchTerm && ` matching "${searchTerm}"`}
+        </span>
+      </div>
+
+      {/* Client Table */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[30%]">School Name</TableHead>
+                <TableHead className="w-[15%]">Country</TableHead>
+                <TableHead className="w-[25%]">Email</TableHead>
+                <TableHead className="w-[15%]">City</TableHead>
+                <TableHead className="w-[15%]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredClients.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                    {searchTerm ? `No clients found matching "${searchTerm}"` : "No clients found"}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredClients.map((client) => (
+                  <TableRow key={client.id} className="hover:bg-slate-50">
+                    <TableCell className="font-medium">
+                      <div>
+                        <div className="font-semibold text-slate-900">{client.fiscalName}</div>
+                        {client.taxId && (
+                          <div className="text-sm text-slate-500">Tax ID: {client.taxId}</div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{client.country}</TableCell>
+                    <TableCell>
+                      {client.email ? (
+                        <a 
+                          href={`mailto:${client.email}`} 
+                          className="text-blue-600 hover:underline flex items-center gap-1"
+                        >
+                          <Mail className="h-4 w-4" />
+                          {client.email}
+                        </a>
+                      ) : (
+                        <span className="text-slate-400">No email</span>
+                      )}
+                    </TableCell>
+                    <TableCell>{client.city}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {onEditClient && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onEditClient(client)}
+                            className="h-8 w-8 p-0"
+                            title="Edit client"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {onViewQuotes && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onViewQuotes(client.id)}
+                            className="h-8 w-8 p-0"
+                            title="View quotes"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
