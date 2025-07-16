@@ -2,11 +2,22 @@
 
 ## Overview
 
-This is a full-stack web application for generating professional travel quotes for educational institutions. The system allows users to create detailed travel quotes for school trips, including destinations, pricing, and additional services.
+This is a full-stack web application for generating professional travel quotes for educational institutions. The system allows users to create detailed travel quotes for school trips, including destinations, pricing, and additional services. The application is branded for "My Abroad Ally" travel agency specializing in educational travel.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Company branding: "My Abroad Ally" with yellow brand colors
+Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
+
+## Recent Changes
+
+✓ Integrated My Abroad Ally company logo in web app header and quote preview
+✓ Updated brand colors to yellow theme (hsl(48, 98%, 60%)) 
+✓ Modified trip type options to: Work Experience Mobility, Job Shadowing, School Exchange, Other
+✓ Added company branding throughout quote documents
+✓ Updated contact information to myabroadally.com domain
+✓ Fixed storage type issues for boolean fields
 
 ## System Architecture
 

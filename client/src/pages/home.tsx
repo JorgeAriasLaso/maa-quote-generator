@@ -5,7 +5,7 @@ import { QuotePreview } from "@/components/quote-preview";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { type InsertQuote, type Quote } from "@shared/schema";
-import { Plane } from "lucide-react";
+import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
 export default function Home() {
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
@@ -46,10 +46,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Plane className="text-white text-sm" />
-              </div>
-              <h1 className="text-xl font-semibold text-slate-900">TravelQuote Pro</h1>
+              <img 
+                src={logoPath} 
+                alt="My Abroad Ally" 
+                className="h-10 w-10 object-contain"
+              />
+              <h1 className="text-xl font-semibold text-slate-900">My Abroad Ally</h1>
             </div>
             <nav className="hidden md:flex space-x-6">
               <a href="#" className="text-primary font-medium">Quote Generator</a>

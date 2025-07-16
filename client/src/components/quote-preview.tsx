@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, Printer } from "lucide-react";
 import { CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
+import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
 interface QuotePreviewProps {
   quote: Quote | null;
@@ -150,11 +151,14 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
           <div className="max-w-2xl mx-auto bg-white">
             {/* Header */}
             <div className="text-center mb-12">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <GraduationCap className="text-white text-xl" />
-              </div>
+              <img 
+                src={logoPath} 
+                alt="My Abroad Ally" 
+                className="h-20 w-20 object-contain mx-auto mb-4"
+              />
               <h1 className="text-3xl font-bold text-slate-900 mb-2">Educational Travel Proposal</h1>
-              <div className="w-24 h-1 bg-primary mx-auto"></div>
+              <p className="text-lg text-slate-600 mb-4">by My Abroad Ally</p>
+              <div className="w-24 h-1 bg-yellow-400 mx-auto"></div>
             </div>
 
             {/* Trip Title */}
@@ -336,16 +340,16 @@ export function QuotePreview({ quote }: QuotePreviewProps) {
             </div>
 
             {/* Next Steps */}
-            <Card className="bg-gradient-to-r from-primary to-blue-600 p-6 text-white text-center">
+            <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
               <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
-              <p className="mb-6 text-blue-100">
-                Contact us to discuss this opportunity and customize the perfect educational experience for {quote.schoolName}.
+              <p className="mb-6 text-gray-800">
+                Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.schoolName}.
               </p>
               
-              <div className="space-y-2 text-sm">
-                <p><Phone className="inline mr-2 h-4 w-4" />+44 20 1234 5678</p>
-                <p><Mail className="inline mr-2 h-4 w-4" />quotes@traveleducation.com</p>
-                <p><Globe className="inline mr-2 h-4 w-4" />www.traveleducation.com</p>
+              <div className="space-y-2 text-sm font-medium">
+                <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
+                <p><Mail className="inline mr-2 h-4 w-4" />info@myabroadally.com</p>
+                <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
               </div>
             </Card>
           </div>

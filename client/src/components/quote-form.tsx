@@ -80,9 +80,9 @@ export function QuoteForm({ onSubmit, isLoading }: QuoteFormProps) {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
-                        <SelectItem value="Cultural Exchange">Cultural Exchange</SelectItem>
-                        <SelectItem value="Language Immersion">Language Immersion</SelectItem>
-                        <SelectItem value="Historical Study Tour">Historical Study Tour</SelectItem>
+                        <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
+                        <SelectItem value="School Exchange">School Exchange</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

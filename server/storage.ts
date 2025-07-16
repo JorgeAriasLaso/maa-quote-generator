@@ -33,6 +33,10 @@ export class MemStorage implements IStorage {
       ...insertQuote,
       id,
       createdAt: new Date(),
+      travelInsurance: insertQuote.travelInsurance ?? false,
+      airportTransfers: insertQuote.airportTransfers ?? false,
+      localTransport: insertQuote.localTransport ?? false,
+      tourGuide: insertQuote.tourGuide ?? false,
     };
     this.quotes.set(id, quote);
     return quote;
