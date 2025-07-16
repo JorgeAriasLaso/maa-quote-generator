@@ -564,11 +564,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         return;
       }
 
-      // Temporarily hide the preview header and controls for PDF
+      // Temporarily hide the preview header and internal analysis sections for PDF
       const previewHeader = document.querySelector('.preview-header');
+      const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
+      
       if (previewHeader) {
         (previewHeader as HTMLElement).style.display = 'none';
       }
+      
+      // Hide internal analysis sections
+      internalAnalysisSections.forEach((section) => {
+        (section as HTMLElement).style.display = 'none';
+      });
 
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
@@ -580,10 +587,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         height: quoteElement.scrollHeight,
       });
 
-      // Show the header again
+      // Show the header and internal analysis sections again
       if (previewHeader) {
         (previewHeader as HTMLElement).style.display = '';
       }
+      
+      internalAnalysisSections.forEach((section) => {
+        (section as HTMLElement).style.display = '';
+      });
 
       // Calculate PDF dimensions
       const imgData = canvas.toDataURL('image/png');
@@ -903,7 +914,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   )}
                   
                   {costBreakdown && costBreakdown.erasmusFunding && (
-                    <div className="border-t border-slate-300 pt-2">
+                    <div className="internal-analysis-only border-t border-slate-300 pt-2">
                       <h5 className="font-medium text-green-700 mb-2">Erasmus+ Funding Available:</h5>
                       <div className="space-y-1 text-sm">
                         <div className="flex justify-between items-center">
@@ -944,7 +955,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                       <span className="text-2xl font-bold text-primary">€{calculateTotal().toLocaleString()}</span>
                     </div>
                     {costBreakdown && costBreakdown.erasmusFunding && (
-                      <div className="mt-2 space-y-2">
+                      <div className="internal-analysis-only mt-2 space-y-2">
                         <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium text-blue-800">Available Erasmus+ Funding</span>
@@ -979,7 +990,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   
                   {/* Internal Profitability Analysis */}
                   {costBreakdown && costBreakdown.profitability && costBreakdown.internalCosts.totalCosts > 0 && (
-                    <div className="border-t border-slate-300 pt-4">
+                    <div className="internal-analysis-only border-t border-slate-300 pt-4">
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <h4 className="text-sm font-semibold text-red-800 mb-3 flex items-center">
                           <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>

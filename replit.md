@@ -59,6 +59,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented live cost breakdown updates from form to preview for real-time profitability analysis
 ✓ Added profit per student and profit per teacher calculations in profitability section
 ✓ Enhanced Erasmus+ funding display with detailed student/teacher breakdown and country group information
+✓ Added PDF export protection - Erasmus+ funding and internal profitability analysis now excluded from customer PDFs
+✓ Implemented CSS class system (.internal-analysis-only) to hide sensitive business data from customer-facing documents
 
 ## System Architecture
 
