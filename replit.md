@@ -18,6 +18,9 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Added company branding throughout quote documents
 ✓ Updated contact information to myabroadally.com domain
 ✓ Fixed storage type issues for boolean fields
+✓ Created comprehensive city-specific content for 18 European destinations
+✓ Added PostgreSQL database with Drizzle ORM integration
+✓ Replaced in-memory storage with persistent database storage
 
 ## System Architecture
 
@@ -68,9 +71,10 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 - Extensive UI component library from shadcn/ui
 
 ### Storage Strategy
-- **Development**: In-memory storage (`MemStorage` class)
-- **Production**: PostgreSQL via Drizzle ORM
+- **Current**: PostgreSQL via Drizzle ORM (`DatabaseStorage` class)
+- **Fallback**: In-memory storage (`MemStorage` class) available for development
 - Storage abstraction allows easy switching between implementations
+- Database connection via Neon PostgreSQL serverless
 
 ## Data Flow
 
