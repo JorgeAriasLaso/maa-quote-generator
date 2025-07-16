@@ -54,6 +54,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       costStudentCoordination: parseFloat(quote.costStudentCoordination || "60"),
       costTeacherCoordination: parseFloat(quote.costTeacherCoordination || "0"),
       costLocalCoordinator: parseFloat(quote.costLocalCoordinator || "150"),
+      costAirportTransfer: quote.costAirportTransfer || "0",
     }
   ) : null);
 
@@ -1105,7 +1106,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               
               <div className="space-y-2 text-sm font-medium">
                 <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
-                <p><Mail className="inline mr-2 h-4 w-4" />info@myabroadally.com</p>
+                <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
                 <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
               </div>
             </Card>

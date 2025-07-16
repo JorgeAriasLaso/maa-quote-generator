@@ -71,7 +71,7 @@ export default function Home() {
           costStudentCoordination: parseFloat(data.costStudentCoordination || "60"),
           costTeacherCoordination: parseFloat(data.costTeacherCoordination || "0"),
           costLocalCoordinator: parseFloat(data.costLocalCoordinator || "150"),
-          costAirportTransfer: data.costAirportTransfer || "0",
+          costAirportTransfer: parseFloat(data.costAirportTransfer || "0"),
         }
       );
 
