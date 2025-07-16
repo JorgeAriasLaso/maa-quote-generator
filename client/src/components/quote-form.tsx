@@ -313,7 +313,19 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         costAirportTransfer: currentQuote.costAirportTransfer || "",
       };
       
+      // Reset form with explicit field setting
       form.reset(formData);
+      
+      // Force individual field updates to ensure they're properly set
+      Object.keys(formData).forEach(key => {
+        const value = formData[key as keyof typeof formData];
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          form.setValue(key as any, value);
+        }
+      });
+      
+      // Force form to re-render
+      form.trigger();
       
       // Handle destination selection
       if (currentQuote.destination) {
