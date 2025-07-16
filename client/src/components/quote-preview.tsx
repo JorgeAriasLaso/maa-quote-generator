@@ -577,15 +577,24 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
+      // Set optimal width for PDF export (A4 standard)
+      const originalMaxWidth = quoteElement.style.maxWidth;
+      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
+      quoteElement.style.width = '794px';
+      
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: quoteElement.scrollWidth,
+        width: 794, // Fixed A4 width
         height: quoteElement.scrollHeight,
       });
+      
+      // Restore original width
+      quoteElement.style.maxWidth = originalMaxWidth;
+      quoteElement.style.width = '';
 
       // Show the header and internal analysis sections again
       if (previewHeader) {
@@ -596,25 +605,29 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Calculate PDF dimensions
+      // Calculate PDF dimensions for optimal A4 layout
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate scaling to fit content on page
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const scaledWidth = imgWidth * ratio;
-      const scaledHeight = imgHeight * ratio;
+      // Calculate scaling to use full page width with margins
+      const margin = 10; // 10mm margins
+      const availableWidth = pdfWidth - (2 * margin);
+      const availableHeight = pdfHeight - (2 * margin);
       
-      // Center the content
-      const x = (pdfWidth - scaledWidth) / 2;
-      const y = (pdfHeight - scaledHeight) / 2;
+      const ratio = Math.min(availableWidth / (imgWidth * 0.264583), availableHeight / (imgHeight * 0.264583)); // Convert pixels to mm
+      const scaledWidth = (imgWidth * 0.264583) * ratio;
+      const scaledHeight = (imgHeight * 0.264583) * ratio;
+      
+      // Center the content with margins
+      const x = margin + (availableWidth - scaledWidth) / 2;
+      const y = margin;
 
-      // Add image to PDF
+      // Add image to PDF using full available width
       pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
       
       // Generate filename
@@ -685,7 +698,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
 
         {/* Quote Document */}
         <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div id="quote-document" className="max-w-2xl mx-auto bg-white">
+          <div id="quote-document" className="max-w-4xl mx-auto bg-white print:max-w-none print:w-full">
             {/* Header */}
             <div className="text-center mb-12">
               <img 

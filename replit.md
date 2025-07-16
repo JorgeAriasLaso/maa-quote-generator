@@ -65,6 +65,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed teacher meal pricing calculation - teacher discount now only applies when using default pricing, not custom pricing
 ✓ Eliminated all discounts from calculations - removed teacher meal discounts and group discounts for transparent pricing
 ✓ Added airport transfer cost input field to internal analysis section for accurate profitability tracking
+✓ Fixed PDF output width to fit standard A4 page sizing with proper margins and full-width layout
 
 ## System Architecture
 
