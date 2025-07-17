@@ -120,6 +120,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Replaced first picture (next to duration/students/teachers) with madrid1 custom image
 ✓ Modified image gallery to show only 4 pictures (madrid2-madrid5) in 2x2 grid layout instead of 5
 ✓ Removed top picture completely and centered the trip details frame for cleaner layout
+✓ Applied centered layout (no top image) to all cities with 4-image grid format
+✓ Updated page break positioning to start second page with Educational Value & Learning Outcomes section
 
 ## System Architecture
 
