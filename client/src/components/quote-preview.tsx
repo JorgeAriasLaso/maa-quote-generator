@@ -998,168 +998,178 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   
                   {/* Internal Profitability Analysis */}
                   {costBreakdown && costBreakdown.profitability && costBreakdown.internalCosts.totalCosts > 0 && (
-                    <div className="internal-analysis-only border-t border-slate-300 pt-4">
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <h4 className="text-sm font-semibold text-red-800 mb-3 flex items-center">
-                          <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+                    <div className="internal-analysis-only border-t border-slate-300 pt-6">
+                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
+                        <h4 className="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                          <div className="w-3 h-3 bg-red-600 rounded-full mr-3"></div>
                           Internal Profitability Analysis
                         </h4>
                         
-                        <div className="space-y-3 text-sm">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <span className="text-red-700 font-medium">Revenue:</span>
-                              <div className="text-lg font-bold text-green-700">
-                                {formatCurrency(costBreakdown.profitability.revenue)}
-                              </div>
+                        {/* Revenue & Costs Overview */}
+                        <div className="grid grid-cols-2 gap-6 mb-6">
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div className="text-sm text-green-700 font-medium mb-1">Total Revenue</div>
+                            <div className="text-2xl font-bold text-green-800">
+                              {formatCurrency(costBreakdown.profitability.revenue)}
                             </div>
-                            <div>
-                              <span className="text-red-700 font-medium">Total Costs:</span>
-                              <div className="text-lg font-bold text-red-700">
-                                {formatCurrency(costBreakdown.profitability.costs)}
-                              </div>
+                            <div className="text-xs text-green-600 mt-1">
+                              {quote?.numberOfStudents} students + {quote?.numberOfTeachers} teachers
                             </div>
                           </div>
-                          
-                          <div className="border-t border-red-200 pt-2 space-y-2">
-                            <div className="flex justify-between items-center">
-                              <span className="text-red-700 font-medium">Gross Profit:</span>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div className="text-sm text-red-700 font-medium mb-1">Total Internal Costs</div>
+                            <div className="text-2xl font-bold text-red-800">
+                              {formatCurrency(costBreakdown.profitability.costs)}
+                            </div>
+                            <div className="text-xs text-red-600 mt-1">
+                              All operational expenses
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Profit Calculation */}
+                        <div className="bg-white border border-slate-200 rounded-lg p-4 mb-6">
+                          <h5 className="text-md font-semibold text-slate-800 mb-4">Profit Calculation</h5>
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                              <span className="text-slate-700 font-medium">Gross Profit</span>
                               <span className={`text-lg font-bold ${costBreakdown.profitability.grossProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                                 {formatCurrency(costBreakdown.profitability.grossProfit)}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-red-700 font-medium">VAT (21%):</span>
-                              <span className="text-orange-600 font-bold">
-                                {formatCurrency(costBreakdown.profitability.vat)}
+                            <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                              <span className="text-slate-700">Less: VAT (21%)</span>
+                              <span className="text-orange-600 font-semibold">
+                                -{formatCurrency(costBreakdown.profitability.vat)}
                               </span>
                             </div>
-                            <div className="flex justify-between items-center border-t border-red-200 pt-2">
-                              <span className="text-red-800 font-semibold">Net Profit:</span>
+                            <div className="flex justify-between items-center py-3 border-t-2 border-slate-300 bg-slate-50 px-2 rounded">
+                              <span className="text-slate-800 font-bold">Net Profit</span>
                               <span className={`text-xl font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                                 {formatCurrency(costBreakdown.profitability.netProfit)}
                               </span>
                             </div>
-                            
-                            {/* Average profit per traveller */}
-                            <div className="border-t border-red-200 pt-2 space-y-1">
-                              <div className="flex justify-between items-center text-sm">
-                                <span className="text-red-700">Average Profit per Traveller:</span>
-                                <span className={`font-bold ${(() => {
-                                  if (!quote || (quote.numberOfStudents + quote.numberOfTeachers) === 0) return 'text-red-700';
-                                  const avgProfit = costBreakdown.profitability.netProfit / (quote.numberOfStudents + quote.numberOfTeachers);
-                                  return avgProfit >= 0 ? 'text-green-700' : 'text-red-700';
-                                })()}`}>
-                                  {quote && (quote.numberOfStudents + quote.numberOfTeachers) > 0 ? (() => {
-                                    const avgProfit = costBreakdown.profitability.netProfit / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    return formatCurrency(avgProfit);
-                                  })() : '€0'}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 text-xs">
-                              <div className="flex justify-between">
-                                <span className="text-red-700">Gross Margin:</span>
-                                <span className={`font-bold ${costBreakdown.profitability.grossMarginPercentage >= 30 ? 'text-green-700' : costBreakdown.profitability.grossMarginPercentage >= 15 ? 'text-yellow-600' : 'text-red-700'}`}>
-                                  {costBreakdown.profitability.grossMarginPercentage.toFixed(1)}%
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-red-700">Net Margin:</span>
-                                <span className={`font-bold ${costBreakdown.profitability.netMarginPercentage >= 20 ? 'text-green-700' : costBreakdown.profitability.netMarginPercentage >= 10 ? 'text-yellow-600' : 'text-red-700'}`}>
-                                  {costBreakdown.profitability.netMarginPercentage.toFixed(1)}%
-                                </span>
-                              </div>
+                          </div>
+                        </div>
+                        
+                        {/* Key Metrics */}
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                            <div className="text-xs text-blue-700 font-medium mb-1">Average Profit per Traveller</div>
+                            <div className={`text-lg font-bold ${(() => {
+                              if (!quote || (quote.numberOfStudents + quote.numberOfTeachers) === 0) return 'text-red-700';
+                              const avgProfit = costBreakdown.profitability.netProfit / (quote.numberOfStudents + quote.numberOfTeachers);
+                              return avgProfit >= 0 ? 'text-green-700' : 'text-red-700';
+                            })()}`}>
+                              {quote && (quote.numberOfStudents + quote.numberOfTeachers) > 0 ? (() => {
+                                const avgProfit = costBreakdown.profitability.netProfit / (quote.numberOfStudents + quote.numberOfTeachers);
+                                return formatCurrency(avgProfit);
+                              })() : '€0'}
                             </div>
                           </div>
-                          
-                          <div className="bg-red-100 border border-red-200 rounded p-3">
-                            <h5 className="text-xs font-semibold text-red-800 mb-3">Detailed Cost Breakdown</h5>
-                            <div className="overflow-x-auto">
-                              <table className="w-full text-xs text-red-700">
-                                <thead>
-                                  <tr className="border-b border-red-200">
-                                    <th className="text-left py-1">Item</th>
-                                    <th className="text-left py-1">Calculation</th>
-                                    <th className="text-right py-1">Amount</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="space-y-1">
-                                  {costBreakdown.internalCosts.studentAccommodation > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Student Accommodation</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfStudents || 0} students × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costStudentAccommodationPerDay || "0")).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.studentAccommodation.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.teacherAccommodation > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Teacher Accommodation</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfTeachers || 0} teachers × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costTeacherAccommodationPerDay || "0")).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.meals > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Meals (All)</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × {quote ? parseDuration(quote.duration) : 0} days × €{((parseFloat(quote?.costBreakfastPerDay || "0") + parseFloat(quote?.costLunchPerDay || "0") + parseFloat(quote?.costDinnerPerDay || "0"))).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.meals.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.localTransportation > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Local Transport</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costLocalTransportationCard || "0")).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.localTransportation.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.coordination > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Coordination Fees</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfStudents || 0} × €{(parseFloat(quote?.costStudentCoordination || "0")).toFixed(2)} + {quote?.numberOfTeachers || 0} × €{(parseFloat(quote?.costTeacherCoordination || "0")).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.coordination.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.localCoordinator > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Local Coordinator</td>
-                                      <td className="py-1 text-slate-600">1 trip × €{(parseFloat(quote?.costLocalCoordinator || "0")).toFixed(2)}</td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.localCoordinator.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.airportTransfer > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Airport Transfers</td>
-                                      <td className="py-1 text-slate-600">
-                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costAirportTransfer || "0")).toFixed(2)}
-                                      </td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.airportTransfer.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  {costBreakdown.internalCosts.additionalServices > 0 && (
-                                    <tr className="border-b border-red-100">
-                                      <td className="py-1">Additional Services</td>
-                                      <td className="py-1 text-slate-600">Various services</td>
-                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.additionalServices.toFixed(2)}</td>
-                                    </tr>
-                                  )}
-                                  <tr className="border-t-2 border-red-300 font-semibold">
-                                    <td className="py-2">Total Internal Costs</td>
-                                    <td className="py-2"></td>
-                                    <td className="py-2 text-right text-red-800">€{costBreakdown.internalCosts.totalCosts.toFixed(2)}</td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                            <div className="text-xs text-yellow-700 font-medium mb-1">Gross Margin</div>
+                            <div className={`text-lg font-bold ${costBreakdown.profitability.grossMarginPercentage >= 30 ? 'text-green-700' : costBreakdown.profitability.grossMarginPercentage >= 15 ? 'text-yellow-600' : 'text-red-700'}`}>
+                              {costBreakdown.profitability.grossMarginPercentage.toFixed(1)}%
+                            </div>
+                          </div>
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                            <div className="text-xs text-purple-700 font-medium mb-1">Net Margin</div>
+                            <div className={`text-lg font-bold ${costBreakdown.profitability.netMarginPercentage >= 20 ? 'text-green-700' : costBreakdown.profitability.netMarginPercentage >= 10 ? 'text-yellow-600' : 'text-red-700'}`}>
+                              {costBreakdown.profitability.netMarginPercentage.toFixed(1)}%
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Detailed Cost Breakdown */}
+                        <div className="bg-white border border-slate-200 rounded-lg p-4">
+                          <h5 className="text-md font-semibold text-slate-800 mb-4">Detailed Cost Breakdown</h5>
+                          <div className="space-y-3">
+                            {costBreakdown.internalCosts.studentAccommodation > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Student Accommodation</div>
+                                  <div className="text-sm text-slate-500">
+                                    {quote?.numberOfStudents || 0} students × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costStudentAccommodationPerDay || "0")).toFixed(2)}
+                                  </div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.studentAccommodation.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.teacherAccommodation > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Teacher Accommodation</div>
+                                  <div className="text-sm text-slate-500">
+                                    {quote?.numberOfTeachers || 0} teachers × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costTeacherAccommodationPerDay || "0")).toFixed(2)}
+                                  </div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.meals > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Meals</div>
+                                  <div className="text-sm text-slate-500">
+                                    {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × {quote ? parseDuration(quote.duration) : 0} days
+                                  </div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.meals.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.localTransportation > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Local Transportation</div>
+                                  <div className="text-sm text-slate-500">
+                                    {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costLocalTransportationCard || "0")).toFixed(2)}
+                                  </div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.localTransportation.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.coordination > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Coordination Fees</div>
+                                  <div className="text-sm text-slate-500">Student and teacher coordination</div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.coordination.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.localCoordinator > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Local Coordinator</div>
+                                  <div className="text-sm text-slate-500">1 trip × €{(parseFloat(quote?.costLocalCoordinator || "0")).toFixed(2)}</div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.localCoordinator.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.airportTransfer > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Airport Transfers</div>
+                                  <div className="text-sm text-slate-500">
+                                    {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costAirportTransfer || "0")).toFixed(2)}
+                                  </div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.airportTransfer.toFixed(2)}</div>
+                              </div>
+                            )}
+                            {costBreakdown.internalCosts.additionalServices > 0 && (
+                              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                <div>
+                                  <div className="font-medium">Additional Services</div>
+                                  <div className="text-sm text-slate-500">Various services</div>
+                                </div>
+                                <div className="font-semibold">€{costBreakdown.internalCosts.additionalServices.toFixed(2)}</div>
+                              </div>
+                            )}
+                            <div className="flex justify-between items-center py-3 border-t-2 border-slate-300 bg-slate-50 px-2 rounded">
+                              <div className="font-bold text-slate-800">Total Internal Costs</div>
+                              <div className="font-bold text-lg text-slate-800">€{costBreakdown.internalCosts.totalCosts.toFixed(2)}</div>
                             </div>
                           </div>
                         </div>
