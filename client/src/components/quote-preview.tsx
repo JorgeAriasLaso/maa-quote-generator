@@ -1048,25 +1048,33 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <span className={`font-bold ${(() => {
                                   if (!quote || quote.numberOfStudents === 0) return 'text-red-700';
                                   const studentRevenue = costBreakdown.student.totalPerStudent || 0;
-                                  const studentCosts = ((costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents) + 
-                                                     ((costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                     ((costBreakdown.internalCosts.transportCard || 0) / quote.numberOfStudents) + 
-                                                     ((costBreakdown.internalCosts.studentCoordination || 0) / quote.numberOfStudents) + 
-                                                     ((costBreakdown.internalCosts.airportTransfer || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                     ((costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers));
-                                  const studentProfit = studentRevenue - studentCosts;
+                                  // Student-specific costs per student
+                                  const studentAccoPerStudent = (costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents;
+                                  // Shared costs split among all participants
+                                  const mealsPerStudent = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                  const transportPerStudent = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                  const coordinatorPerStudent = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                  // Student coordination costs per student
+                                  const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) * quote.numberOfStudents / quote.numberOfStudents;
+                                  
+                                  const totalStudentCosts = studentAccoPerStudent + mealsPerStudent + transportPerStudent + coordinatorPerStudent + studentCoordinationCost;
+                                  const studentProfit = studentRevenue - totalStudentCosts;
                                   const studentNetProfit = studentProfit / 1.21;
                                   return !isNaN(studentNetProfit) && studentNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
                                 })()}`}>
                                   {quote && quote.numberOfStudents > 0 ? (() => {
                                     const studentRevenue = costBreakdown.student.totalPerStudent || 0;
-                                    const studentCosts = ((costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents) + 
-                                                       ((costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                       ((costBreakdown.internalCosts.transportCard || 0) / quote.numberOfStudents) + 
-                                                       ((costBreakdown.internalCosts.studentCoordination || 0) / quote.numberOfStudents) + 
-                                                       ((costBreakdown.internalCosts.airportTransfer || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                       ((costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers));
-                                    const studentProfit = studentRevenue - studentCosts;
+                                    // Student-specific costs per student
+                                    const studentAccoPerStudent = (costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents;
+                                    // Shared costs split among all participants
+                                    const mealsPerStudent = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const transportPerStudent = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const coordinatorPerStudent = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    // Student coordination costs per student (assuming coordination cost is per student)
+                                    const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    
+                                    const totalStudentCosts = studentAccoPerStudent + mealsPerStudent + transportPerStudent + coordinatorPerStudent + studentCoordinationCost;
+                                    const studentProfit = studentRevenue - totalStudentCosts;
                                     const studentNetProfit = studentProfit / 1.21;
                                     return isNaN(studentNetProfit) ? '€0' : formatCurrency(studentNetProfit);
                                   })() : '€0'}
@@ -1077,25 +1085,33 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                   <span className="text-red-700">Profit per Teacher:</span>
                                   <span className={`font-bold ${(() => {
                                     const teacherRevenue = costBreakdown.teacher.totalPerTeacher || 0;
-                                    const teacherCosts = ((costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers) + 
-                                                       ((costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                       ((costBreakdown.internalCosts.transportCard || 0) / quote.numberOfTeachers) + 
-                                                       ((costBreakdown.internalCosts.teacherCoordination || 0) / quote.numberOfTeachers) + 
-                                                       ((costBreakdown.internalCosts.airportTransfer || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                       ((costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers));
-                                    const teacherProfit = teacherRevenue - teacherCosts;
+                                    // Teacher-specific costs per teacher
+                                    const teacherAccoPerTeacher = (costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers;
+                                    // Shared costs split among all participants
+                                    const mealsPerTeacher = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const transportPerTeacher = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const coordinatorPerTeacher = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    // Teacher coordination costs per teacher 
+                                    const teacherCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    
+                                    const totalTeacherCosts = teacherAccoPerTeacher + mealsPerTeacher + transportPerTeacher + coordinatorPerTeacher + teacherCoordinationCost;
+                                    const teacherProfit = teacherRevenue - totalTeacherCosts;
                                     const teacherNetProfit = teacherProfit / 1.21;
                                     return !isNaN(teacherNetProfit) && teacherNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
                                   })()}`}>
                                     {(() => {
                                       const teacherRevenue = costBreakdown.teacher.totalPerTeacher || 0;
-                                      const teacherCosts = ((costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers) + 
-                                                         ((costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                         ((costBreakdown.internalCosts.transportCard || 0) / quote.numberOfTeachers) + 
-                                                         ((costBreakdown.internalCosts.teacherCoordination || 0) / quote.numberOfTeachers) + 
-                                                         ((costBreakdown.internalCosts.airportTransfer || 0) / (quote.numberOfStudents + quote.numberOfTeachers)) + 
-                                                         ((costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers));
-                                      const teacherProfit = teacherRevenue - teacherCosts;
+                                      // Teacher-specific costs per teacher
+                                      const teacherAccoPerTeacher = (costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers;
+                                      // Shared costs split among all participants
+                                      const mealsPerTeacher = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      const transportPerTeacher = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      const coordinatorPerTeacher = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      // Teacher coordination costs per teacher
+                                      const teacherCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      
+                                      const totalTeacherCosts = teacherAccoPerTeacher + mealsPerTeacher + transportPerTeacher + coordinatorPerTeacher + teacherCoordinationCost;
+                                      const teacherProfit = teacherRevenue - totalTeacherCosts;
                                       const teacherNetProfit = teacherProfit / 1.21;
                                       return isNaN(teacherNetProfit) ? '€0' : formatCurrency(teacherNetProfit);
                                     })()}
