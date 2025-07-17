@@ -580,33 +580,44 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         backgroundColor: quoteElement.style.backgroundColor,
       };
       
-      // Set fixed dimensions for PDF export
-      quoteElement.style.maxWidth = '750px';
-      quoteElement.style.width = '750px';
+      // Set fixed dimensions for PDF export with proper A4 ratio
+      quoteElement.style.maxWidth = '210mm';
+      quoteElement.style.width = '210mm';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '15px';
+      quoteElement.style.padding = '20mm';
       quoteElement.style.backgroundColor = '#ffffff';
+      quoteElement.style.boxSizing = 'border-box';
       
       // Allow time for DOM to update
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
       
-      // Create canvas from the quote document with optimized settings
+      // Create canvas from the quote document with A4 dimensions
       const canvas = await html2canvas(quoteElement, {
-        scale: 1.5,
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 780, // 750px + 30px padding
         logging: false,
-        imageTimeout: 15000,
+        imageTimeout: 30000,
+        height: window.innerHeight,
+        windowWidth: 794, // A4 width at 96 DPI
+        windowHeight: 1123, // A4 height at 96 DPI
         onclone: (clonedDoc) => {
-          // Ensure all styles are applied to the cloned document
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            clonedElement.style.maxWidth = '750px';
-            clonedElement.style.width = '750px';
+            clonedElement.style.maxWidth = '210mm';
+            clonedElement.style.width = '210mm';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '15px';
+            clonedElement.style.padding = '20mm';
+            clonedElement.style.boxSizing = 'border-box';
+            
+            // Ensure all images are properly sized
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach(img => {
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              img.style.objectFit = 'cover';
+            });
           }
         }
       });
@@ -623,58 +634,51 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with improved page handling
+      // Create PDF with proper A4 dimensions
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 12; // Optimal margins for content visibility
       
-      // Convert canvas to image data with high quality
+      // Convert canvas to image data
       const imgData = canvas.toDataURL('image/png', 1.0);
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate dimensions to fit page width
-      const availableWidth = pdfWidth - (2 * margin);
-      const scaledWidth = availableWidth;
-      const scaledHeight = (imgHeight * availableWidth) / imgWidth;
+      // Calculate scaling to fit A4 page exactly
+      const scaleX = pdfWidth / (imgWidth / 2); // Divide by 2 because canvas is 2x scale
+      const scaleY = pdfHeight / (imgHeight / 2);
+      const scale = Math.min(scaleX, scaleY);
       
-      // Check if content fits on one page
-      const availableHeight = pdfHeight - (2 * margin);
+      const scaledWidth = (imgWidth / 2) * scale;
+      const scaledHeight = (imgHeight / 2) * scale;
       
-      if (scaledHeight <= availableHeight) {
-        // Content fits on one page
-        pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
-      } else {
-        // Content spans multiple pages - use improved splitting
-        const pageContentHeight = availableHeight - 10; // Leave some buffer
-        const totalPages = Math.ceil(scaledHeight / pageContentHeight);
+      // Center the content on the page
+      const x = (pdfWidth - scaledWidth) / 2;
+      const y = (pdfHeight - scaledHeight) / 2;
+      
+      // Add the image to PDF
+      pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
+      
+      // If content is too tall, split into multiple pages
+      if (scaledHeight > pdfHeight) {
+        const pageHeight = pdfHeight;
+        const totalPages = Math.ceil(scaledHeight / pageHeight);
         
-        for (let i = 0; i < totalPages; i++) {
-          if (i > 0) {
-            pdf.addPage();
-          }
+        for (let i = 1; i < totalPages; i++) {
+          pdf.addPage();
           
-          // Calculate source rectangle with overlap to avoid cutting
-          const overlap = i === 0 ? 0 : 20; // 20px overlap for continuity
-          const sourceY = Math.max(0, (i * pageContentHeight * imgHeight) / scaledHeight - overlap);
+          const sourceY = (i * pageHeight * imgHeight) / scaledHeight;
           const sourceHeight = Math.min(
-            (pageContentHeight * imgHeight) / scaledHeight + overlap,
+            (pageHeight * imgHeight) / scaledHeight,
             imgHeight - sourceY
           );
           
-          // Scale back to match the target dimensions
-          const targetHeight = (sourceHeight * scaledHeight) / imgHeight;
-          const targetY = i === 0 ? margin : margin - (overlap * scaledHeight) / imgHeight;
-          
-          // Create a temporary canvas for this page slice
           const pageCanvas = document.createElement('canvas');
           const pageCtx = pageCanvas.getContext('2d');
           
           pageCanvas.width = imgWidth;
           pageCanvas.height = sourceHeight;
           
-          // Draw the slice from the original canvas
           pageCtx?.drawImage(
             canvas,
             0, sourceY, imgWidth, sourceHeight,
@@ -683,8 +687,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           
           const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
           
-          // Add image with proper positioning
-          pdf.addImage(pageImgData, 'PNG', margin, targetY, scaledWidth, targetHeight);
+          pdf.addImage(pageImgData, 'PNG', 0, 0, pdfWidth, pageHeight);
         }
       }
       
