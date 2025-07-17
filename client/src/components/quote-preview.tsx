@@ -32,6 +32,10 @@ import prague1 from "@assets/prague1.avif";
 import prague2 from "@assets/prague2.jpg";
 import prague3 from "@assets/prague3.png";
 import prague4 from "@assets/prague4.avif";
+import budapest1 from "@assets/budapest1.jpg";
+import budapest2 from "@assets/budapest2.jpg";
+import budapest3 from "@assets/budapest3.webp";
+import budapest4 from "@assets/budapest4.webp";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -364,28 +368,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
     // HUNGARY
     else if (city.includes('budapest')) {
-      return [
-        {
-          title: "Danube River Capital",
-          description: "Explore the stunning architecture along the Danube, learning about Central European urban planning and cultural preservation.",
-          image: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Thermal Bath Culture",
-          description: "Experience Budapest's unique thermal bath tradition and learn about wellness tourism and traditional Hungarian health practices.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Tech & Innovation Hub",
-          description: "Discover Budapest's growing startup ecosystem and learn about Hungary's digital transformation and EU technology initiatives.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Austro-Hungarian Legacy",
-          description: "Explore the grandeur of the former Austro-Hungarian Empire through palaces, parliament buildings, and cultural institutions.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Budapest provides students with an immersive educational experience in Central Europe's most captivating capital, where the majestic Danube River divides historic Buda from cosmopolitan Pest, creating stunning panoramic views that demonstrate urban planning excellence across centuries. Students explore the magnificent architecture of the former Austro-Hungarian Empire through iconic parliament buildings, royal palaces, and grand boulevards that tell the story of Central European political and cultural development. The city's famous thermal bath culture offers unique insights into traditional Hungarian wellness practices and modern wellness tourism, while Budapest's transformation into a thriving tech and innovation hub showcases Hungary's successful digital modernization and EU technology integration. Through visits to startups, cultural institutions, and historic sites, students gain comprehensive understanding of how this remarkable city bridges its imperial past with its dynamic European future.",
+        images: [
+          { src: budapest1, alt: "Budapest Parliament and Danube River panoramic view" },
+          { src: budapest2, alt: "Hungarian Parliament Building with historic monument" },
+          { src: budapest3, alt: "Famous Széchenyi thermal baths complex" },
+          { src: budapest4, alt: "Budapest Opera House evening illumination" }
+        ]
+      };
     }
     // DENMARK
     else if (city.includes('copenhagen')) {
