@@ -192,6 +192,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
       // Set all pricing fields to empty strings to avoid "010" issue
       studentAccommodationPerDay: "",
       teacherAccommodationPerDay: "",
+      accommodationName: "",
       breakfastPerDay: "",
       lunchPerDay: "",
       dinnerPerDay: "",
@@ -286,6 +287,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         // Service pricing fields - handle all string values properly
         studentAccommodationPerDay: currentQuote.studentAccommodationPerDay || "",
         teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay || "",
+        accommodationName: currentQuote.accommodationName || "",
         breakfastPerDay: currentQuote.breakfastPerDay || "",
         lunchPerDay: currentQuote.lunchPerDay || "",
         dinnerPerDay: currentQuote.dinnerPerDay || "",
