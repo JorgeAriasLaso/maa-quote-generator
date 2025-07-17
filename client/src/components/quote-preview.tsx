@@ -1055,7 +1055,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                   // Shared costs (split among all participants)
                                   const sharedCostPerPerson = ((costBreakdown.internalCosts.meals || 0) + 
                                                               (costBreakdown.internalCosts.localTransportation || 0) + 
-                                                              (costBreakdown.internalCosts.localCoordinator || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                                              (costBreakdown.internalCosts.localCoordinator || 0) + 
+                                                              (costBreakdown.internalCosts.additionalServices || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
                                   
                                   // Student coordination cost (from coordination field - need to determine student portion)
                                   const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) * quote.numberOfStudents / (quote.numberOfStudents + quote.numberOfTeachers) / quote.numberOfStudents;
@@ -1074,7 +1075,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                     // Shared costs (split among all participants)
                                     const sharedCostPerPerson = ((costBreakdown.internalCosts.meals || 0) + 
                                                                 (costBreakdown.internalCosts.localTransportation || 0) + 
-                                                                (costBreakdown.internalCosts.localCoordinator || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                                                (costBreakdown.internalCosts.localCoordinator || 0) + 
+                                                                (costBreakdown.internalCosts.additionalServices || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
                                     
                                     // Student coordination cost
                                     const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) * quote.numberOfStudents / (quote.numberOfStudents + quote.numberOfTeachers) / quote.numberOfStudents;
@@ -1117,7 +1119,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                       // Shared costs (split among all participants)
                                       const sharedCostPerPerson = ((costBreakdown.internalCosts.meals || 0) + 
                                                                   (costBreakdown.internalCosts.localTransportation || 0) + 
-                                                                  (costBreakdown.internalCosts.localCoordinator || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                                                  (costBreakdown.internalCosts.localCoordinator || 0) + 
+                                                                  (costBreakdown.internalCosts.additionalServices || 0)) / (quote.numberOfStudents + quote.numberOfTeachers);
                                       
                                       // Teacher coordination cost
                                       const teacherCoordinationCost = (costBreakdown.internalCosts.coordination || 0) * quote.numberOfTeachers / (quote.numberOfStudents + quote.numberOfTeachers) / quote.numberOfTeachers;
