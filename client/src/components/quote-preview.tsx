@@ -593,14 +593,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
-        scale: 1.5,
+        scale: 1,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 15000,
-        width: 900,
-        height: quoteElement.scrollHeight,
+        imageTimeout: 30000,
+        foreignObjectRendering: true,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
@@ -610,12 +609,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.padding = '30px';
             clonedElement.style.fontSize = '16px';
             
-            // Ensure images fit properly
+            // Force all images to load and display properly
             const images = clonedElement.querySelectorAll('img');
-            images.forEach(img => {
-              img.style.maxWidth = '100%';
-              img.style.height = 'auto';
+            images.forEach((img, index) => {
+              img.style.maxWidth = '180px';
+              img.style.width = '180px';
+              img.style.height = '120px';
+              img.style.objectFit = 'cover';
               img.style.display = 'block';
+              img.style.borderRadius = '8px';
+              img.style.margin = '2px';
             });
             
             // Increase font sizes for better PDF readability
@@ -840,13 +843,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </p>
                   
                   {/* Image gallery - 4 images in a nice layout */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {highlights.images.slice(1, 5).map((image, index) => (
-                      <div key={index}>
+                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '200px' }}>
                         <img 
                           src={image.src} 
                           alt={image.alt} 
-                          className="w-full h-44 object-cover rounded-lg shadow-sm"
+                          className="w-full h-32 object-cover rounded-lg shadow-sm"
+                          style={{ minHeight: '120px', maxHeight: '140px' }}
                         />
                       </div>
                     ))}
@@ -871,13 +875,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </div>
                   
                   {/* Image gallery - 4 images in a nice layout */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {highlights && Array.isArray(highlights) && highlights.slice(0, 4).map((highlight, index) => (
-                      <div key={index}>
+                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '200px' }}>
                         <img 
                           src={highlight.image} 
                           alt={highlight.title} 
-                          className="w-full h-44 object-cover rounded-lg shadow-sm"
+                          className="w-full h-32 object-cover rounded-lg shadow-sm"
+                          style={{ minHeight: '120px', maxHeight: '140px' }}
                         />
                       </div>
                     ))}
