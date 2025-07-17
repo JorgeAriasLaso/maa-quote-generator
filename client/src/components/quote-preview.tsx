@@ -829,19 +829,35 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </div>
                 </div>
               ) : (
-                // Fallback to old format for other cities
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {highlights && Array.isArray(highlights) && highlights.map((highlight, index) => (
-                    <div key={index} className="space-y-4">
-                      <img 
-                        src={highlight.image} 
-                        alt={highlight.title} 
-                        className="w-full h-40 object-cover rounded-lg"
-                      />
-                      <h4 className="font-semibold text-slate-800">{highlight.title}</h4>
-                      <p className="text-slate-600 text-sm">{highlight.description}</p>
-                    </div>
-                  )) || <div className="text-center text-slate-500">No destination highlights available</div>}
+                // Updated format for all other cities - single description with 4 images
+                <div className="space-y-6">
+                  <div className="text-slate-700 text-sm leading-relaxed">
+                    {highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                      <div className="space-y-4">
+                        {highlights.map((highlight, index) => (
+                          <div key={index}>
+                            <h4 className="font-semibold text-slate-800 mb-2">{highlight.title}</h4>
+                            <p className="mb-4">{highlight.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center text-slate-500">No destination highlights available</div>
+                    )}
+                  </div>
+                  
+                  {/* Image gallery - 4 images in a nice layout */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {highlights && Array.isArray(highlights) && highlights.slice(0, 4).map((highlight, index) => (
+                      <div key={index}>
+                        <img 
+                          src={highlight.image} 
+                          alt={highlight.title} 
+                          className="w-full h-48 object-cover rounded-lg shadow-md"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
