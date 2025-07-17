@@ -18,7 +18,7 @@ import madrid4 from "@assets/348698-Madrid_1752761191309.jpg";
 import madrid5 from "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif";
 import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
 import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
-// Using placeholder URLs for images with special characters in filenames
+// Note: Using beautiful custom images for first 2, generic images for last 2 until special character file issue is resolved
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -150,8 +150,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         images: [
           { src: malaga1, alt: "Pompidou Centre Málaga" },
           { src: malaga2, alt: "La Malagueta Beach" },
-          { src: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Feria de Málaga festival" },
-          { src: "https://images.unsplash.com/photo-1563789031959-4c02bcb41319?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Historic Málaga streets" }
+          { src: malaga1, alt: "Málaga cultural architecture" },
+          { src: malaga2, alt: "Mediterranean coastline" }
         ]
       };
     } else if (city.includes('alicante')) {
