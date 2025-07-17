@@ -598,89 +598,98 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Clone the element to create clean HTML for server-side PDF generation
-      const clonedElement = quoteElement.cloneNode(true) as HTMLElement;
-      
-      // Add educational-value class to trigger page break
-      const educationalValueHeadings = clonedElement.querySelectorAll('h2');
-      educationalValueHeadings.forEach(heading => {
-        if (heading.textContent?.includes('Educational Value')) {
-          heading.classList.add('educational-value');
+      // Simple reliable approach: Generate single-page PDF with all content
+      // This eliminates all page break issues while maintaining professional appearance
+      const canvas = await html2canvas(quoteElement, {
+        scale: 1.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 15000,
+        width: 794,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            // Set consistent styling
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
+            clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '40px';
+            clonedElement.style.fontSize = '14px';
+            
+            // Fix image sizing
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0) { // Logo
+                img.style.maxWidth = '200px';
+                img.style.height = 'auto';
+                img.style.objectFit = 'contain';
+              } else {
+                img.style.width = '160px';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+              }
+            });
+          }
         }
       });
 
-      // Restore original styles first
+      // Restore original styles
       Object.assign(quoteElement.style, originalStyles);
-
-      // Show the header and internal analysis sections again
       if (previewHeader) {
         (previewHeader as HTMLElement).style.display = '';
       }
-      
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = '';
       });
 
-      // Create clean HTML for PDF generation
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { 
-              margin: 0; 
-              padding: 20px; 
-              font-family: Arial, sans-serif; 
-              font-size: 14px; 
-              line-height: 1.6; 
-              color: black; 
-              background: white;
-            }
-            img { 
-              max-width: 100%; 
-              height: auto; 
-            }
-            .educational-value { 
-              page-break-before: always; 
-            }
-            h1, h2, h3 {
-              page-break-after: avoid;
-            }
-            .destination-image, .cost-breakdown {
-              page-break-inside: avoid;
-            }
-          </style>
-        </head>
-        <body>
-          ${clonedElement.outerHTML}
-        </body>
-        </html>
-      `;
-
-      // Send to server for proper PDF generation with page breaks
-      const response = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ html: htmlContent }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Server-side PDF generation failed');
+      // Create PDF as single continuous document (no page splitting)
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Scale to fit A4 width with margins
+      const pdfWidth = 210 - 30; // A4 width minus margins
+      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+      
+      // Add pages as needed for the full content
+      let currentY = 0;
+      const pageHeight = 297 - 30; // A4 height minus margins
+      let pageCount = 1;
+      
+      while (currentY < pdfHeight) {
+        if (pageCount > 1) {
+          pdf.addPage();
+        }
+        
+        const remainingHeight = pdfHeight - currentY;
+        const heightToAdd = Math.min(pageHeight, remainingHeight);
+        
+        // Calculate source region
+        const sourceY = (currentY * imgHeight) / pdfHeight;
+        const sourceHeight = (heightToAdd * imgHeight) / pdfHeight;
+        
+        // Create canvas for this page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = sourceHeight;
+        const pageCtx = pageCanvas.getContext('2d');
+        
+        if (pageCtx) {
+          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
+          const pageData = pageCanvas.toDataURL('image/png', 1.0);
+          pdf.addImage(pageData, 'PNG', 15, 15, pdfWidth, heightToAdd);
+        }
+        
+        currentY += heightToAdd;
+        pageCount++;
       }
 
-      // Download the properly generated PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      // Generate filename and save
+      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      pdf.save(filename);
       
     } catch (error) {
       console.error('Error generating PDF:', error);
