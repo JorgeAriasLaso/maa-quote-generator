@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
 import { CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
+import madrid1 from "@assets/5fa53648e38b2_1752761191307.jpeg";
+import madrid2 from "@assets/vistas-palacio-real_1752761191308.avif";
+import madrid3 from "@assets/895-adobestock110515761_1752761191309.jpeg";
+import madrid4 from "@assets/348698-Madrid_1752761191309.jpg";
+import madrid5 from "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -123,11 +128,11 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Madrid offers an exceptional educational experience as Spain's dynamic capital and the heart of European business, culture, and politics. Students will experience vibrant business culture and modern European economy while exploring the center of Spanish politics, finance, and innovation. The city provides world-class art and culture with visits to the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance. Students practice Spanish in its native environment while engaging with local professionals and experiencing authentic Spanish hospitality and culture. The historic Royal Palace, Plaza Mayor, and Retiro Park offer insights into Spain's rich history and its role in global exploration and trade, making Madrid an ideal destination for comprehensive educational travel.",
         images: [
-          { src: "/attached_assets/5fa53648e38b2_1752761191307.jpeg", alt: "Madrid cityscape" },
-          { src: "/attached_assets/vistas-palacio-real_1752761191308.avif", alt: "Royal Palace of Madrid" },
-          { src: "/attached_assets/895-adobestock110515761_1752761191309.jpeg", alt: "Madrid landmarks" },
-          { src: "/attached_assets/348698-Madrid_1752761191309.jpg", alt: "Madrid Gran Via at night" },
-          { src: "/attached_assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif", alt: "Madrid architectural landmarks" }
+          { src: madrid1, alt: "Madrid cityscape" },
+          { src: madrid2, alt: "Royal Palace of Madrid" },
+          { src: madrid3, alt: "Madrid landmarks" },
+          { src: madrid4, alt: "Madrid Gran Via at night" },
+          { src: madrid5, alt: "Madrid architectural landmarks" }
         ]
       };
     } else if (city.includes('malaga')) {
