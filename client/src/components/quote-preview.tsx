@@ -581,52 +581,76 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       };
       
       // Set standard PDF dimensions
-      quoteElement.style.maxWidth = '800px';
-      quoteElement.style.width = '800px';
+      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
+      quoteElement.style.width = '794px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '20px';
+      quoteElement.style.padding = '40px';
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '12px';
-      quoteElement.style.lineHeight = '1.5';
+      quoteElement.style.fontSize = '14px';
+      quoteElement.style.lineHeight = '1.6';
       
       // Allow time for DOM to update
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
-        scale: 1,
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 15000,
+        imageTimeout: 20000,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            clonedElement.style.maxWidth = '800px';
-            clonedElement.style.width = '800px';
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '20px';
-            clonedElement.style.fontSize = '12px';
-            clonedElement.style.lineHeight = '1.5';
+            clonedElement.style.padding = '40px';
+            clonedElement.style.fontSize = '14px';
+            clonedElement.style.lineHeight = '1.6';
             
-            // Ensure images render properly
+            // Improve image quality and size
             const images = clonedElement.querySelectorAll('img');
-            images.forEach(img => {
+            images.forEach((img, index) => {
               img.style.maxWidth = '100%';
-              img.style.height = 'auto';
+              img.style.width = '160px';
+              img.style.height = '120px';
+              img.style.objectFit = 'cover';
               img.style.display = 'block';
+              img.style.borderRadius = '6px';
+              img.style.imageRendering = 'auto';
             });
             
-            // Set appropriate heading sizes
+            // Set clear heading sizes
             const h1s = clonedElement.querySelectorAll('h1');
-            h1s.forEach(h => h.style.fontSize = '18px');
+            h1s.forEach(h => {
+              h.style.fontSize = '20px';
+              h.style.fontWeight = 'bold';
+              h.style.marginBottom = '12px';
+            });
             
             const h2s = clonedElement.querySelectorAll('h2');
-            h2s.forEach(h => h.style.fontSize = '16px');
+            h2s.forEach(h => {
+              h.style.fontSize = '18px';
+              h.style.fontWeight = 'bold';
+              h.style.marginBottom = '10px';
+            });
             
             const h3s = clonedElement.querySelectorAll('h3');
-            h3s.forEach(h => h.style.fontSize = '14px');
+            h3s.forEach(h => {
+              h.style.fontSize = '16px';
+              h.style.fontWeight = 'bold';
+              h.style.marginBottom = '8px';
+            });
+            
+            // Improve text clarity
+            const paragraphs = clonedElement.querySelectorAll('p');
+            paragraphs.forEach(p => {
+              p.style.fontSize = '14px';
+              p.style.lineHeight = '1.6';
+              p.style.marginBottom = '8px';
+            });
           }
         }
       });
@@ -643,18 +667,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with normal A4 dimensions and margins
+      // Create PDF with high quality settings
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 20; // 20mm margins (standard)
+      const margin = 15; // 15mm margins
       
-      // Convert canvas to image data
+      // Convert canvas to high quality image
       const imgData = canvas.toDataURL('image/png', 1.0);
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate dimensions to fit within margins
+      // Calculate dimensions accounting for 2x scale
       const availableWidth = pdfWidth - (2 * margin);
       const scaledWidth = availableWidth;
       const scaledHeight = (imgHeight * availableWidth) / imgWidth;
@@ -666,18 +690,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         // Content fits on one page
         pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Content needs multiple pages - split automatically
+        // Content needs multiple pages - split with overlap to prevent cutting
         const totalPages = Math.ceil(scaledHeight / availableHeight);
+        const overlap = 20; // 20px overlap to prevent cutting
         
         for (let i = 0; i < totalPages; i++) {
           if (i > 0) {
             pdf.addPage();
           }
           
-          // Calculate which portion of the image goes on this page
-          const sourceY = (i * availableHeight * imgHeight) / scaledHeight;
+          // Calculate source region with overlap
+          const sourceY = Math.max(0, (i * availableHeight * imgHeight) / scaledHeight - (i > 0 ? overlap : 0));
           const sourceHeight = Math.min(
-            (availableHeight * imgHeight) / scaledHeight,
+            (availableHeight * imgHeight) / scaledHeight + (i > 0 ? overlap : 0),
             imgHeight - sourceY
           );
           
@@ -688,7 +713,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           pageCanvas.width = imgWidth;
           pageCanvas.height = sourceHeight;
           
-          // Draw this page's portion of the content
+          // Draw this page's portion with high quality
           pageCtx?.drawImage(
             canvas,
             0, sourceY, imgWidth, sourceHeight,
