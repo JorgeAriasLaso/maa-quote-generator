@@ -777,7 +777,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <img 
                     src={quote.destination.toLowerCase().includes('madrid') ? madrid1 : getDestinationImage(quote.destination)} 
                     alt={quote.destination} 
-                    className="w-full h-32 object-cover"
+                    className="w-full h-32 object-fill"
                   />
                 </div>
 
