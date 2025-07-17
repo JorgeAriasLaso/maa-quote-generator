@@ -82,7 +82,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     // Spain
     if (city.includes('madrid')) {
       return "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('malaga')) {
+    } else if (city.includes('malaga') || city.includes('málaga')) {
       return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('alicante')) {
       return "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
@@ -145,7 +145,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           { src: madrid5, alt: "Madrid architectural landmarks" }
         ]
       };
-    } else if (city.includes('malaga')) {
+    } else if (city.includes('malaga') || city.includes('málaga')) {
       return {
         description: "Málaga stands as southern Spain's cultural and business gateway, where Mediterranean charm meets modern innovation. As the birthplace of Pablo Picasso and home to world-class museums including the Pompidou Centre, students experience exceptional artistic and cultural immersion. The city's vibrant tech sector and entrepreneurial ecosystem provide insights into Spain's digital transformation and startup culture. Students explore the historic Alcazaba fortress and Roman Theatre, discovering Spain's rich multicultural heritage from Moorish rule to modern times. The beautiful coastline and traditional Andalusian culture create an engaging environment for language learning and cultural exchange, while the modern port and tourism industry offer practical business insights into Mediterranean economic development.",
         images: [
