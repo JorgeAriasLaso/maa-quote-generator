@@ -16,6 +16,11 @@ import madrid2 from "@assets/vistas-palacio-real_1752761191308.avif";
 import madrid3 from "@assets/895-adobestock110515761_1752761191309.jpeg";
 import madrid4 from "@assets/348698-Madrid_1752761191309.jpg";
 import madrid5 from "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif";
+import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
+import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
+// Note: Using centro-pompidou image twice due to filename issues with special characters
+// import malaga3 from "@assets/Feria de Málaga_280525_GettyImages-1420308105_1752771123520.webp";
+// import malaga4 from "@assets/Malaga_280525_GettyImages-1988664077_1752771123521.webp";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -142,28 +147,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         ]
       };
     } else if (city.includes('malaga')) {
-      return [
-        {
-          title: "Costa del Sol Gateway",
-          description: "Experience the entrepreneurial spirit of southern Spain's tech hub, where tourism innovation meets traditional Andalusian culture.",
-          image: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Picasso's Birthplace",
-          description: "Visit the Picasso Museum and explore the artistic heritage of Málaga, fostering creativity and cultural appreciation in students.",
-          image: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Mediterranean Business Culture",
-          description: "Learn about Spain's tourism industry, port operations, and the growing tech sector in this modern Andalusian city.",
-          image: "https://images.unsplash.com/photo-1563789031959-4c02bcb41319?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Historic Moorish Heritage",
-          description: "Discover the Alcazaba fortress and Roman Theatre, exploring Spain's multicultural history and architectural evolution.",
-          image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Málaga stands as southern Spain's cultural and business gateway, where Mediterranean charm meets modern innovation. As the birthplace of Pablo Picasso and home to world-class museums including the Pompidou Centre, students experience exceptional artistic and cultural immersion. The city's vibrant tech sector and entrepreneurial ecosystem provide insights into Spain's digital transformation and startup culture. Students explore the historic Alcazaba fortress and Roman Theatre, discovering Spain's rich multicultural heritage from Moorish rule to modern times. The beautiful coastline and traditional Andalusian culture create an engaging environment for language learning and cultural exchange, while the modern port and tourism industry offer practical business insights into Mediterranean economic development.",
+        images: [
+          { src: malaga1, alt: "Pompidou Centre Málaga" },
+          { src: malaga2, alt: "La Malagueta Beach" },
+          { src: malaga1, alt: "Málaga cultural architecture" },
+          { src: malaga2, alt: "Mediterranean coastline" },
+          { src: malaga1, alt: "Modern Málaga" }
+        ]
+      };
     } else if (city.includes('alicante')) {
       return [
         {
