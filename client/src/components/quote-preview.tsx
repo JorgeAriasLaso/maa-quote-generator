@@ -8,7 +8,7 @@ function parseDuration(duration: string): number {
 }
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
+import { Download, ZoomIn, Printer, Loader2, FileSpreadsheet } from "lucide-react";
 import { CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 import madrid1 from "@assets/5fa53648e38b2_1752761191307.jpeg";
@@ -47,6 +47,7 @@ interface QuotePreviewProps {
 
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingSheets, setIsExportingSheets] = useState(false);
   
   // Parse adhoc services from quote
   const adhocServices: AdhocService[] = quote?.adhocServices ? 
@@ -577,6 +578,145 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   };
 
+  const handleExportGoogleSheets = async () => {
+    if (!quote || isExportingSheets) return;
+    
+    setIsExportingSheets(true);
+    try {
+      // Create comprehensive spreadsheet data including all internal calculations
+      const spreadsheetData = {
+        // Basic Quote Information
+        quoteInfo: {
+          'Quote Number': quote.quoteNumber,
+          'Date Created': new Date(quote.createdAt).toLocaleDateString(),
+          'Client Name': quote.fiscalName,
+          'Email': quote.email,
+          'Tax ID': quote.taxId || 'N/A',
+          'Country': quote.country,
+          'City': quote.city,
+          'Postcode': quote.postcode || 'N/A',
+          'Address': quote.address || 'N/A'
+        },
+        
+        // Trip Details
+        tripDetails: {
+          'Destination': quote.destination,
+          'Trip Type': quote.tripType,
+          'Start Date': quote.startDate,
+          'End Date': quote.endDate,
+          'Duration': quote.duration,
+          'Number of Students': quote.numberOfStudents,
+          'Number of Teachers': quote.numberOfTeachers,
+          'Total Participants': quote.numberOfStudents + quote.numberOfTeachers
+        },
+        
+        // Accommodation
+        accommodation: {
+          'Student Accommodation Name': quote.studentAccommodationName || 'N/A',
+          'Student Accommodation Price/Day': `€${parseFloat(quote.studentAccommodationPerDay || "0").toFixed(2)}`,
+          'Teacher Accommodation Name': quote.teacherAccommodationName || 'N/A', 
+          'Teacher Accommodation Price/Day': `€${parseFloat(quote.teacherAccommodationPerDay || "0").toFixed(2)}`
+        },
+        
+        // Meals
+        meals: {
+          'Breakfast Price/Day': `€${parseFloat(quote.breakfastPerDay || "0").toFixed(2)}`,
+          'Lunch Price/Day': `€${parseFloat(quote.lunchPerDay || "0").toFixed(2)}`,
+          'Dinner Price/Day': `€${parseFloat(quote.dinnerPerDay || "0").toFixed(2)}`
+        },
+        
+        // Other Services
+        services: {
+          'Transport Card Total': `€${parseFloat(quote.transportCardTotal || "0").toFixed(2)}`,
+          'Student Coordination Fee Total': `€${parseFloat(quote.studentCoordinationFeeTotal || "0").toFixed(2)}`,
+          'Teacher Coordination Fee Total': `€${parseFloat(quote.teacherCoordinationFeeTotal || "0").toFixed(2)}`,
+          'Airport Transfer Per Person': `€${parseFloat(quote.airportTransferPerPerson || "0").toFixed(2)}`
+        },
+        
+        // Customer Pricing
+        customerPricing: {
+          'Price Per Student': `€${parseFloat(quote.pricePerStudent || "0").toFixed(2)}`,
+          'Price Per Teacher': `€${parseFloat(quote.pricePerTeacher || "0").toFixed(2)}`,
+          'Total Student Revenue': `€${(parseFloat(quote.pricePerStudent || "0") * quote.numberOfStudents).toFixed(2)}`,
+          'Total Teacher Revenue': `€${(parseFloat(quote.pricePerTeacher || "0") * quote.numberOfTeachers).toFixed(2)}`,
+          'Total Revenue': `€${((parseFloat(quote.pricePerStudent || "0") * quote.numberOfStudents) + (parseFloat(quote.pricePerTeacher || "0") * quote.numberOfTeachers)).toFixed(2)}`
+        },
+        
+        // Internal Cost Analysis
+        internalCosts: {
+          'Student Accommodation Cost': `€${costBreakdown.internalCosts.studentAccommodation.toFixed(2)}`,
+          'Teacher Accommodation Cost': `€${costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}`,
+          'Meals Cost': `€${costBreakdown.internalCosts.meals.toFixed(2)}`,
+          'Local Transportation Cost': `€${costBreakdown.internalCosts.localTransportation.toFixed(2)}`,
+          'Coordination Fees Cost': `€${costBreakdown.internalCosts.coordination.toFixed(2)}`,
+          'Local Coordinator Cost': `€${costBreakdown.internalCosts.localCoordinator.toFixed(2)}`,
+          'Airport Transfer Cost': `€${costBreakdown.internalCosts.airportTransfer.toFixed(2)}`,
+          'Additional Services Cost': `€${costBreakdown.internalCosts.additionalServices.toFixed(2)}`,
+          'Total Internal Costs': `€${costBreakdown.internalCosts.totalCosts.toFixed(2)}`
+        },
+        
+        // Profitability Analysis
+        profitability: {
+          'Total Revenue': `€${costBreakdown.revenue.total.toFixed(2)}`,
+          'Total Costs': `€${costBreakdown.internalCosts.totalCosts.toFixed(2)}`,
+          'Gross Profit': `€${costBreakdown.profit.gross.toFixed(2)}`,
+          'Net Profit (after VAT)': `€${costBreakdown.profit.net.toFixed(2)}`,
+          'Average Profit per Traveller': `€${costBreakdown.profit.averagePerTraveller.toFixed(2)}`,
+          'Gross Margin': `${costBreakdown.profit.grossMargin.toFixed(1)}%`,
+          'Net Margin': `${costBreakdown.profit.netMargin.toFixed(1)}%`
+        },
+        
+        // Erasmus+ Funding (if available)
+        erasmusFunding: costBreakdown.erasmusFunding ? {
+          'Country Group': costBreakdown.erasmusFunding.countryGroup,
+          'Student Funding (Days 1-14)': `€${costBreakdown.erasmusFunding.student.days1to14.toFixed(2)}`,
+          'Student Funding (Days 15+)': `€${costBreakdown.erasmusFunding.student.days15plus.toFixed(2)}`,
+          'Total Student Funding': `€${costBreakdown.erasmusFunding.student.total.toFixed(2)}`,
+          'Teacher Funding (Days 1-14)': `€${costBreakdown.erasmusFunding.teacher.days1to14.toFixed(2)}`,
+          'Teacher Funding (Days 15+)': `€${costBreakdown.erasmusFunding.teacher.days15plus.toFixed(2)}`,
+          'Total Teacher Funding': `€${costBreakdown.erasmusFunding.teacher.total.toFixed(2)}`,
+          'Total Available Funding': `€${costBreakdown.erasmusFunding.total.toFixed(2)}`
+        } : {},
+        
+        // Additional Information
+        additional: {
+          'Additional Comments': quote.additionalComments || 'None'
+        }
+      };
+
+      // Convert to CSV format for Google Sheets compatibility
+      let csvContent = '';
+      
+      // Add each section
+      Object.entries(spreadsheetData).forEach(([sectionName, sectionData]) => {
+        if (Object.keys(sectionData).length > 0) {
+          csvContent += `\n${sectionName.toUpperCase()}\n`;
+          csvContent += 'Field,Value\n';
+          Object.entries(sectionData).forEach(([key, value]) => {
+            csvContent += `"${key}","${value}"\n`;
+          });
+        }
+      });
+
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}_Complete_Analysis.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+    } catch (error) {
+      console.error('Error generating Google Sheets export:', error);
+      alert('Failed to generate Google Sheets export. Please try again.');
+    } finally {
+      setIsExportingSheets(false);
+    }
+  };
+
   if (!quote) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -610,6 +750,20 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </Button>
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                 <Printer className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportGoogleSheets}
+                disabled={isExportingSheets}
+                className="text-green-600 border-green-600 hover:bg-green-50 disabled:opacity-50"
+              >
+                {isExportingSheets ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                )}
+                {isExportingSheets ? 'Exporting...' : 'Export Sheets'}
               </Button>
               <Button 
                 variant="default" 
