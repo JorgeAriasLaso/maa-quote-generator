@@ -113,6 +113,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Updated all destination pictures with unique, relevant images that match their content descriptions
 ✓ Fixed Madrid pictures with 4 distinct iconic images (Gran Vía, Prado Museum, Spanish culture, Royal Palace)
 ✓ Updated costing module to include individual meal cost breakdowns (breakfastCost, lunchCost, dinnerCost)
+✓ Fixed cost legend formatting to place "Average cost per student/teacher" inside parentheses for better clarity
 
 ## System Architecture
 

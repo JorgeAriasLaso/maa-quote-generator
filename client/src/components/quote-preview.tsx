@@ -885,7 +885,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-blue-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent}) - Average cost per student
+                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent} - Average cost per student)
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.student.totalForAllStudents || 0)}
@@ -937,7 +937,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-green-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher}) - Average cost per teacher
+                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher} - Average cost per teacher)
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.teacher.totalForAllTeachers || 0)}
