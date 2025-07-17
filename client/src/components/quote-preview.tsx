@@ -580,39 +580,37 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         backgroundColor: quoteElement.style.backgroundColor,
       };
       
-      // Set fixed dimensions for PDF export
-      quoteElement.style.maxWidth = '210mm';
-      quoteElement.style.width = '210mm';
+      // Set standard PDF dimensions
+      quoteElement.style.maxWidth = '800px';
+      quoteElement.style.width = '800px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '15mm';
+      quoteElement.style.padding = '20px';
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '14px';
-      quoteElement.style.lineHeight = '1.4';
+      quoteElement.style.fontSize = '12px';
+      quoteElement.style.lineHeight = '1.5';
       
       // Allow time for DOM to update
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
-        scale: 2,
+        scale: 1,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 10000,
-        height: quoteElement.scrollHeight,
-        width: quoteElement.scrollWidth,
+        imageTimeout: 15000,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            clonedElement.style.maxWidth = '210mm';
-            clonedElement.style.width = '210mm';
+            clonedElement.style.maxWidth = '800px';
+            clonedElement.style.width = '800px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '15mm';
-            clonedElement.style.fontSize = '14px';
-            clonedElement.style.lineHeight = '1.4';
+            clonedElement.style.padding = '20px';
+            clonedElement.style.fontSize = '12px';
+            clonedElement.style.lineHeight = '1.5';
             
-            // Simple image handling
+            // Ensure images render properly
             const images = clonedElement.querySelectorAll('img');
             images.forEach(img => {
               img.style.maxWidth = '100%';
@@ -620,12 +618,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               img.style.display = 'block';
             });
             
-            // Simple text scaling
-            const headings = clonedElement.querySelectorAll('h1, h2, h3');
-            headings.forEach(heading => {
-              heading.style.fontSize = '18px';
-              heading.style.fontWeight = 'bold';
-            });
+            // Set appropriate heading sizes
+            const h1s = clonedElement.querySelectorAll('h1');
+            h1s.forEach(h => h.style.fontSize = '18px');
+            
+            const h2s = clonedElement.querySelectorAll('h2');
+            h2s.forEach(h => h.style.fontSize = '16px');
+            
+            const h3s = clonedElement.querySelectorAll('h3');
+            h3s.forEach(h => h.style.fontSize = '14px');
           }
         }
       });
@@ -642,53 +643,52 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with A4 dimensions
+      // Create PDF with normal A4 dimensions and margins
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const margin = 20; // 20mm margins (standard)
       
       // Convert canvas to image data
       const imgData = canvas.toDataURL('image/png', 1.0);
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate scaling to fit A4 page
-      const scaleX = pdfWidth / (imgWidth / 2); // Divide by 2 for 2x canvas scale
-      const scaleY = pdfHeight / (imgHeight / 2);
-      const scale = Math.min(scaleX, scaleY);
+      // Calculate dimensions to fit within margins
+      const availableWidth = pdfWidth - (2 * margin);
+      const scaledWidth = availableWidth;
+      const scaledHeight = (imgHeight * availableWidth) / imgWidth;
       
-      const scaledWidth = (imgWidth / 2) * scale;
-      const scaledHeight = (imgHeight / 2) * scale;
+      // Available height per page (minus margins)
+      const availableHeight = pdfHeight - (2 * margin);
       
-      // Center content
-      const x = (pdfWidth - scaledWidth) / 2;
-      const y = 0;
-      
-      // Check if content fits on one page
-      if (scaledHeight <= pdfHeight) {
-        pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
+      if (scaledHeight <= availableHeight) {
+        // Content fits on one page
+        pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Split across multiple pages
-        const pageHeight = pdfHeight;
-        const totalPages = Math.ceil(scaledHeight / pageHeight);
+        // Content needs multiple pages - split automatically
+        const totalPages = Math.ceil(scaledHeight / availableHeight);
         
         for (let i = 0; i < totalPages; i++) {
           if (i > 0) {
             pdf.addPage();
           }
           
-          const sourceY = (i * pageHeight * imgHeight) / scaledHeight;
+          // Calculate which portion of the image goes on this page
+          const sourceY = (i * availableHeight * imgHeight) / scaledHeight;
           const sourceHeight = Math.min(
-            (pageHeight * imgHeight) / scaledHeight,
+            (availableHeight * imgHeight) / scaledHeight,
             imgHeight - sourceY
           );
           
+          // Create a canvas for this page's content
           const pageCanvas = document.createElement('canvas');
           const pageCtx = pageCanvas.getContext('2d');
           
           pageCanvas.width = imgWidth;
           pageCanvas.height = sourceHeight;
           
+          // Draw this page's portion of the content
           pageCtx?.drawImage(
             canvas,
             0, sourceY, imgWidth, sourceHeight,
@@ -698,7 +698,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
           const pageScaledHeight = (sourceHeight * scaledHeight) / imgHeight;
           
-          pdf.addImage(pageImgData, 'PNG', x, 0, scaledWidth, pageScaledHeight);
+          // Add this page's content to the PDF
+          pdf.addImage(pageImgData, 'PNG', margin, margin, scaledWidth, pageScaledHeight);
         }
       }
       
