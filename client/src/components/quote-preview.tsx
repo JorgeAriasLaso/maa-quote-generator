@@ -607,9 +607,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const page1Element = quoteElement.cloneNode(true) as HTMLElement;
       page1Element.id = 'pdf-page-1';
       
-      // Hide everything from Educational Value onwards
-      const educationalAndAfter = page1Element.querySelectorAll('#educational-value-section, #educational-value-section ~ *');
-      educationalAndAfter.forEach(el => (el as HTMLElement).style.display = 'none');
+      // Find and remove Educational Value section and everything after it
+      const educationalSection = page1Element.querySelector('#educational-value-section');
+      if (educationalSection) {
+        // Remove the Educational Value section and all following siblings
+        let nextSibling = educationalSection.nextSibling;
+        while (nextSibling) {
+          const toRemove = nextSibling;
+          nextSibling = nextSibling.nextSibling;
+          toRemove.parentNode?.removeChild(toRemove);
+        }
+        // Remove the Educational Value section itself
+        educationalSection.parentNode?.removeChild(educationalSection);
+      }
       
       // Style and position page 1 element
       page1Element.style.position = 'absolute';
@@ -647,18 +657,20 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const page2Element = quoteElement.cloneNode(true) as HTMLElement;
       page2Element.id = 'pdf-page-2';
       
-      // Simple approach: Hide everything except Educational Value and what follows
-      const educationalSection = page2Element.querySelector('#educational-value-section');
-      if (educationalSection) {
-        // Hide all direct children of the main container except Educational Value and following siblings
-        const mainContent = page2Element.querySelector('#quote-document');
-        if (mainContent) {
-          Array.from(mainContent.children).forEach(child => {
-            // If this child comes before Educational Value section, hide it
-            if (child.compareDocumentPosition(educationalSection) & Node.DOCUMENT_POSITION_FOLLOWING) {
-              (child as HTMLElement).style.display = 'none';
+      // Find Educational Value section and hide everything before it
+      const educationalSection2 = page2Element.querySelector('#educational-value-section');
+      if (educationalSection2) {
+        // Find the main quote document container
+        const quoteDoc = page2Element.querySelector('#quote-document');
+        if (quoteDoc) {
+          // Hide all children before Educational Value section
+          const children = Array.from(quoteDoc.children);
+          for (const child of children) {
+            if (child.id === 'educational-value-section') {
+              break; // Stop when we reach Educational Value
             }
-          });
+            (child as HTMLElement).style.display = 'none';
+          }
         }
       }
       
