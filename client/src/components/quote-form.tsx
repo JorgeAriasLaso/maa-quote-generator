@@ -988,6 +988,26 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                 
 
 
+                {/* Accommodation Name */}
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="accommodationName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hotel/Accommodation Name (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="e.g., Hotel ABC, Youth Hostel XYZ" 
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 {/* Daily Rates */}
                 <div>
                   <h4 className="font-medium text-slate-700 mb-3">Daily Rates (per person per day)</h4>

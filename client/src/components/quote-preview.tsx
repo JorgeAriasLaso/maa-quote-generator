@@ -962,7 +962,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {costBreakdown && (
                       <div className="space-y-1 text-xs text-slate-600">
                         <div className="flex justify-between">
-                          <span>• Accommodation:</span>
+                          <span>• Accommodation{quote.accommodationName ? ` (${quote.accommodationName})` : ''}:</span>
                           <span>{formatCurrency(costBreakdown.student.accommodation)}</span>
                         </div>
                         {costBreakdown.student.breakfastCost > 0 && (
@@ -1014,7 +1014,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {costBreakdown && (
                       <div className="space-y-1 text-xs text-slate-600">
                         <div className="flex justify-between">
-                          <span>• Accommodation:</span>
+                          <span>• Accommodation{quote.accommodationName ? ` (${quote.accommodationName})` : ''}:</span>
                           <span>{formatCurrency(costBreakdown.teacher.accommodation)}</span>
                         </div>
                         {costBreakdown.teacher.breakfastCost > 0 && (

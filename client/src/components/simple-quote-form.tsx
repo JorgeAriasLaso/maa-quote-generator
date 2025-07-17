@@ -39,6 +39,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     address: "",
     studentAccommodationPerDay: "",
     teacherAccommodationPerDay: "",
+    accommodationName: "",
     breakfastPerDay: "",
     lunchPerDay: "",
     dinnerPerDay: "",
@@ -105,6 +106,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
         address: currentQuote.address || "",
         studentAccommodationPerDay: currentQuote.studentAccommodationPerDay || "",
         teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay || "",
+        accommodationName: currentQuote.accommodationName || "",
         breakfastPerDay: currentQuote.breakfastPerDay || "",
         lunchPerDay: currentQuote.lunchPerDay || "",
         dinnerPerDay: currentQuote.dinnerPerDay || "",
@@ -530,6 +532,17 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             Custom Pricing (Optional)
           </h2>
           
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Hotel/Accommodation Name (Optional)</label>
+              <Input
+                value={formData.accommodationName}
+                onChange={(e) => updateFormData("accommodationName", e.target.value)}
+                placeholder="e.g., Hotel ABC, Youth Hostel XYZ"
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Student Accommodation (€/day)</label>
