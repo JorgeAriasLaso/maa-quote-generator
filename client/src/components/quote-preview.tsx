@@ -598,38 +598,88 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // ULTIMATE SOLUTION: Send HTML to backend for server-side PDF generation
-      const htmlContent = quoteElement.outerHTML;
-      
-      // Send to backend for PDF generation
-      const response = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          html: htmlContent,
-          quoteNumber: quote.quoteNumber,
-          fiscalName: quote.fiscalName,
-          destination: quote.destination
-        }),
+      // SIMPLE FIX: Use single canvas with manual Educational Value positioning
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 794,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
+            clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '40px';
+            clonedElement.style.fontSize = '14px';
+            clonedElement.style.lineHeight = '1.6';
+            
+            // Style images properly
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0 || img.src.includes('logo') || img.alt?.includes('My Abroad Ally')) {
+                img.style.maxWidth = '200px';
+                img.style.height = 'auto';
+                img.style.objectFit = 'contain';
+              } else {
+                img.style.width = '160px';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+              }
+            });
+          }
+        }
       });
+
+      // Find where Educational Value section is located
+      const educationalSection = quoteElement.querySelector('#educational-value-section');
+      let educationalPixelStart = Math.floor(canvas.height * 0.65); // Default fallback
       
-      if (!response.ok) {
-        throw new Error('Failed to generate PDF');
+      if (educationalSection) {
+        const rect = educationalSection.getBoundingClientRect();
+        const containerRect = quoteElement.getBoundingClientRect();
+        const relativeTop = rect.top - containerRect.top;
+        educationalPixelStart = Math.floor((relativeTop + 80) * 2); // Scale factor
+      }
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const margin = 15;
+      const contentWidth = 210 - (2 * margin);
+      
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const scaledWidth = contentWidth;
+      
+      // Page 1: Everything before Educational Value
+      const page1Height = educationalPixelStart - 50; // Slight buffer
+      const page1Canvas = document.createElement('canvas');
+      const page1Ctx = page1Canvas.getContext('2d');
+      if (page1Ctx) {
+        page1Canvas.width = canvas.width;
+        page1Canvas.height = page1Height;
+        page1Ctx.drawImage(canvas, 0, 0, canvas.width, page1Height, 0, 0, canvas.width, page1Height);
+        
+        const page1Data = page1Canvas.toDataURL('image/png', 1.0);
+        const page1ScaledHeight = (page1Height * scaledWidth) / canvas.width;
+        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Download the PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      // Page 2: Educational Value onwards
+      pdf.addPage();
+      const page2StartY = educationalPixelStart - 100; // Small overlap
+      const page2Height = canvas.height - page2StartY;
+      const page2Canvas = document.createElement('canvas');
+      const page2Ctx = page2Canvas.getContext('2d');
+      if (page2Ctx) {
+        page2Canvas.width = canvas.width;
+        page2Canvas.height = page2Height;
+        page2Ctx.drawImage(canvas, 0, page2StartY, canvas.width, page2Height, 0, 0, canvas.width, page2Height);
+        
+        const page2Data = page2Canvas.toDataURL('image/png', 1.0);
+        const page2ScaledHeight = (page2Height * scaledWidth) / canvas.width;
+        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
+      }
 
       // Restore original styling
       Object.assign(quoteElement.style, originalStyles);
