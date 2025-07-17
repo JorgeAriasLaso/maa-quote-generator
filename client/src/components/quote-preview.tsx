@@ -812,16 +812,30 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 Why {quote.destination} for Educational Travel?
               </h3>
               
-              {/* Check if highlights has description (new format) or is array (old format) */}
-              {highlights && highlights.description ? (
-                <div className="space-y-6">
-                  <p className="text-slate-700 text-sm leading-relaxed">
-                    {highlights.description}
-                  </p>
-                  
-                  {/* Image gallery - 4 images protected from page breaks */}
-                  <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                    {highlights.images.slice(1, 5).map((image, index) => (
+              {/* Unified layout - apply Madrid's working format to all cities */}
+              <div className="space-y-4">
+                {/* Text content first - convert all formats to single text block */}
+                <div className="text-slate-700 text-sm leading-relaxed space-y-3">
+                  {highlights && highlights.description ? (
+                    // Madrid format - single description
+                    <div dangerouslySetInnerHTML={{ __html: highlights.description.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
+                  ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                    // Other cities - convert array to continuous text
+                    highlights.map((highlight, index) => (
+                      <p key={index}>
+                        <strong>{highlight.title}:</strong> {highlight.description}
+                      </p>
+                    ))
+                  ) : (
+                    <div className="text-center text-slate-500">No destination highlights available</div>
+                  )}
+                </div>
+                
+                {/* Images placed after text to avoid page break cuts - protected block */}
+                <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                  {highlights && highlights.description && highlights.images ? (
+                    // Madrid format - use custom images
+                    highlights.images.slice(1, 5).map((image, index) => (
                       <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                         <img 
                           src={image.src} 
@@ -830,30 +844,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                           style={{ minHeight: '100px', maxHeight: '120px' }}
                         />
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                // Updated format for all other cities - single description with 4 images
-                <div className="space-y-6">
-                  <div className="text-slate-700 text-sm leading-relaxed">
-                    {highlights && Array.isArray(highlights) && highlights.length > 0 ? (
-                      <div className="space-y-4">
-                        {highlights.map((highlight, index) => (
-                          <div key={index}>
-                            <h4 className="font-semibold text-slate-800 mb-2">{highlight.title}</h4>
-                            <p className="mb-4">{highlight.description}</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center text-slate-500">No destination highlights available</div>
-                    )}
-                  </div>
-                  
-                  {/* Image gallery - 4 images protected from page breaks */}
-                  <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                    {highlights && Array.isArray(highlights) && highlights.slice(0, 4).map((highlight, index) => (
+                    ))
+                  ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                    // Other cities - use highlight images
+                    highlights.slice(0, 4).map((highlight, index) => (
                       <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                         <img 
                           src={highlight.image} 
@@ -862,10 +856,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                           style={{ minHeight: '100px', maxHeight: '120px' }}
                         />
                       </div>
-                    ))}
-                  </div>
+                    ))
+                  ) : (
+                    // Placeholder if no images available
+                    <div className="text-center text-slate-400 text-sm py-8">Images will be added when uploaded</div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Learning Outcomes - FORCE PAGE BREAK HERE */}
