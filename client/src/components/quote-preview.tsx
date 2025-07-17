@@ -598,61 +598,100 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Create canvas from the quote document
-      const canvas = await html2canvas(quoteElement, {
+      // NUCLEAR OPTION: Create separate HTML elements for each page
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const margin = 15;
+      const contentWidth = 210 - (2 * margin);
+
+      // PAGE 1: Clone document and hide Educational Value section onwards
+      const page1Element = quoteElement.cloneNode(true) as HTMLElement;
+      page1Element.id = 'pdf-page-1';
+      
+      // Hide everything from Educational Value onwards
+      const educationalAndAfter = page1Element.querySelectorAll('#educational-value-section, #educational-value-section ~ *');
+      educationalAndAfter.forEach(el => (el as HTMLElement).style.display = 'none');
+      
+      // Style and position page 1 element
+      page1Element.style.position = 'absolute';
+      page1Element.style.top = '-9999px';
+      page1Element.style.left = '0';
+      page1Element.style.maxWidth = '794px';
+      page1Element.style.width = '794px';
+      page1Element.style.backgroundColor = '#ffffff';
+      page1Element.style.padding = '40px';
+      page1Element.style.fontSize = '14px';
+      page1Element.style.lineHeight = '1.6';
+      
+      document.body.appendChild(page1Element);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Render page 1
+      const canvas1 = await html2canvas(page1Element, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 30000,
-        width: 794,
-        height: null,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
-          if (clonedElement) {
-            clonedElement.style.maxWidth = '794px';
-            clonedElement.style.width = '794px';
-            clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '40px';
-            clonedElement.style.fontSize = '14px';
-            clonedElement.style.lineHeight = '1.6';
-            
-            // FORCE PAGE BREAK: Find Educational Value section and add page break styles
-            const educationalSection = clonedElement.querySelector('#educational-value-section');
-            if (educationalSection) {
-              (educationalSection as HTMLElement).style.pageBreakBefore = 'always';
-              (educationalSection as HTMLElement).style.breakBefore = 'always';
-              (educationalSection as HTMLElement).style.marginTop = '40px';
-            }
-            
-            // Improve image quality and size, special handling for logo
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0 || img.src.includes('logo') || img.src.includes('Logo') || img.alt?.includes('My Abroad Ally')) {
-                img.style.maxWidth = '200px';
-                img.style.width = 'auto';
-                img.style.height = 'auto';
-                img.style.maxHeight = '128px';
-                img.style.objectFit = 'contain';
-              } else {
-                img.style.width = '160px';
-                img.style.height = '120px';
-                img.style.objectFit = 'cover';
-              }
-            });
-            
-            const h1s = clonedElement.querySelectorAll('h1');
-            h1s.forEach(h => { h.style.fontSize = '20px'; h.style.fontWeight = 'bold'; });
-            const h2s = clonedElement.querySelectorAll('h2');
-            h2s.forEach(h => { h.style.fontSize = '18px'; h.style.fontWeight = 'bold'; });
-            const h3s = clonedElement.querySelectorAll('h3');
-            h3s.forEach(h => { h.style.fontSize = '16px'; h.style.fontWeight = 'bold'; });
-            const ps = clonedElement.querySelectorAll('p');
-            ps.forEach(p => { p.style.fontSize = '14px'; p.style.lineHeight = '1.6'; });
-          }
-        }
+        width: 794
       });
+      
+      const page1Data = canvas1.toDataURL('image/png', 1.0);
+      const page1ScaledHeight = (canvas1.height * contentWidth) / canvas1.width;
+      pdf.addImage(page1Data, 'PNG', margin, margin, contentWidth, page1ScaledHeight);
+      
+      // Clean up page 1
+      document.body.removeChild(page1Element);
+      
+      // PAGE 2: Clone document and show only Educational Value onwards
+      pdf.addPage();
+      const page2Element = quoteElement.cloneNode(true) as HTMLElement;
+      page2Element.id = 'pdf-page-2';
+      
+      // Simple approach: Hide everything except Educational Value and what follows
+      const educationalSection = page2Element.querySelector('#educational-value-section');
+      if (educationalSection) {
+        // Hide all direct children of the main container except Educational Value and following siblings
+        const mainContent = page2Element.querySelector('#quote-document');
+        if (mainContent) {
+          Array.from(mainContent.children).forEach(child => {
+            // If this child comes before Educational Value section, hide it
+            if (child.compareDocumentPosition(educationalSection) & Node.DOCUMENT_POSITION_FOLLOWING) {
+              (child as HTMLElement).style.display = 'none';
+            }
+          });
+        }
+      }
+      
+      // Style page 2 element
+      page2Element.style.position = 'absolute';
+      page2Element.style.top = '-9999px';
+      page2Element.style.left = '0';
+      page2Element.style.maxWidth = '794px';
+      page2Element.style.width = '794px';
+      page2Element.style.backgroundColor = '#ffffff';
+      page2Element.style.padding = '40px';
+      page2Element.style.fontSize = '14px';
+      page2Element.style.lineHeight = '1.6';
+      
+      document.body.appendChild(page2Element);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Render page 2
+      const canvas2 = await html2canvas(page2Element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 794
+      });
+      
+      const page2Data = canvas2.toDataURL('image/png', 1.0);
+      const page2ScaledHeight = (canvas2.height * contentWidth) / canvas2.width;
+      pdf.addImage(page2Data, 'PNG', margin, margin, contentWidth, page2ScaledHeight);
+      
+      // Clean up page 2
+      document.body.removeChild(page2Element);
 
       // Restore original styling
       Object.assign(quoteElement.style, originalStyles);
@@ -665,81 +704,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = '';
       });
-
-      // Create PDF with EXACTLY 2 pages - Educational Value starts page 2
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const margin = 15; // 15mm margins
-      const contentWidth = 210 - (2 * margin); // A4 width minus margins
-      const contentHeight = 297 - (2 * margin); // A4 height minus margins
-      
-      // Find Educational Value section position to determine split point
-      const educationalSection = quoteElement.querySelector('#educational-value-section');
-      let splitRatio = 0.5; // Default to 50/50 split if section not found
-      
-      if (educationalSection) {
-        const sectionTop = educationalSection.offsetTop;
-        const totalHeight = quoteElement.scrollHeight;
-        splitRatio = sectionTop / totalHeight;
-      }
-      
-      // Convert canvas to image
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      // Calculate scaling to fit width
-      const scaledWidth = contentWidth;
-      const scaledHeight = (imgHeight * contentWidth) / imgWidth;
-      
-      // FORCE EXACTLY 2 PAGES: Find Educational Value section's exact position
-      const educationalElement = quoteElement.querySelector('#educational-value-section');
-      let splitPixel = Math.floor(imgHeight * 0.65); // Default fallback
-      
-      if (educationalElement) {
-        // Get the actual pixel position where Educational Value starts
-        const elementRect = educationalElement.getBoundingClientRect();
-        const containerRect = quoteElement.getBoundingClientRect();
-        const relativeTop = elementRect.top - containerRect.top;
-        
-        // Convert to canvas coordinates (accounting for scale and padding)
-        const paddingOffset = 80; // 40px padding * 2 scale
-        splitPixel = Math.floor((relativeTop + paddingOffset) * 2); // 2x scale factor
-        
-        // Ensure it's within reasonable bounds (not too early, not too late)
-        splitPixel = Math.max(Math.floor(imgHeight * 0.5), Math.min(splitPixel, Math.floor(imgHeight * 0.7)));
-      }
-      
-      console.log(`PDF Split: Educational Value at pixel ${splitPixel} of ${imgHeight} total height`);
-      
-      // Page 1: Everything before Educational Value
-      const page1Height = splitPixel;
-      const page1Canvas = document.createElement('canvas');
-      const page1Ctx = page1Canvas.getContext('2d');
-      if (page1Ctx) {
-        page1Canvas.width = imgWidth;
-        page1Canvas.height = page1Height;
-        page1Ctx.drawImage(canvas, 0, 0, imgWidth, page1Height, 0, 0, imgWidth, page1Height);
-        
-        const page1Data = page1Canvas.toDataURL('image/png', 1.0);
-        const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
-        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
-      }
-      
-      // Page 2: Educational Value onwards (with small overlap to prevent gaps)
-      pdf.addPage();
-      const page2StartY = splitPixel - 30; // Small overlap
-      const page2Height = imgHeight - page2StartY;
-      const page2Canvas = document.createElement('canvas');
-      const page2Ctx = page2Canvas.getContext('2d');
-      if (page2Ctx) {
-        page2Canvas.width = imgWidth;
-        page2Canvas.height = page2Height;
-        page2Ctx.drawImage(canvas, 0, page2StartY, imgWidth, page2Height, 0, 0, imgWidth, page2Height);
-        
-        const page2Data = page2Canvas.toDataURL('image/png', 1.0);
-        const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
-        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
-      }
       
       // Generate filename and save
       const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
