@@ -661,19 +661,21 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const scaledWidth = contentWidth;
       const scaledHeight = (imgHeight * contentWidth) / imgWidth;
       
-      // Calculate A4 page height in canvas pixels (accounting for scale and margins)
-      const a4HeightMm = 297;
-      const a4HeightPixels = ((a4HeightMm - 30) * imgWidth) / 210; // Subtract margins, scale to canvas width
+      // Calculate maximum content height that fits on A4 page with margins
+      const a4ContentHeightMm = 297 - 30; // A4 minus top/bottom margins
+      const maxContentHeightPixels = (a4ContentHeightMm * imgWidth) / 210; // Scale to canvas width
       
-      // Ensure split point doesn't exceed what fits on first page
-      let splitPoint = Math.floor(imgHeight * 0.6); // Start with 60%
-      if (splitPoint > a4HeightPixels) {
-        splitPoint = Math.floor(a4HeightPixels - 40); // Leave buffer for margins
+      // Use a more aggressive split to fill page 1 properly
+      let splitPoint = Math.floor(maxContentHeightPixels * 0.95); // Use 95% of available space
+      
+      // Ensure we don't exceed total height
+      if (splitPoint > imgHeight * 0.75) {
+        splitPoint = Math.floor(imgHeight * 0.75); // Maximum 75% on first page
       }
       
-      console.log(`PDF Split Info: Total height ${imgHeight}px, Split at ${splitPoint}px (${(splitPoint/imgHeight*100).toFixed(1)}%)`);
+      console.log(`PDF Split Info: Total height ${imgHeight}px, Max page height ${maxContentHeightPixels}px, Split at ${splitPoint}px (${(splitPoint/imgHeight*100).toFixed(1)}%)`);
       
-      // Page 1: Top portion
+      // Page 1: Fill the page properly
       const page1Height = splitPoint;
       const page1Canvas = document.createElement('canvas');
       const page1Ctx = page1Canvas.getContext('2d');
@@ -685,16 +687,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         const page1Data = page1Canvas.toDataURL('image/png', 1.0);
         const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
         
-        // Ensure page 1 doesn't exceed A4 height
-        const maxPageHeight = a4HeightMm - 30; // A4 minus margins
-        const finalPage1Height = Math.min(page1ScaledHeight, maxPageHeight);
-        
-        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, finalPage1Height);
+        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Page 2: Bottom portion (with overlap to prevent gaps)
+      // Page 2: Remaining content with minimal overlap
       pdf.addPage();
-      const page2StartY = splitPoint - 50; // Larger overlap to ensure no content is missed
+      const page2StartY = splitPoint - 30; // Small overlap to prevent gaps
       const page2Height = imgHeight - page2StartY;
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
@@ -706,7 +704,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         const page2Data = page2Canvas.toDataURL('image/png', 1.0);
         const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
         
-        // For page 2, allow it to use full height if needed
         pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
       }
 
