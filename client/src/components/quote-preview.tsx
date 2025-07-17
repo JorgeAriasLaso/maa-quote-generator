@@ -598,14 +598,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // SIMPLE FIX: Use single canvas with manual Educational Value positioning
+      // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
+        imageTimeout: 30000,
         width: 794,
+        height: null,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
@@ -616,12 +618,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.fontSize = '14px';
             clonedElement.style.lineHeight = '1.6';
             
-            // Style images properly
+            // Improve image quality and size, special handling for logo
             const images = clonedElement.querySelectorAll('img');
             images.forEach((img, index) => {
-              if (index === 0 || img.src.includes('logo') || img.alt?.includes('My Abroad Ally')) {
+              if (index === 0 || img.src.includes('logo') || img.src.includes('Logo') || img.alt?.includes('My Abroad Ally')) {
                 img.style.maxWidth = '200px';
+                img.style.width = 'auto';
                 img.style.height = 'auto';
+                img.style.maxHeight = '128px';
                 img.style.objectFit = 'contain';
               } else {
                 img.style.width = '160px';
@@ -629,70 +633,65 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 img.style.objectFit = 'cover';
               }
             });
+            
+            const h1s = clonedElement.querySelectorAll('h1');
+            h1s.forEach(h => { h.style.fontSize = '20px'; h.style.fontWeight = 'bold'; });
+            const h2s = clonedElement.querySelectorAll('h2');
+            h2s.forEach(h => { h.style.fontSize = '18px'; h.style.fontWeight = 'bold'; });
+            const h3s = clonedElement.querySelectorAll('h3');
+            h3s.forEach(h => { h.style.fontSize = '16px'; h.style.fontWeight = 'bold'; });
+            const ps = clonedElement.querySelectorAll('p');
+            ps.forEach(p => { p.style.fontSize = '14px'; p.style.lineHeight = '1.6'; });
           }
         }
       });
 
-      // Find where Educational Value section is located
-      const educationalSection = quoteElement.querySelector('#educational-value-section');
-      let educationalPixelStart = Math.floor(canvas.height * 0.65); // Default fallback
-      
-      if (educationalSection) {
-        const rect = educationalSection.getBoundingClientRect();
-        const containerRect = quoteElement.getBoundingClientRect();
-        const relativeTop = rect.top - containerRect.top;
-        educationalPixelStart = Math.floor((relativeTop + 80) * 2); // Scale factor
-      }
-
+      // Create PDF with EXACTLY 2 pages - Educational Value starts page 2
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const margin = 15;
-      const contentWidth = 210 - (2 * margin);
+      const margin = 15; // 15mm margins
+      const contentWidth = 210 - (2 * margin); // A4 width minus margins
+      const contentHeight = 297 - (2 * margin); // A4 height minus margins
       
+      // Convert canvas to image
       const imgData = canvas.toDataURL('image/png', 1.0);
-      const scaledWidth = contentWidth;
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
       
-      // Page 1: Everything before Educational Value
-      const page1Height = educationalPixelStart - 50; // Slight buffer
+      // Calculate scaling to fit width
+      const scaledWidth = contentWidth;
+      const scaledHeight = (imgHeight * contentWidth) / imgWidth;
+      
+      // Split at approximately 65% to ensure Educational Value starts on page 2
+      const splitPoint = Math.floor(imgHeight * 0.65);
+      
+      // Page 1: Top portion
+      const page1Height = splitPoint;
       const page1Canvas = document.createElement('canvas');
       const page1Ctx = page1Canvas.getContext('2d');
       if (page1Ctx) {
-        page1Canvas.width = canvas.width;
+        page1Canvas.width = imgWidth;
         page1Canvas.height = page1Height;
-        page1Ctx.drawImage(canvas, 0, 0, canvas.width, page1Height, 0, 0, canvas.width, page1Height);
+        page1Ctx.drawImage(canvas, 0, 0, imgWidth, page1Height, 0, 0, imgWidth, page1Height);
         
         const page1Data = page1Canvas.toDataURL('image/png', 1.0);
-        const page1ScaledHeight = (page1Height * scaledWidth) / canvas.width;
+        const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
         pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Page 2: Educational Value onwards with proper bottom margin
+      // Page 2: Bottom portion (with small overlap to prevent gaps)
       pdf.addPage();
-      const page2StartY = educationalPixelStart - 100; // Small overlap
-      let page2Height = canvas.height - page2StartY;
-      
-      // Calculate maximum height that fits on A4 page with margins
-      const maxPage2Height = ((297 - 30) * 794) / 210; // A4 height minus margins, scaled to canvas width
-      
-      // If content exceeds page height, crop it to fit with proper bottom margin
-      if (page2Height > maxPage2Height) {
-        page2Height = maxPage2Height;
-      }
-      
+      const page2StartY = splitPoint - 40; // Small overlap
+      const page2Height = imgHeight - page2StartY;
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
       if (page2Ctx) {
-        page2Canvas.width = canvas.width;
+        page2Canvas.width = imgWidth;
         page2Canvas.height = page2Height;
-        page2Ctx.drawImage(canvas, 0, page2StartY, canvas.width, page2Height, 0, 0, canvas.width, page2Height);
+        page2Ctx.drawImage(canvas, 0, page2StartY, imgWidth, page2Height, 0, 0, imgWidth, page2Height);
         
         const page2Data = page2Canvas.toDataURL('image/png', 1.0);
-        const page2ScaledHeight = (page2Height * scaledWidth) / canvas.width;
-        
-        // Ensure it doesn't exceed page boundaries
-        const maxScaledHeight = 297 - (2 * margin); // A4 height minus margins
-        const finalHeight = Math.min(page2ScaledHeight, maxScaledHeight);
-        
-        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, finalHeight);
+        const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
+        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
       }
 
       // Restore original styling
