@@ -581,10 +581,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       };
       
       // Set fixed dimensions for PDF export
-      quoteElement.style.maxWidth = '800px';
-      quoteElement.style.width = '800px';
+      quoteElement.style.maxWidth = '900px';
+      quoteElement.style.width = '900px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '40px';
+      quoteElement.style.padding = '30px';
       quoteElement.style.backgroundColor = '#ffffff';
       quoteElement.style.fontSize = '16px';
       
@@ -593,20 +593,30 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Create canvas from the quote document
       const canvas = await html2canvas(quoteElement, {
-        scale: 1,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
         imageTimeout: 15000,
+        width: 900,
+        height: quoteElement.scrollHeight,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            clonedElement.style.maxWidth = '800px';
-            clonedElement.style.width = '800px';
+            clonedElement.style.maxWidth = '900px';
+            clonedElement.style.width = '900px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '40px';
+            clonedElement.style.padding = '30px';
             clonedElement.style.fontSize = '16px';
+            
+            // Ensure images fit properly
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach(img => {
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              img.style.display = 'block';
+            });
             
             // Increase font sizes for better PDF readability
             const headings = clonedElement.querySelectorAll('h1, h2, h3, h4');
