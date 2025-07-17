@@ -18,9 +18,7 @@ import madrid4 from "@assets/348698-Madrid_1752761191309.jpg";
 import madrid5 from "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif";
 import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
 import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
-// Note: Using centro-pompidou image twice due to filename issues with special characters
-// import malaga3 from "@assets/Feria de Málaga_280525_GettyImages-1420308105_1752771123520.webp";
-// import malaga4 from "@assets/Malaga_280525_GettyImages-1988664077_1752771123521.webp";
+// Using placeholder URLs for images with special characters in filenames
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -152,178 +150,86 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         images: [
           { src: malaga1, alt: "Pompidou Centre Málaga" },
           { src: malaga2, alt: "La Malagueta Beach" },
-          { src: malaga1, alt: "Málaga cultural architecture" },
-          { src: malaga2, alt: "Mediterranean coastline" },
-          { src: malaga1, alt: "Modern Málaga" }
+          { src: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Feria de Málaga festival" },
+          { src: "https://images.unsplash.com/photo-1563789031959-4c02bcb41319?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Historic Málaga streets" }
         ]
       };
     } else if (city.includes('alicante')) {
-      return [
-        {
-          title: "Mediterranean Innovation Hub",
-          description: "Explore Alicante's growing tech sector and university research facilities, connecting students with Spain's emerging digital economy.",
-          image: "https://images.unsplash.com/photo-1565531491644-76e7171c3b1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Coastal Business Environment",
-          description: "Study sustainable tourism practices and marine conservation efforts along Spain's beautiful Costa Blanca.",
-          image: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Valencian Culture & Language",
-          description: "Experience the unique Valencian culture and bilingual environment, enhancing language skills and cultural understanding.",
-          image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Historic Castle & Port",
-          description: "Visit Santa Bárbara Castle and learn about Mediterranean trade history while exploring modern port operations.",
-          image: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Alicante offers students a unique Mediterranean experience where innovation meets tradition along Spain's beautiful Costa Blanca. As a growing tech hub with expanding university research facilities, students connect with Spain's emerging digital economy and startup culture. The city's sustainable tourism practices and marine conservation efforts provide practical insights into environmental responsibility and coastal management. Students experience the distinctive Valencian culture and bilingual environment, enhancing both Spanish and Valencian language skills while building cultural understanding. The historic Santa Bárbara Castle and modern port operations offer lessons in Mediterranean trade history and contemporary logistics, making Alicante an ideal destination for comprehensive educational travel that combines business innovation, cultural immersion, and environmental awareness.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1565531491644-76e7171c3b1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Alicante tech innovation" },
+          { src: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Costa Blanca coastline" },
+          { src: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Valencian culture" },
+          { src: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Santa Bárbara Castle" }
+        ]
+      };
     } else if (city.includes('valladolid')) {
-      return [
-        {
-          title: "Castilian Heritage Capital",
-          description: "Discover the birthplace of Spanish language and literature in this historic Castilian city, perfect for language immersion.",
-          image: "https://images.unsplash.com/photo-1578061417017-ef9f3b9c6ec8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Automotive Industry Center",
-          description: "Visit Renault and other automotive facilities to understand Spain's industrial transformation and modern manufacturing.",
-          image: "https://images.unsplash.com/photo-1619733921207-d2fdacb7e3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "University Town Atmosphere",
-          description: "Experience authentic Spanish student life at one of Spain's oldest universities, fostering academic and cultural exchange.",
-          image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Golden Age Architecture",
-          description: "Explore Renaissance and Baroque architecture from Spain's imperial period, connecting history with modern Spanish identity.",
-          image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Valladolid stands as the birthplace of Spanish language and literature, offering students unparalleled language immersion in this historic Castilian city. As a major automotive industry center, students visit Renault and other manufacturing facilities to understand Spain's industrial transformation and modern production methods. The city's authentic university town atmosphere provides opportunities to experience genuine Spanish student life at one of the country's oldest institutions, fostering meaningful academic and cultural exchange. Students explore Renaissance and Baroque architecture from Spain's Golden Age, connecting imperial history with contemporary Spanish identity. This combination of linguistic heritage, industrial innovation, academic tradition, and architectural splendor makes Valladolid an exceptional destination for comprehensive educational travel.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1578061417017-ef9f3b9c6ec8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Valladolid historic center" },
+          { src: "https://images.unsplash.com/photo-1619733921207-d2fdacb7e3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Automotive industry" },
+          { src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "University atmosphere" },
+          { src: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Golden Age architecture" }
+        ]
+      };
     } else if (city.includes('gijon')) {
-      return [
-        {
-          title: "Asturian Maritime Heritage",
-          description: "Explore Spain's naval history and modern fishing industry in this vibrant northern Spanish port city.",
-          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Industrial Revolution Legacy",
-          description: "Learn about Spain's industrial development through steel production and mining heritage, now transformed into cultural spaces.",
-          image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Green Spain Experience",
-          description: "Discover sustainable practices and environmental awareness in Spain's greenest region, promoting ecological education.",
-          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Celtic & Roman Influences",
-          description: "Explore unique Asturian culture with Celtic traditions and Roman archaeological sites, broadening historical perspectives.",
-          image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Gijón provides students with an exceptional window into Spain's maritime heritage and industrial evolution as a vibrant northern port city. Students explore the country's naval history and modern fishing industry, understanding how traditional seafaring has adapted to contemporary economic demands. The city's Industrial Revolution legacy offers fascinating insights into Spain's development through steel production and mining heritage, with historic industrial sites now transformed into engaging cultural and educational spaces. As part of Green Spain, Gijón showcases sustainable practices and environmental awareness initiatives, promoting ecological education and climate consciousness. The unique Asturian culture blends Celtic traditions with Roman archaeological heritage, broadening students' historical perspectives and cultural understanding beyond typical Spanish experiences.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Gijón maritime port" },
+          { src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Industrial heritage" },
+          { src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Green Spain landscape" },
+          { src: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Asturian cultural heritage" }
+        ]
+      };
     }
     // PORTUGAL
     else if (city.includes('porto')) {
-      return [
-        {
-          title: "UNESCO World Heritage Center",
-          description: "Explore Porto's historic center, learning about Portuguese architecture, azulejo tiles, and urban planning preservation.",
-          image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Port Wine & Business Tradition",
-          description: "Visit famous port cellars to understand Portuguese export traditions and family business management across generations.",
-          image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Tech & Innovation Hub",
-          description: "Discover Porto's growing startup ecosystem and tech companies, positioning Portugal as a European innovation center.",
-          image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Maritime Exploration Legacy",
-          description: "Learn about Portuguese Age of Discovery and modern shipping industry at this historic Atlantic port.",
-          image: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Porto offers students an extraordinary educational experience in Portugal's UNESCO World Heritage historic center, where centuries-old architecture, traditional azulejo tiles, and exemplary urban planning preservation create living lessons in cultural heritage management. Students visit the world-famous port wine cellars to understand Portuguese export traditions and discover how family businesses have thrived across generations, building international brands and maintaining quality standards. As Portugal's emerging tech and innovation hub, Porto showcases a dynamic startup ecosystem that positions the country as a modern European innovation center, blending traditional industries with cutting-edge technology. The city's rich maritime exploration legacy connects students to the Portuguese Age of Discovery while exploring today's modern shipping industry, making Porto an ideal destination for comprehensive cultural, business, and historical education.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Porto UNESCO center" },
+          { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Port wine cellars" },
+          { src: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Tech innovation" },
+          { src: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Maritime heritage" }
+        ]
+      };
     }
     // FRANCE
     else if (city.includes('lyon')) {
-      return [
-        {
-          title: "Culinary Capital of France",
-          description: "Experience Lyon's renowned gastronomy and learn about French culinary traditions, food science, and hospitality management.",
-          image: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Silk Industry Heritage",
-          description: "Discover Lyon's historical role in silk production and textile innovation, connecting traditional crafts with modern design.",
-          image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Biotech & Pharmaceutical Hub",
-          description: "Explore Lyon's leadership in life sciences and medical research, inspiring students interested in healthcare and science.",
-          image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Renaissance Architecture",
-          description: "Walk through Vieux Lyon's Renaissance buildings and learn about French architectural history and urban development.",
-          image: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Lyon stands as France's undisputed culinary capital, offering students an immersive experience in world-renowned gastronomy while learning about French culinary traditions, food science, and hospitality management from master chefs and industry professionals. The city's remarkable silk industry heritage provides insights into Lyon's historical role in textile innovation, connecting traditional French crafts with contemporary design and manufacturing excellence. As a leading biotech and pharmaceutical hub, Lyon showcases France's advancement in life sciences and medical research, inspiring students interested in healthcare careers and scientific innovation. Students explore Vieux Lyon's Renaissance architecture and UNESCO World Heritage sites, gaining deep understanding of French architectural history and urban development principles that have influenced cities worldwide.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Lyon gastronomy" },
+          { src: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Silk heritage" },
+          { src: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Biotech research" },
+          { src: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Renaissance architecture" }
+        ]
+      };
     } else if (city.includes('paris')) {
-      return [
-        {
-          title: "Global Business Capital",
-          description: "Experience Paris as a major global financial center and headquarters for luxury brands, fashion houses, and multinational corporations.",
-          image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Cultural & Artistic Heritage",
-          description: "Visit world-renowned museums like the Louvre and Musée d'Orsay while exploring French art, literature, and intellectual traditions.",
-          image: "https://images.unsplash.com/photo-1471623432079-b009d30b6729?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "European Union Hub",
-          description: "Learn about French politics, EU policies, and international diplomacy in the city that hosts numerous international organizations.",
-          image: "https://images.unsplash.com/photo-1522582324369-2dfc36bd9275?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Innovation & Technology",
-          description: "Discover Paris's growing tech scene in Station F and La Défense business district, balancing tradition with cutting-edge innovation.",
-          image: "https://images.unsplash.com/photo-1549144511-f099e773c147?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Paris provides students with unparalleled access to global business and European commerce as France's economic capital, featuring visits to multinational headquarters and prestigious financial institutions that shape international markets. Students explore world-famous Parisian fashion houses and design studios, gaining insight into France's leadership in luxury goods and creative industries that set global trends. The city's incomparable cultural heritage includes visits to renowned museums and landmarks, offering immersive experiences in French art, history, and cultural preservation that have influenced civilization. Paris's rapidly growing tech ecosystem and innovation districts demonstrate how the city successfully connects traditional excellence with digital transformation, making it an exceptional destination for comprehensive business, cultural, and technological education.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Paris business district" },
+          { src: "https://images.unsplash.com/photo-1471623432079-b009d30b6729?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Cultural heritage" },
+          { src: "https://images.unsplash.com/photo-1522582324369-2dfc36bd9275?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "EU diplomacy" },
+          { src: "https://images.unsplash.com/photo-1549144511-f099e773c147?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Tech innovation" }
+        ]
+      };
     }
     // UK
     else if (city.includes('bristol')) {
-      return [
-        {
-          title: "Engineering & Aerospace Excellence",
-          description: "Visit Airbus facilities and learn about British aerospace innovation, engineering design, and sustainable aviation technology.",
-          image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Maritime Trading History",
-          description: "Explore Bristol's role in historical trade and learn about modern sustainable business practices and ethical commerce.",
-          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Creative & Digital Industries",
-          description: "Discover Bristol's thriving creative sector, from BBC production to video game development and digital media.",
-          image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Environmental Sustainability",
-          description: "Learn about Bristol's Green Capital initiatives and environmental technology, promoting sustainability awareness.",
-          image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Bristol provides students with exceptional access to British aerospace innovation through visits to Airbus facilities, where they learn about engineering design, sustainable aviation technology, and the UK's leadership in aerospace manufacturing. The city's fascinating maritime trading history offers insights into historical commerce while exploring modern sustainable business practices and ethical trading principles. Students discover Bristol's thriving creative and digital industries, from BBC production facilities to cutting-edge video game development studios and digital media companies that shape British entertainment. As a former European Green Capital, Bristol showcases environmental sustainability initiatives and green technology innovations, promoting ecological awareness and sustainable development practices among students.",
+        images: [
+          { src: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Bristol aerospace" },
+          { src: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Maritime heritage" },
+          { src: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Creative industries" },
+          { src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Green initiatives" }
+        ]
+      };
     }
     // ITALY
     else if (city.includes('bari')) {
