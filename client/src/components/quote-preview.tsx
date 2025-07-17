@@ -1047,36 +1047,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <span className="text-red-700">Profit per Student:</span>
                                 <span className={`font-bold ${(() => {
                                   if (!quote || quote.numberOfStudents === 0) return 'text-red-700';
-                                  const studentRevenue = costBreakdown.student.totalPerStudent || 0;
-                                  // Student-specific costs per student
-                                  const studentAccoPerStudent = (costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents;
-                                  // Shared costs split among all participants
-                                  const mealsPerStudent = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                  const transportPerStudent = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                  const coordinatorPerStudent = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                  // Student coordination costs per student
-                                  const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) * quote.numberOfStudents / quote.numberOfStudents;
-                                  
-                                  const totalStudentCosts = studentAccoPerStudent + mealsPerStudent + transportPerStudent + coordinatorPerStudent + studentCoordinationCost;
-                                  const studentProfit = studentRevenue - totalStudentCosts;
-                                  const studentNetProfit = studentProfit / 1.21;
-                                  return !isNaN(studentNetProfit) && studentNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
+                                  // Simple calculation: Student price - Total costs allocated per student
+                                  const studentPrice = parseFloat(quote.pricePerStudent) || 0;
+                                  const totalCostsPerStudent = (costBreakdown.internalCosts.totalCosts || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                  const grossProfit = studentPrice - totalCostsPerStudent;
+                                  const netProfit = grossProfit / 1.21; // VAT adjustment
+                                  return !isNaN(netProfit) && netProfit >= 0 ? 'text-green-700' : 'text-red-700';
                                 })()}`}>
                                   {quote && quote.numberOfStudents > 0 ? (() => {
-                                    const studentRevenue = costBreakdown.student.totalPerStudent || 0;
-                                    // Student-specific costs per student
-                                    const studentAccoPerStudent = (costBreakdown.internalCosts.studentAccommodation || 0) / quote.numberOfStudents;
-                                    // Shared costs split among all participants
-                                    const mealsPerStudent = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    const transportPerStudent = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    const coordinatorPerStudent = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    // Student coordination costs per student (assuming coordination cost is per student)
-                                    const studentCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    
-                                    const totalStudentCosts = studentAccoPerStudent + mealsPerStudent + transportPerStudent + coordinatorPerStudent + studentCoordinationCost;
-                                    const studentProfit = studentRevenue - totalStudentCosts;
-                                    const studentNetProfit = studentProfit / 1.21;
-                                    return isNaN(studentNetProfit) ? '€0' : formatCurrency(studentNetProfit);
+                                    const studentPrice = parseFloat(quote.pricePerStudent) || 0;
+                                    const totalCostsPerStudent = (costBreakdown.internalCosts.totalCosts || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const grossProfit = studentPrice - totalCostsPerStudent;
+                                    const netProfit = grossProfit / 1.21;
+                                    return isNaN(netProfit) ? '€0' : formatCurrency(netProfit);
                                   })() : '€0'}
                                 </span>
                               </div>
@@ -1084,36 +1067,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <div className="flex justify-between items-center text-sm">
                                   <span className="text-red-700">Profit per Teacher:</span>
                                   <span className={`font-bold ${(() => {
-                                    const teacherRevenue = costBreakdown.teacher.totalPerTeacher || 0;
-                                    // Teacher-specific costs per teacher
-                                    const teacherAccoPerTeacher = (costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers;
-                                    // Shared costs split among all participants
-                                    const mealsPerTeacher = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    const transportPerTeacher = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    const coordinatorPerTeacher = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    // Teacher coordination costs per teacher 
-                                    const teacherCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                    
-                                    const totalTeacherCosts = teacherAccoPerTeacher + mealsPerTeacher + transportPerTeacher + coordinatorPerTeacher + teacherCoordinationCost;
-                                    const teacherProfit = teacherRevenue - totalTeacherCosts;
-                                    const teacherNetProfit = teacherProfit / 1.21;
-                                    return !isNaN(teacherNetProfit) && teacherNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
+                                    // Simple calculation: Teacher price - Total costs allocated per teacher
+                                    const teacherPrice = parseFloat(quote.pricePerTeacher) || 0;
+                                    const totalCostsPerTeacher = (costBreakdown.internalCosts.totalCosts || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const grossProfit = teacherPrice - totalCostsPerTeacher;
+                                    const netProfit = grossProfit / 1.21; // VAT adjustment
+                                    return !isNaN(netProfit) && netProfit >= 0 ? 'text-green-700' : 'text-red-700';
                                   })()}`}>
                                     {(() => {
-                                      const teacherRevenue = costBreakdown.teacher.totalPerTeacher || 0;
-                                      // Teacher-specific costs per teacher
-                                      const teacherAccoPerTeacher = (costBreakdown.internalCosts.teacherAccommodation || 0) / quote.numberOfTeachers;
-                                      // Shared costs split among all participants
-                                      const mealsPerTeacher = (costBreakdown.internalCosts.meals || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                      const transportPerTeacher = (costBreakdown.internalCosts.localTransportation || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                      const coordinatorPerTeacher = (costBreakdown.internalCosts.localCoordinator || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                      // Teacher coordination costs per teacher
-                                      const teacherCoordinationCost = (costBreakdown.internalCosts.coordination || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
-                                      
-                                      const totalTeacherCosts = teacherAccoPerTeacher + mealsPerTeacher + transportPerTeacher + coordinatorPerTeacher + teacherCoordinationCost;
-                                      const teacherProfit = teacherRevenue - totalTeacherCosts;
-                                      const teacherNetProfit = teacherProfit / 1.21;
-                                      return isNaN(teacherNetProfit) ? '€0' : formatCurrency(teacherNetProfit);
+                                      const teacherPrice = parseFloat(quote.pricePerTeacher) || 0;
+                                      const totalCostsPerTeacher = (costBreakdown.internalCosts.totalCosts || 0) / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      const grossProfit = teacherPrice - totalCostsPerTeacher;
+                                      const netProfit = grossProfit / 1.21;
+                                      return isNaN(netProfit) ? '€0' : formatCurrency(netProfit);
                                     })()}
                                   </span>
                                 </div>
