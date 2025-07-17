@@ -592,7 +592,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       quoteElement.style.margin = '0';
       quoteElement.style.padding = '20px'; // Reduced padding to save space
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '11px'; // User requested font size
+      quoteElement.style.fontSize = '12px'; // Slightly larger for readability
       quoteElement.style.lineHeight = '1.4'; // Tighter spacing for more content
       
       // Allow time for DOM to update
@@ -616,19 +616,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.width = '794px';
             clonedElement.style.backgroundColor = '#ffffff';
             clonedElement.style.padding = '20px'; // Reduced padding
-            clonedElement.style.fontSize = '11px'; // User requested font size
+            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
             
-            // Fix image sizing - smaller logo as requested
+            // Fix image sizing - medium logo as requested
             const images = clonedElement.querySelectorAll('img');
             images.forEach((img, index) => {
-              if (index === 0) { // Logo - made smaller
-                img.style.maxWidth = '120px'; // Reduced from 200px
+              if (index === 0) { // Logo - medium size
+                img.style.maxWidth = '160px'; // Medium size between small and large
                 img.style.height = 'auto';
-                img.style.maxHeight = '60px'; // Added max height
+                img.style.maxHeight = '80px'; // Medium height
                 img.style.objectFit = 'contain';
               } else {
-                img.style.width = '140px'; // Slightly smaller destination images
-                img.style.height = '100px'; 
+                img.style.width = '150px'; // Destination images
+                img.style.height = '110px'; 
                 img.style.objectFit = 'cover';
               }
             });
@@ -819,15 +819,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {highlights.description}
                   </p>
                   
-                  {/* Image gallery - 4 images in a nice layout */}
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  {/* Image gallery - 4 images protected from page breaks */}
+                  <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                     {highlights.images.slice(1, 5).map((image, index) => (
-                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '200px' }}>
+                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                         <img 
                           src={image.src} 
                           alt={image.alt} 
-                          className="w-full h-32 object-cover rounded-lg shadow-sm"
-                          style={{ minHeight: '120px', maxHeight: '140px' }}
+                          className="w-full h-28 object-cover rounded-lg shadow-sm"
+                          style={{ minHeight: '100px', maxHeight: '120px' }}
                         />
                       </div>
                     ))}
@@ -851,15 +851,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     )}
                   </div>
                   
-                  {/* Image gallery - 4 images in a nice layout */}
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  {/* Image gallery - 4 images protected from page breaks */}
+                  <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                     {highlights && Array.isArray(highlights) && highlights.slice(0, 4).map((highlight, index) => (
-                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '200px' }}>
+                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                         <img 
                           src={highlight.image} 
                           alt={highlight.title} 
-                          className="w-full h-32 object-cover rounded-lg shadow-sm"
-                          style={{ minHeight: '120px', maxHeight: '140px' }}
+                          className="w-full h-28 object-cover rounded-lg shadow-sm"
+                          style={{ minHeight: '100px', maxHeight: '120px' }}
                         />
                       </div>
                     ))}
