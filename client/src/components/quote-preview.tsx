@@ -586,14 +586,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         backgroundColor: quoteElement.style.backgroundColor,
       };
       
-      // Set standard PDF dimensions - ONLY reduced padding, keep everything else working
+      // Set standard PDF dimensions for 2-page layout
       quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
       quoteElement.style.width = '794px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '25px'; // Slightly reduced padding only
+      quoteElement.style.padding = '20px'; // Reduced padding to save space
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '14px'; // Keep original font size
-      quoteElement.style.lineHeight = '1.6'; // Keep original line spacing
+      quoteElement.style.fontSize = '11px'; // User requested font size
+      quoteElement.style.lineHeight = '1.4'; // Tighter spacing for more content
       
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -611,23 +611,24 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            // Set consistent styling - minimal padding reduction only
+            // Set consistent styling for 2-page layout
             clonedElement.style.maxWidth = '794px';
             clonedElement.style.width = '794px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '25px'; // Slightly reduced padding
-            clonedElement.style.fontSize = '14px'; // Keep original font
+            clonedElement.style.padding = '20px'; // Reduced padding
+            clonedElement.style.fontSize = '11px'; // User requested font size
             
-            // Fix image sizing
+            // Fix image sizing - smaller logo as requested
             const images = clonedElement.querySelectorAll('img');
             images.forEach((img, index) => {
-              if (index === 0) { // Logo
-                img.style.maxWidth = '200px';
+              if (index === 0) { // Logo - made smaller
+                img.style.maxWidth = '120px'; // Reduced from 200px
                 img.style.height = 'auto';
+                img.style.maxHeight = '60px'; // Added max height
                 img.style.objectFit = 'contain';
               } else {
-                img.style.width = '160px';
-                img.style.height = '120px';
+                img.style.width = '140px'; // Slightly smaller destination images
+                img.style.height = '100px'; 
                 img.style.objectFit = 'cover';
               }
             });
@@ -654,9 +655,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const pdfWidth = 210 - 30; // A4 width minus margins
       const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
       
-      // Add pages as needed for the full content - keep original page logic
+      // Add pages as needed for the full content - optimized for exactly 2 pages
       let currentY = 0;
-      const pageHeight = 297 - 30; // A4 height minus margins (keep original)
+      const pageHeight = 297 - 20; // Smaller margins to fit more content
       let pageCount = 1;
       
       while (currentY < pdfHeight) {
