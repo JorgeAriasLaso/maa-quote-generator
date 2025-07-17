@@ -549,6 +549,14 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             Custom Pricing (Optional)
           </h2>
           
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded-md mb-6">
+            <p className="text-sm text-slate-700">
+              <span className="font-medium">Pricing Layout:</span> Each item has two fields side by side:
+              <span className="ml-2 inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Customer Price</span>
+              <span className="ml-1 inline-block bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Internal Cost</span>
+            </p>
+          </div>
+          
           <div className="space-y-4">
             <h4 className="font-medium text-slate-700 mb-3">Accommodation Details</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -576,16 +584,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Student Accommodation (€/day)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.studentAccommodationPerDay}
-                  onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.studentAccommodationPerDay, numberOfStudents, duration))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.studentAccommodationPerDay}
+                    onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costStudentAccommodationPerDay}
+                    onChange={(e) => updateFormData("costStudentAccommodationPerDay", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -593,16 +609,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Teacher Accommodation (€/day)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.teacherAccommodationPerDay}
-                  onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.teacherAccommodationPerDay, numberOfTeachers, duration))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.teacherAccommodationPerDay}
+                    onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costTeacherAccommodationPerDay}
+                    onChange={(e) => updateFormData("costTeacherAccommodationPerDay", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -610,16 +634,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Breakfast (€/day)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.breakfastPerDay}
-                  onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.breakfastPerDay, numberOfStudents + numberOfTeachers, duration))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.breakfastPerDay}
+                    onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costBreakfastPerDay}
+                    onChange={(e) => updateFormData("costBreakfastPerDay", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -627,16 +659,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Lunch (€/day)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.lunchPerDay}
-                  onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.lunchPerDay, numberOfStudents + numberOfTeachers, duration))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.lunchPerDay}
+                    onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costLunchPerDay}
+                    onChange={(e) => updateFormData("costLunchPerDay", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -644,16 +684,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Dinner (€/day)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.dinnerPerDay}
-                  onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.dinnerPerDay, numberOfStudents + numberOfTeachers, duration))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.dinnerPerDay}
+                    onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costDinnerPerDay}
+                    onChange={(e) => updateFormData("costDinnerPerDay", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -661,16 +709,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Local Transportation Card (€ total)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.transportCardTotal}
-                  onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.transportCardTotal, numberOfStudents + numberOfTeachers))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.transportCardTotal}
+                    onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costLocalTransportationCard}
+                    onChange={(e) => updateFormData("costLocalTransportationCard", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -678,16 +734,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Student Coordination Fee (€ total)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.studentCoordinationFeeTotal}
-                  onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.studentCoordinationFeeTotal, numberOfStudents))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.studentCoordinationFeeTotal}
+                    onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costStudentCoordination}
+                    onChange={(e) => updateFormData("costStudentCoordination", e.target.value)}
+                    placeholder="Cost 60.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -695,16 +759,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Teacher Coordination Fee (€ total)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.teacherCoordinationFeeTotal}
-                  onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.teacherCoordinationFeeTotal, numberOfTeachers))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.teacherCoordinationFeeTotal}
+                    onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costTeacherCoordination}
+                    onChange={(e) => updateFormData("costTeacherCoordination", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -712,16 +784,24 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Airport Transfer (€ per person)</label>
               <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.airportTransferPerPerson}
-                  onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
-                  placeholder="0.00"
-                  className="flex-1"
-                />
-                <div className="text-sm text-slate-600 min-w-[80px]">
-                  Total: {formatCurrency(calculateItemCost(formData.airportTransferPerPerson, numberOfStudents + numberOfTeachers))}
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.airportTransferPerPerson}
+                    onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
+                    placeholder="Price 0.00"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.costAirportTransfer}
+                    onChange={(e) => updateFormData("costAirportTransfer", e.target.value)}
+                    placeholder="Cost 0.00"
+                    className="border-red-200 bg-red-50"
+                  />
                 </div>
               </div>
             </div>
@@ -732,98 +812,10 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
         <Card className="p-6 internal-analysis-only">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">
             <Calculator className="inline h-6 w-6 mr-2" />
-            Internal Profitability Analysis
+            Additional Internal Costs
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Student Accommodation Cost (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costStudentAccommodationPerDay}
-                onChange={(e) => updateFormData("costStudentAccommodationPerDay", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Teacher Accommodation Cost (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costTeacherAccommodationPerDay}
-                onChange={(e) => updateFormData("costTeacherAccommodationPerDay", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Breakfast Cost (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costBreakfastPerDay}
-                onChange={(e) => updateFormData("costBreakfastPerDay", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Lunch Cost (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costLunchPerDay}
-                onChange={(e) => updateFormData("costLunchPerDay", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Dinner Cost (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costDinnerPerDay}
-                onChange={(e) => updateFormData("costDinnerPerDay", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Local Transportation Cost (€ total)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costLocalTransportationCard}
-                onChange={(e) => updateFormData("costLocalTransportationCard", e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Student Coordination Cost (€ per student)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costStudentCoordination}
-                onChange={(e) => updateFormData("costStudentCoordination", e.target.value)}
-                placeholder="60"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Teacher Coordination Cost (€ per teacher)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costTeacherCoordination}
-                onChange={(e) => updateFormData("costTeacherCoordination", e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Local Coordinator Cost (€ total)</label>
               <Input
@@ -832,17 +824,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                 value={formData.costLocalCoordinator}
                 onChange={(e) => updateFormData("costLocalCoordinator", e.target.value)}
                 placeholder="150"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Airport Transfer Cost (€ per person)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.costAirportTransfer}
-                onChange={(e) => updateFormData("costAirportTransfer", e.target.value)}
-                placeholder="0.00"
               />
             </div>
           </div>
