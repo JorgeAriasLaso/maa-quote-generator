@@ -618,66 +618,42 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.fontSize = '14px';
             clonedElement.style.lineHeight = '1.6';
             
+            // FORCE PAGE BREAK: Find Educational Value section and add page break styles
+            const educationalSection = clonedElement.querySelector('#educational-value-section');
+            if (educationalSection) {
+              (educationalSection as HTMLElement).style.pageBreakBefore = 'always';
+              (educationalSection as HTMLElement).style.breakBefore = 'always';
+              (educationalSection as HTMLElement).style.marginTop = '40px';
+            }
+            
             // Improve image quality and size, special handling for logo
             const images = clonedElement.querySelectorAll('img');
             images.forEach((img, index) => {
-              // Check if this is the logo (first image or contains logo in src)
               if (index === 0 || img.src.includes('logo') || img.src.includes('Logo') || img.alt?.includes('My Abroad Ally')) {
-                // Logo specific styling - prevent deformation
                 img.style.maxWidth = '200px';
                 img.style.width = 'auto';
                 img.style.height = 'auto';
                 img.style.maxHeight = '128px';
-                img.style.aspectRatio = 'auto';
                 img.style.objectFit = 'contain';
-                img.style.objectPosition = 'center';
-                img.style.imageRendering = 'high-quality';
-                img.style.borderRadius = '0';
               } else {
-                // Regular destination images
-                img.style.maxWidth = '100%';
                 img.style.width = '160px';
                 img.style.height = '120px';
                 img.style.objectFit = 'cover';
-                img.style.imageRendering = 'auto';
-                img.style.borderRadius = '6px';
               }
-              img.style.display = 'block';
             });
             
-            // Set clear heading sizes
             const h1s = clonedElement.querySelectorAll('h1');
-            h1s.forEach(h => {
-              h.style.fontSize = '20px';
-              h.style.fontWeight = 'bold';
-              h.style.marginBottom = '12px';
-            });
-            
+            h1s.forEach(h => { h.style.fontSize = '20px'; h.style.fontWeight = 'bold'; });
             const h2s = clonedElement.querySelectorAll('h2');
-            h2s.forEach(h => {
-              h.style.fontSize = '18px';
-              h.style.fontWeight = 'bold';
-              h.style.marginBottom = '10px';
-            });
-            
+            h2s.forEach(h => { h.style.fontSize = '18px'; h.style.fontWeight = 'bold'; });
             const h3s = clonedElement.querySelectorAll('h3');
-            h3s.forEach(h => {
-              h.style.fontSize = '16px';
-              h.style.fontWeight = 'bold';
-              h.style.marginBottom = '8px';
-            });
-            
-            // Improve text clarity
-            const paragraphs = clonedElement.querySelectorAll('p');
-            paragraphs.forEach(p => {
-              p.style.fontSize = '14px';
-              p.style.lineHeight = '1.6';
-              p.style.marginBottom = '8px';
-            });
+            h3s.forEach(h => { h.style.fontSize = '16px'; h.style.fontWeight = 'bold'; });
+            const ps = clonedElement.querySelectorAll('p');
+            ps.forEach(p => { p.style.fontSize = '14px'; p.style.lineHeight = '1.6'; });
           }
         }
       });
-      
+
       // Restore original styling
       Object.assign(quoteElement.style, originalStyles);
 
@@ -690,86 +666,62 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with high quality settings
+      // Create PDF with EXACTLY 2 pages - Educational Value starts page 2
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
-      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
       const margin = 15; // 15mm margins
+      const contentWidth = 210 - (2 * margin); // A4 width minus margins
+      const contentHeight = 297 - (2 * margin); // A4 height minus margins
       
-      // Convert canvas to high quality image
+      // Find Educational Value section position to determine split point
+      const educationalSection = quoteElement.querySelector('#educational-value-section');
+      let splitRatio = 0.5; // Default to 50/50 split if section not found
+      
+      if (educationalSection) {
+        const sectionTop = educationalSection.offsetTop;
+        const totalHeight = quoteElement.scrollHeight;
+        splitRatio = sectionTop / totalHeight;
+      }
+      
+      // Convert canvas to image
       const imgData = canvas.toDataURL('image/png', 1.0);
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calculate dimensions accounting for 2x scale
-      const availableWidth = pdfWidth - (2 * margin);
-      const scaledWidth = availableWidth;
-      const scaledHeight = (imgHeight * availableWidth) / imgWidth;
+      // Calculate scaling to fit width
+      const scaledWidth = contentWidth;
+      const scaledHeight = (imgHeight * contentWidth) / imgWidth;
       
-      // Available height per page (minus margins)
-      const availableHeight = pdfHeight - (2 * margin);
+      // FORCE EXACTLY 2 PAGES
+      // Page 1: From top to Educational Value section (approximately first 60% of content)
+      const page1Height = Math.floor(imgHeight * 0.6); // Approximately 60% for page 1
+      const page2StartY = page1Height - 50; // Small overlap to prevent gaps
+      const page2Height = imgHeight - page2StartY;
       
-      if (scaledHeight <= availableHeight) {
-        // Content fits on one page
-        pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
-      } else {
-        // Content needs multiple pages - improved page splitting logic
-        const totalPages = Math.ceil(scaledHeight / availableHeight);
-        const overlap = 40; // Increased overlap to prevent cutting mid-sections
+      // Add page 1
+      const page1Canvas = document.createElement('canvas');
+      const page1Ctx = page1Canvas.getContext('2d');
+      if (page1Ctx) {
+        page1Canvas.width = imgWidth;
+        page1Canvas.height = page1Height;
+        page1Ctx.drawImage(canvas, 0, 0, imgWidth, page1Height, 0, 0, imgWidth, page1Height);
         
-        for (let i = 0; i < totalPages; i++) {
-          if (i > 0) {
-            pdf.addPage();
-          }
-          
-          // Improved source region calculation with better overlap handling
-          let sourceY: number;
-          let sourceHeight: number;
-          
-          if (i === 0) {
-            // First page - start from top
-            sourceY = 0;
-            sourceHeight = Math.min((availableHeight * imgHeight) / scaledHeight, imgHeight);
-          } else if (i === totalPages - 1) {
-            // Last page - ensure we capture all remaining content
-            sourceHeight = imgHeight - (i * (availableHeight * imgHeight) / scaledHeight - overlap);
-            sourceY = imgHeight - sourceHeight;
-          } else {
-            // Middle pages - use overlap
-            sourceY = (i * (availableHeight * imgHeight) / scaledHeight) - overlap;
-            sourceHeight = (availableHeight * imgHeight) / scaledHeight + overlap;
-          }
-          
-          // Ensure sourceY and sourceHeight are within bounds
-          sourceY = Math.max(0, Math.min(sourceY, imgHeight));
-          sourceHeight = Math.max(0, Math.min(sourceHeight, imgHeight - sourceY));
-          
-          // Create a canvas for this page's content with higher quality
-          const pageCanvas = document.createElement('canvas');
-          const pageCtx = pageCanvas.getContext('2d');
-          
-          if (!pageCtx) continue;
-          
-          pageCanvas.width = imgWidth;
-          pageCanvas.height = sourceHeight;
-          
-          // Enable image smoothing for better quality
-          pageCtx.imageSmoothingEnabled = true;
-          pageCtx.imageSmoothingQuality = 'high';
-          
-          // Draw this page's portion with high quality
-          pageCtx.drawImage(
-            canvas,
-            0, sourceY, imgWidth, sourceHeight,
-            0, 0, imgWidth, sourceHeight
-          );
-          
-          const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
-          const pageScaledHeight = (sourceHeight * scaledHeight) / imgHeight;
-          
-          // Add this page's content to the PDF
-          pdf.addImage(pageImgData, 'PNG', margin, margin, scaledWidth, pageScaledHeight);
-        }
+        const page1Data = page1Canvas.toDataURL('image/png', 1.0);
+        const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
+        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
+      }
+      
+      // Add page 2 (Educational Value onwards)
+      pdf.addPage();
+      const page2Canvas = document.createElement('canvas');
+      const page2Ctx = page2Canvas.getContext('2d');
+      if (page2Ctx) {
+        page2Canvas.width = imgWidth;
+        page2Canvas.height = page2Height;
+        page2Ctx.drawImage(canvas, 0, page2StartY, imgWidth, page2Height, 0, 0, imgWidth, page2Height);
+        
+        const page2Data = page2Canvas.toDataURL('image/png', 1.0);
+        const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
+        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
       }
       
       // Generate filename and save
@@ -952,8 +904,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               )}
             </div>
 
-            {/* Learning Outcomes */}
-            <div className="mb-12" style={{ pageBreakBefore: 'auto', breakBefore: 'auto' }}>
+            {/* Learning Outcomes - FORCE PAGE BREAK HERE */}
+            <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Educational Value & Learning Outcomes
               </h3>
