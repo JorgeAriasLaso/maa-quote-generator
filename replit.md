@@ -57,7 +57,7 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Added real-time internal cost tracking in quote form for live profitability updates
 ✓ Fixed undefined variable crash (accommodationPerDay references) in cost breakdown display
 ✓ Implemented live cost breakdown updates from form to preview for real-time profitability analysis
-✓ Added profit per student and profit per teacher calculations in profitability section
+✓ FIXED TEACHER PROFITABILITY FORMULA: Corrected profit per teacher calculation to use individual teacher revenue minus allocated costs with VAT adjustment, instead of incorrectly dividing total net profit by number of teachers
 ✓ Enhanced Erasmus+ funding display with detailed student/teacher breakdown and country group information
 ✓ Added PDF export protection - Erasmus+ funding and internal profitability analysis now excluded from customer PDFs
 ✓ Implemented CSS class system (.internal-analysis-only) to hide sensitive business data from customer-facing documents

@@ -1045,15 +1045,40 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                             <div className="border-t border-red-200 pt-2 space-y-1">
                               <div className="flex justify-between items-center text-sm">
                                 <span className="text-red-700">Profit per Student:</span>
-                                <span className={`font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                                  {quote && quote.numberOfStudents > 0 ? formatCurrency(costBreakdown.profitability.netProfit / quote.numberOfStudents) : '€0'}
+                                <span className={`font-bold ${(() => {
+                                  if (!quote || quote.numberOfStudents === 0) return 'text-red-700';
+                                  const studentRevenue = costBreakdown.student.totalPerStudent;
+                                  const studentCost = costBreakdown.internalCosts.totalCosts / (quote.numberOfStudents + quote.numberOfTeachers);
+                                  const studentProfit = studentRevenue - studentCost;
+                                  const studentNetProfit = studentProfit / 1.21;
+                                  return studentNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
+                                })()}`}>
+                                  {quote && quote.numberOfStudents > 0 ? (() => {
+                                    const studentRevenue = costBreakdown.student.totalPerStudent;
+                                    const studentCost = costBreakdown.internalCosts.totalCosts / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const studentProfit = studentRevenue - studentCost;
+                                    const studentNetProfit = studentProfit / 1.21; // Account for VAT
+                                    return formatCurrency(studentNetProfit);
+                                  })() : '€0'}
                                 </span>
                               </div>
                               {quote && quote.numberOfTeachers > 0 && (
                                 <div className="flex justify-between items-center text-sm">
                                   <span className="text-red-700">Profit per Teacher:</span>
-                                  <span className={`font-bold ${costBreakdown.profitability.netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                                    {formatCurrency(costBreakdown.profitability.netProfit / quote.numberOfTeachers)}
+                                  <span className={`font-bold ${(() => {
+                                    const teacherRevenue = costBreakdown.teacher.totalPerTeacher;
+                                    const teacherCost = costBreakdown.internalCosts.totalCosts / (quote.numberOfStudents + quote.numberOfTeachers);
+                                    const teacherProfit = teacherRevenue - teacherCost;
+                                    const teacherNetProfit = teacherProfit / 1.21;
+                                    return teacherNetProfit >= 0 ? 'text-green-700' : 'text-red-700';
+                                  })()}`}>
+                                    {(() => {
+                                      const teacherRevenue = costBreakdown.teacher.totalPerTeacher;
+                                      const teacherCost = costBreakdown.internalCosts.totalCosts / (quote.numberOfStudents + quote.numberOfTeachers);
+                                      const teacherProfit = teacherRevenue - teacherCost;
+                                      const teacherNetProfit = teacherProfit / 1.21; // Account for VAT
+                                      return formatCurrency(teacherNetProfit);
+                                    })()}
                                   </span>
                                 </div>
                               )}
