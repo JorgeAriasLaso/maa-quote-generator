@@ -622,11 +622,11 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF with proper margin handling
+      // Create PDF with improved page handling
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 15; // 15mm margins
+      const margin = 10; // Reduced margins for more content space
       
       // Convert canvas to image data with high quality
       const imgData = canvas.toDataURL('image/png', 1.0);
@@ -645,8 +645,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         // Content fits on one page
         pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Content spans multiple pages - split with proper margins
-        const pageContentHeight = availableHeight; // Height available for content on each page
+        // Content spans multiple pages - use improved splitting
+        const pageContentHeight = availableHeight - 10; // Leave some buffer
         const totalPages = Math.ceil(scaledHeight / pageContentHeight);
         
         for (let i = 0; i < totalPages; i++) {
@@ -654,15 +654,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             pdf.addPage();
           }
           
-          // Calculate source rectangle from the original image for this page
-          const sourceY = (i * pageContentHeight * imgHeight) / scaledHeight;
+          // Calculate source rectangle with overlap to avoid cutting
+          const overlap = i === 0 ? 0 : 20; // 20px overlap for continuity
+          const sourceY = Math.max(0, (i * pageContentHeight * imgHeight) / scaledHeight - overlap);
           const sourceHeight = Math.min(
-            (pageContentHeight * imgHeight) / scaledHeight,
+            (pageContentHeight * imgHeight) / scaledHeight + overlap,
             imgHeight - sourceY
           );
           
           // Scale back to match the target dimensions
           const targetHeight = (sourceHeight * scaledHeight) / imgHeight;
+          const targetY = i === 0 ? margin : margin - (overlap * scaledHeight) / imgHeight;
           
           // Create a temporary canvas for this page slice
           const pageCanvas = document.createElement('canvas');
@@ -680,8 +682,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           
           const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
           
-          // Add image with proper margin positioning
-          pdf.addImage(pageImgData, 'PNG', margin, margin, scaledWidth, targetHeight);
+          // Add image with proper positioning
+          pdf.addImage(pageImgData, 'PNG', margin, targetY, scaledWidth, targetHeight);
         }
       }
       
@@ -863,7 +865,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Learning Outcomes */}
-            <div className="mb-12" style={{ pageBreakBefore: 'always' }}>
+            <div className="mb-12">
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Educational Value & Learning Outcomes
               </h3>
