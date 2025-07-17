@@ -598,112 +598,115 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // NUCLEAR OPTION: Create separate HTML elements for each page
+      // FINAL SOLUTION: Manual page height control with CSS
+      // Add CSS for forcing page breaks in PDF generation
+      const styleSheet = document.createElement('style');
+      styleSheet.innerHTML = `
+        @page { margin: 15mm; size: A4; }
+        #educational-value-section { page-break-before: always !important; break-before: always !important; }
+        .pdf-page-1 { height: 1122px !important; overflow: hidden !important; }
+        .pdf-page-2 { height: auto !important; }
+      `;
+      document.head.appendChild(styleSheet);
+      
+      // Create single canvas with forced page break
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 794,
+        height: null,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
+            clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '40px';
+            clonedElement.style.fontSize = '14px';
+            clonedElement.style.lineHeight = '1.6';
+            
+            // Force page break at Educational Value
+            const educationalSection = clonedElement.querySelector('#educational-value-section');
+            if (educationalSection) {
+              (educationalSection as HTMLElement).style.pageBreakBefore = 'always';
+              (educationalSection as HTMLElement).style.breakBefore = 'always';
+              (educationalSection as HTMLElement).style.marginTop = '50px';
+            }
+            
+            // Style images
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0 || img.src.includes('logo') || img.alt?.includes('My Abroad Ally')) {
+                img.style.maxWidth = '200px';
+                img.style.height = 'auto';
+                img.style.objectFit = 'contain';
+              } else {
+                img.style.width = '160px';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+              }
+            });
+            
+            // Style headings
+            const h1s = clonedElement.querySelectorAll('h1');
+            h1s.forEach(h => { h.style.fontSize = '20px'; h.style.fontWeight = 'bold'; });
+            const h2s = clonedElement.querySelectorAll('h2');
+            h2s.forEach(h => { h.style.fontSize = '18px'; h.style.fontWeight = 'bold'; });
+            const h3s = clonedElement.querySelectorAll('h3');
+            h3s.forEach(h => { h.style.fontSize = '16px'; h.style.fontWeight = 'bold'; });
+            const ps = clonedElement.querySelectorAll('p');
+            ps.forEach(p => { p.style.fontSize = '14px'; p.style.lineHeight = '1.6'; });
+          }
+        }
+      });
+      
+      // Remove the added stylesheet
+      document.head.removeChild(styleSheet);
+      
+      // Create PDF with fixed 2-page split at 60% height
       const pdf = new jsPDF('p', 'mm', 'a4');
       const margin = 15;
       const contentWidth = 210 - (2 * margin);
-
-      // PAGE 1: Clone document and hide Educational Value section onwards
-      const page1Element = quoteElement.cloneNode(true) as HTMLElement;
-      page1Element.id = 'pdf-page-1';
       
-      // Find and remove Educational Value section and everything after it
-      const educationalSection = page1Element.querySelector('#educational-value-section');
-      if (educationalSection) {
-        // Remove the Educational Value section and all following siblings
-        let nextSibling = educationalSection.nextSibling;
-        while (nextSibling) {
-          const toRemove = nextSibling;
-          nextSibling = nextSibling.nextSibling;
-          toRemove.parentNode?.removeChild(toRemove);
-        }
-        // Remove the Educational Value section itself
-        educationalSection.parentNode?.removeChild(educationalSection);
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const scaledWidth = contentWidth;
+      
+      // FORCE 60/40 split regardless of content
+      const splitPoint = Math.floor(imgHeight * 0.6);
+      
+      // Page 1: Top 60%
+      const page1Canvas = document.createElement('canvas');
+      const page1Ctx = page1Canvas.getContext('2d');
+      if (page1Ctx) {
+        page1Canvas.width = imgWidth;
+        page1Canvas.height = splitPoint;
+        page1Ctx.drawImage(canvas, 0, 0, imgWidth, splitPoint, 0, 0, imgWidth, splitPoint);
+        
+        const page1Data = page1Canvas.toDataURL('image/png', 1.0);
+        const page1ScaledHeight = (splitPoint * scaledWidth) / imgWidth;
+        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Style and position page 1 element
-      page1Element.style.position = 'absolute';
-      page1Element.style.top = '-9999px';
-      page1Element.style.left = '0';
-      page1Element.style.maxWidth = '794px';
-      page1Element.style.width = '794px';
-      page1Element.style.backgroundColor = '#ffffff';
-      page1Element.style.padding = '40px';
-      page1Element.style.fontSize = '14px';
-      page1Element.style.lineHeight = '1.6';
-      
-      document.body.appendChild(page1Element);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Render page 1
-      const canvas1 = await html2canvas(page1Element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        width: 794
-      });
-      
-      const page1Data = canvas1.toDataURL('image/png', 1.0);
-      const page1ScaledHeight = (canvas1.height * contentWidth) / canvas1.width;
-      pdf.addImage(page1Data, 'PNG', margin, margin, contentWidth, page1ScaledHeight);
-      
-      // Clean up page 1
-      document.body.removeChild(page1Element);
-      
-      // PAGE 2: Clone document and show only Educational Value onwards
+      // Page 2: Bottom 40% (with overlap)
       pdf.addPage();
-      const page2Element = quoteElement.cloneNode(true) as HTMLElement;
-      page2Element.id = 'pdf-page-2';
-      
-      // Find Educational Value section and hide everything before it
-      const educationalSection2 = page2Element.querySelector('#educational-value-section');
-      if (educationalSection2) {
-        // Find the main quote document container
-        const quoteDoc = page2Element.querySelector('#quote-document');
-        if (quoteDoc) {
-          // Hide all children before Educational Value section
-          const children = Array.from(quoteDoc.children);
-          for (const child of children) {
-            if (child.id === 'educational-value-section') {
-              break; // Stop when we reach Educational Value
-            }
-            (child as HTMLElement).style.display = 'none';
-          }
-        }
+      const page2StartY = splitPoint - 100; // 100px overlap
+      const page2Height = imgHeight - page2StartY;
+      const page2Canvas = document.createElement('canvas');
+      const page2Ctx = page2Canvas.getContext('2d');
+      if (page2Ctx) {
+        page2Canvas.width = imgWidth;
+        page2Canvas.height = page2Height;
+        page2Ctx.drawImage(canvas, 0, page2StartY, imgWidth, page2Height, 0, 0, imgWidth, page2Height);
+        
+        const page2Data = page2Canvas.toDataURL('image/png', 1.0);
+        const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
+        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
       }
-      
-      // Style page 2 element
-      page2Element.style.position = 'absolute';
-      page2Element.style.top = '-9999px';
-      page2Element.style.left = '0';
-      page2Element.style.maxWidth = '794px';
-      page2Element.style.width = '794px';
-      page2Element.style.backgroundColor = '#ffffff';
-      page2Element.style.padding = '40px';
-      page2Element.style.fontSize = '14px';
-      page2Element.style.lineHeight = '1.6';
-      
-      document.body.appendChild(page2Element);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Render page 2
-      const canvas2 = await html2canvas(page2Element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        width: 794
-      });
-      
-      const page2Data = canvas2.toDataURL('image/png', 1.0);
-      const page2ScaledHeight = (canvas2.height * contentWidth) / canvas2.width;
-      pdf.addImage(page2Data, 'PNG', margin, margin, contentWidth, page2ScaledHeight);
-      
-      // Clean up page 2
-      document.body.removeChild(page2Element);
 
       // Restore original styling
       Object.assign(quoteElement.style, originalStyles);
