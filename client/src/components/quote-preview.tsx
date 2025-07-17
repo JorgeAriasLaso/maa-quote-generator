@@ -586,14 +586,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         backgroundColor: quoteElement.style.backgroundColor,
       };
       
-      // Set standard PDF dimensions with reduced padding to fit content in 2 pages
+      // Set standard PDF dimensions - ONLY reduced padding, keep everything else working
       quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
       quoteElement.style.width = '794px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '20px'; // Reduced from 40px to 20px
+      quoteElement.style.padding = '25px'; // Slightly reduced padding only
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '13px'; // Slightly smaller font
-      quoteElement.style.lineHeight = '1.5'; // Tighter line spacing
+      quoteElement.style.fontSize = '14px'; // Keep original font size
+      quoteElement.style.lineHeight = '1.6'; // Keep original line spacing
       
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -611,12 +611,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            // Set consistent styling with reduced padding
+            // Set consistent styling - minimal padding reduction only
             clonedElement.style.maxWidth = '794px';
             clonedElement.style.width = '794px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '20px'; // Reduced padding
-            clonedElement.style.fontSize = '13px'; // Slightly smaller font
+            clonedElement.style.padding = '25px'; // Slightly reduced padding
+            clonedElement.style.fontSize = '14px'; // Keep original font
             
             // Fix image sizing
             const images = clonedElement.querySelectorAll('img');
@@ -654,9 +654,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const pdfWidth = 210 - 30; // A4 width minus margins
       const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
       
-      // Add pages as needed for the full content - optimized for 2 pages
+      // Add pages as needed for the full content - keep original page logic
       let currentY = 0;
-      const pageHeight = 297 - 25; // A4 height with smaller margins (12.5mm each)
+      const pageHeight = 297 - 30; // A4 height minus margins (keep original)
       let pageCount = 1;
       
       while (currentY < pdfHeight) {
