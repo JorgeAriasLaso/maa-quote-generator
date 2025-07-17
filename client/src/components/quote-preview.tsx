@@ -735,7 +735,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                   {highlights && highlights.description && highlights.images ? (
                     // Madrid format - use custom images
-                    highlights.images.slice(1, 5).map((image, index) => (
+                    highlights.images.slice(0, 4).map((image, index) => (
                       <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                         <img 
                           src={image.src} 
