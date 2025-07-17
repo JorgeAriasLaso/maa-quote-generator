@@ -123,11 +123,11 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Madrid offers an exceptional educational experience as Spain's dynamic capital and the heart of European business, culture, and politics. Students will experience vibrant business culture and modern European economy while exploring the center of Spanish politics, finance, and innovation. The city provides world-class art and culture with visits to the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance. Students practice Spanish in its native environment while engaging with local professionals and experiencing authentic Spanish hospitality and culture. The historic Royal Palace, Plaza Mayor, and Retiro Park offer insights into Spain's rich history and its role in global exploration and trade, making Madrid an ideal destination for comprehensive educational travel.",
         images: [
-          { src: "@assets/5fa53648e38b2_1752761191307.jpeg", alt: "Madrid cityscape" },
-          { src: "@assets/vistas-palacio-real_1752761191308.avif", alt: "Royal Palace of Madrid" },
-          { src: "@assets/895-adobestock110515761_1752761191309.jpeg", alt: "Madrid landmarks" },
-          { src: "@assets/348698-Madrid_1752761191309.jpg", alt: "Madrid Gran Via at night" },
-          { src: "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif", alt: "Madrid architectural landmarks" }
+          { src: "/@assets/5fa53648e38b2_1752761191307.jpeg", alt: "Madrid cityscape" },
+          { src: "/@assets/vistas-palacio-real_1752761191308.avif", alt: "Royal Palace of Madrid" },
+          { src: "/@assets/895-adobestock110515761_1752761191309.jpeg", alt: "Madrid landmarks" },
+          { src: "/@assets/348698-Madrid_1752761191309.jpg", alt: "Madrid Gran Via at night" },
+          { src: "/@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif", alt: "Madrid architectural landmarks" }
         ]
       };
     } else if (city.includes('malaga')) {
@@ -821,7 +821,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   
                   {/* Image gallery - 5 images in a nice layout */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {highlights.images.map((image, index) => (
+                    {highlights.images.slice(0, 5).map((image, index) => (
                       <div key={index} className={`${index === 0 ? 'col-span-2 md:col-span-1' : ''} ${index === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
                         <img 
                           src={image.src} 
