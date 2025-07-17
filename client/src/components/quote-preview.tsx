@@ -18,7 +18,8 @@ import madrid4 from "@assets/348698-Madrid_1752761191309.jpg";
 import madrid5 from "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif";
 import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
 import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
-// Note: Using beautiful custom images for first 2, generic images for last 2 until special character file issue is resolved
+import malaga3 from "@assets/feria-malaga.webp";
+import malaga4 from "@assets/malaga-cityview.webp";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -150,8 +151,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         images: [
           { src: malaga1, alt: "Pompidou Centre Málaga" },
           { src: malaga2, alt: "La Malagueta Beach" },
-          { src: malaga1, alt: "Málaga cultural architecture" },
-          { src: malaga2, alt: "Mediterranean coastline" }
+          { src: malaga3, alt: "Feria de Málaga festival" },
+          { src: malaga4, alt: "Historic Málaga cityview" }
         ]
       };
     } else if (city.includes('alicante')) {
