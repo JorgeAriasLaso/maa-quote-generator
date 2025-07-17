@@ -775,7 +775,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 {/* Main Image */}
                 <div className="rounded-lg overflow-hidden shadow-md">
                   <img 
-                    src={getDestinationImage(quote.destination)} 
+                    src={quote.destination.toLowerCase().includes('madrid') ? madrid1 : getDestinationImage(quote.destination)} 
                     alt={quote.destination} 
                     className="w-full h-32 object-cover"
                   />
@@ -824,10 +824,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {highlights.description}
                   </p>
                   
-                  {/* Image gallery - 5 images in a nice layout */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {highlights.images.slice(0, 5).map((image, index) => (
-                      <div key={index} className={`${index === 0 ? 'col-span-2 md:col-span-1' : ''} ${index === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
+                  {/* Image gallery - 4 images in a nice layout */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {highlights.images.slice(1, 5).map((image, index) => (
+                      <div key={index}>
                         <img 
                           src={image.src} 
                           alt={image.alt} 

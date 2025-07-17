@@ -116,6 +116,9 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Fixed cost legend formatting to place "Average cost per student/teacher" inside parentheses for better clarity
 ✓ Updated Madrid destination layout to use single body text instead of 4 separate sections for better readability
 ✓ Integrated 5 custom Madrid images in a responsive grid layout (2x3 grid with special positioning for first and last images)
+✓ Fixed Madrid image display using proper asset imports (@assets/ syntax) instead of URL paths
+✓ Replaced first picture (next to duration/students/teachers) with madrid1 custom image
+✓ Modified image gallery to show only 4 pictures (madrid2-madrid5) in 2x2 grid layout instead of 5
 
 ## System Architecture
 
