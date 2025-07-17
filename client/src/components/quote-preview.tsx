@@ -599,7 +599,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 20000,
+        imageTimeout: 30000,
+        width: 794,
+        height: null,
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
@@ -610,16 +612,31 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.fontSize = '14px';
             clonedElement.style.lineHeight = '1.6';
             
-            // Improve image quality and size
+            // Improve image quality and size, special handling for logo
             const images = clonedElement.querySelectorAll('img');
             images.forEach((img, index) => {
-              img.style.maxWidth = '100%';
-              img.style.width = '160px';
-              img.style.height = '120px';
-              img.style.objectFit = 'cover';
+              // Check if this is the logo (first image or contains logo in src)
+              if (index === 0 || img.src.includes('logo') || img.src.includes('Logo') || img.alt?.includes('My Abroad Ally')) {
+                // Logo specific styling - prevent deformation
+                img.style.maxWidth = '200px';
+                img.style.width = 'auto';
+                img.style.height = 'auto';
+                img.style.maxHeight = '128px';
+                img.style.aspectRatio = 'auto';
+                img.style.objectFit = 'contain';
+                img.style.objectPosition = 'center';
+                img.style.imageRendering = 'high-quality';
+                img.style.borderRadius = '0';
+              } else {
+                // Regular destination images
+                img.style.maxWidth = '100%';
+                img.style.width = '160px';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+                img.style.imageRendering = 'auto';
+                img.style.borderRadius = '6px';
+              }
               img.style.display = 'block';
-              img.style.borderRadius = '6px';
-              img.style.imageRendering = 'auto';
             });
             
             // Set clear heading sizes
@@ -690,31 +707,52 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         // Content fits on one page
         pdf.addImage(imgData, 'PNG', margin, margin, scaledWidth, scaledHeight);
       } else {
-        // Content needs multiple pages - split with overlap to prevent cutting
+        // Content needs multiple pages - improved page splitting logic
         const totalPages = Math.ceil(scaledHeight / availableHeight);
-        const overlap = 20; // 20px overlap to prevent cutting
+        const overlap = 40; // Increased overlap to prevent cutting mid-sections
         
         for (let i = 0; i < totalPages; i++) {
           if (i > 0) {
             pdf.addPage();
           }
           
-          // Calculate source region with overlap
-          const sourceY = Math.max(0, (i * availableHeight * imgHeight) / scaledHeight - (i > 0 ? overlap : 0));
-          const sourceHeight = Math.min(
-            (availableHeight * imgHeight) / scaledHeight + (i > 0 ? overlap : 0),
-            imgHeight - sourceY
-          );
+          // Improved source region calculation with better overlap handling
+          let sourceY: number;
+          let sourceHeight: number;
           
-          // Create a canvas for this page's content
+          if (i === 0) {
+            // First page - start from top
+            sourceY = 0;
+            sourceHeight = Math.min((availableHeight * imgHeight) / scaledHeight, imgHeight);
+          } else if (i === totalPages - 1) {
+            // Last page - ensure we capture all remaining content
+            sourceHeight = imgHeight - (i * (availableHeight * imgHeight) / scaledHeight - overlap);
+            sourceY = imgHeight - sourceHeight;
+          } else {
+            // Middle pages - use overlap
+            sourceY = (i * (availableHeight * imgHeight) / scaledHeight) - overlap;
+            sourceHeight = (availableHeight * imgHeight) / scaledHeight + overlap;
+          }
+          
+          // Ensure sourceY and sourceHeight are within bounds
+          sourceY = Math.max(0, Math.min(sourceY, imgHeight));
+          sourceHeight = Math.max(0, Math.min(sourceHeight, imgHeight - sourceY));
+          
+          // Create a canvas for this page's content with higher quality
           const pageCanvas = document.createElement('canvas');
           const pageCtx = pageCanvas.getContext('2d');
+          
+          if (!pageCtx) continue;
           
           pageCanvas.width = imgWidth;
           pageCanvas.height = sourceHeight;
           
+          // Enable image smoothing for better quality
+          pageCtx.imageSmoothingEnabled = true;
+          pageCtx.imageSmoothingQuality = 'high';
+          
           // Draw this page's portion with high quality
-          pageCtx?.drawImage(
+          pageCtx.drawImage(
             canvas,
             0, sourceY, imgWidth, sourceHeight,
             0, 0, imgWidth, sourceHeight
@@ -800,7 +838,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               <img 
                 src={logoPath} 
                 alt="My Abroad Ally" 
-                className="h-24 w-24 object-contain mx-auto mb-3"
+                className="h-32 w-auto object-contain mx-auto mb-3"
+                style={{ maxWidth: '200px', height: 'auto' }}
               />
               <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
               <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
@@ -908,7 +947,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Learning Outcomes */}
-            <div className="mb-12">
+            <div className="mb-12" style={{ pageBreakBefore: 'auto', breakBefore: 'auto' }}>
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Educational Value & Learning Outcomes
               </h3>
