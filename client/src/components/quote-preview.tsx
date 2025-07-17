@@ -581,10 +581,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       };
       
       // Set fixed dimensions for PDF export
-      quoteElement.style.maxWidth = '800px';
-      quoteElement.style.width = '800px';
+      quoteElement.style.maxWidth = '750px';
+      quoteElement.style.width = '750px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '20px';
+      quoteElement.style.padding = '15px';
       quoteElement.style.backgroundColor = '#ffffff';
       
       // Allow time for DOM to update
@@ -592,20 +592,21 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Create canvas from the quote document with optimized settings
       const canvas = await html2canvas(quoteElement, {
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 840, // 800px + 40px padding
+        width: 780, // 750px + 30px padding
         logging: false,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
           // Ensure all styles are applied to the cloned document
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            clonedElement.style.maxWidth = '800px';
-            clonedElement.style.width = '800px';
+            clonedElement.style.maxWidth = '750px';
+            clonedElement.style.width = '750px';
             clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '15px';
           }
         }
       });
@@ -626,7 +627,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 10; // Reduced margins for more content space
+      const margin = 12; // Optimal margins for content visibility
       
       // Convert canvas to image data with high quality
       const imgData = canvas.toDataURL('image/png', 1.0);
@@ -818,13 +819,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </p>
                   
                   {/* Image gallery - 4 images in a nice layout */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {highlights.images.slice(1, 5).map((image, index) => (
                       <div key={index}>
                         <img 
                           src={image.src} 
                           alt={image.alt} 
-                          className="w-full h-48 object-cover rounded-lg shadow-md"
+                          className="w-full h-44 object-cover rounded-lg shadow-sm"
                         />
                       </div>
                     ))}
@@ -849,13 +850,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </div>
                   
                   {/* Image gallery - 4 images in a nice layout */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {highlights && Array.isArray(highlights) && highlights.slice(0, 4).map((highlight, index) => (
                       <div key={index}>
                         <img 
                           src={highlight.image} 
                           alt={highlight.title} 
-                          className="w-full h-48 object-cover rounded-lg shadow-md"
+                          className="w-full h-44 object-cover rounded-lg shadow-sm"
                         />
                       </div>
                     ))}
