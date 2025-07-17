@@ -771,18 +771,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                {/* Main Image */}
-                <div className="rounded-lg overflow-hidden shadow-md h-32 relative">
-                  <img 
-                    src={quote.destination.toLowerCase().includes('madrid') ? madrid1 : getDestinationImage(quote.destination)} 
-                    alt={quote.destination} 
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </div>
-
+              <div className="flex justify-center">
                 {/* Trip Details */}
-                <Card className="bg-slate-50 p-4">
+                <Card className="bg-slate-50 p-4 max-w-md w-full">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="font-medium text-slate-700">Duration:</span>
