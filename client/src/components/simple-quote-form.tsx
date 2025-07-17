@@ -39,7 +39,9 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     address: "",
     studentAccommodationPerDay: "",
     teacherAccommodationPerDay: "",
-    accommodationName: "",
+    studentAccommodationName: "",
+    teacherAccommodationName: "",
+    additionalComments: "",
     breakfastPerDay: "",
     lunchPerDay: "",
     dinnerPerDay: "",
@@ -106,7 +108,9 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
         address: currentQuote.address || "",
         studentAccommodationPerDay: currentQuote.studentAccommodationPerDay || "",
         teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay || "",
-        accommodationName: currentQuote.accommodationName || "",
+        studentAccommodationName: currentQuote.studentAccommodationName || "",
+        teacherAccommodationName: currentQuote.teacherAccommodationName || "",
+        additionalComments: currentQuote.additionalComments || "",
         breakfastPerDay: currentQuote.breakfastPerDay || "",
         lunchPerDay: currentQuote.lunchPerDay || "",
         dinnerPerDay: currentQuote.dinnerPerDay || "",
@@ -533,13 +537,25 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           </h2>
           
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Hotel/Accommodation Name (Optional)</label>
-              <Input
-                value={formData.accommodationName}
-                onChange={(e) => updateFormData("accommodationName", e.target.value)}
-                placeholder="e.g., Hotel ABC, Youth Hostel XYZ"
-              />
+            <h4 className="font-medium text-slate-700 mb-3">Accommodation Details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Student Accommodation Name</label>
+                <Input
+                  value={formData.studentAccommodationName}
+                  onChange={(e) => updateFormData("studentAccommodationName", e.target.value)}
+                  placeholder="e.g., Youth Hostel Barcelona"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Teacher Accommodation Name</label>
+                <Input
+                  value={formData.teacherAccommodationName}
+                  onChange={(e) => updateFormData("teacherAccommodationName", e.target.value)}
+                  placeholder="e.g., Hotel Central"
+                />
+              </div>
             </div>
           </div>
 
@@ -762,6 +778,21 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                 placeholder="0.00"
               />
             </div>
+          </div>
+        </Card>
+
+        {/* Additional Comments */}
+        <Card className="p-6">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Additional Comments</h2>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Additional Information (Optional)</label>
+            <textarea
+              className="w-full min-h-24 p-3 border border-slate-300 rounded-md resize-vertical"
+              value={formData.additionalComments}
+              onChange={(e) => updateFormData("additionalComments", e.target.value)}
+              placeholder="Add any special requirements, notes, or additional information about this trip..."
+            />
           </div>
         </Card>
 

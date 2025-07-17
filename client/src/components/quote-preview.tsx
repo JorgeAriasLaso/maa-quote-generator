@@ -1,5 +1,11 @@
 import { type Quote } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
+
+// Helper function to parse duration for calculations
+function parseDuration(duration: string): number {
+  const match = duration.match(/(\d+)/);
+  return match ? parseInt(match[1]) : 7;
+}
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, ZoomIn, Printer, Loader2 } from "lucide-react";
@@ -1001,7 +1007,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {costBreakdown && (
                       <div className="space-y-1 text-xs text-slate-600">
                         <div className="flex justify-between">
-                          <span>• Accommodation{quote.accommodationName ? ` (${quote.accommodationName})` : ''}:</span>
+                          <span>• Accommodation{quote.studentAccommodationName ? ` (${quote.studentAccommodationName})` : ''}:</span>
                           <span>{formatCurrency(costBreakdown.student.accommodation)}</span>
                         </div>
                         {costBreakdown.student.breakfastCost > 0 && (
@@ -1053,7 +1059,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     {costBreakdown && (
                       <div className="space-y-1 text-xs text-slate-600">
                         <div className="flex justify-between">
-                          <span>• Accommodation{quote.accommodationName ? ` (${quote.accommodationName})` : ''}:</span>
+                          <span>• Accommodation{quote.teacherAccommodationName ? ` (${quote.teacherAccommodationName})` : ''}:</span>
                           <span>{formatCurrency(costBreakdown.teacher.accommodation)}</span>
                         </div>
                         {costBreakdown.teacher.breakfastCost > 0 && (
@@ -1278,14 +1284,94 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                             </div>
                           </div>
                           
-                          <div className="text-xs text-red-600 bg-red-100 p-2 rounded">
-                            <strong>Cost Breakdown:</strong> Student accommodation (€{costBreakdown.internalCosts.studentAccommodation}), 
-                            Teacher accommodation (€{costBreakdown.internalCosts.teacherAccommodation}), 
-                            Meals (€{costBreakdown.internalCosts.meals}), 
-                            Transport (€{costBreakdown.internalCosts.localTransportation}), 
-                            Coordination (€{costBreakdown.internalCosts.coordination}), 
-                            Local coordinator (€{costBreakdown.internalCosts.localCoordinator}),
-                            Additional services (€{costBreakdown.internalCosts.additionalServices})
+                          <div className="bg-red-100 border border-red-200 rounded p-3">
+                            <h5 className="text-xs font-semibold text-red-800 mb-3">Detailed Cost Breakdown</h5>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-xs text-red-700">
+                                <thead>
+                                  <tr className="border-b border-red-200">
+                                    <th className="text-left py-1">Item</th>
+                                    <th className="text-left py-1">Calculation</th>
+                                    <th className="text-right py-1">Amount</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="space-y-1">
+                                  {costBreakdown.internalCosts.studentAccommodation > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Student Accommodation</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfStudents || 0} students × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costStudentAccommodationPerDay || "0")).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.studentAccommodation.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.teacherAccommodation > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Teacher Accommodation</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfTeachers || 0} teachers × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costTeacherAccommodationPerDay || "0")).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.meals > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Meals (All)</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × {quote ? parseDuration(quote.duration) : 0} days × €{((parseFloat(quote?.costBreakfastPerDay || "0") + parseFloat(quote?.costLunchPerDay || "0") + parseFloat(quote?.costDinnerPerDay || "0"))).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.meals.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.localTransportation > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Local Transport</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costLocalTransportationCard || "0")).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.localTransportation.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.coordination > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Coordination Fees</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfStudents || 0} × €{(parseFloat(quote?.costStudentCoordination || "0")).toFixed(2)} + {quote?.numberOfTeachers || 0} × €{(parseFloat(quote?.costTeacherCoordination || "0")).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.coordination.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.localCoordinator > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Local Coordinator</td>
+                                      <td className="py-1 text-slate-600">1 trip × €{(parseFloat(quote?.costLocalCoordinator || "0")).toFixed(2)}</td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.localCoordinator.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.airportTransfer > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Airport Transfers</td>
+                                      <td className="py-1 text-slate-600">
+                                        {quote?.numberOfStudents + quote?.numberOfTeachers || 0} people × €{(parseFloat(quote?.costAirportTransfer || "0")).toFixed(2)}
+                                      </td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.airportTransfer.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  {costBreakdown.internalCosts.additionalServices > 0 && (
+                                    <tr className="border-b border-red-100">
+                                      <td className="py-1">Additional Services</td>
+                                      <td className="py-1 text-slate-600">Various services</td>
+                                      <td className="py-1 text-right font-medium">€{costBreakdown.internalCosts.additionalServices.toFixed(2)}</td>
+                                    </tr>
+                                  )}
+                                  <tr className="border-t-2 border-red-300 font-semibold">
+                                    <td className="py-2">Total Internal Costs</td>
+                                    <td className="py-2"></td>
+                                    <td className="py-2 text-right text-red-800">€{costBreakdown.internalCosts.totalCosts.toFixed(2)}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1294,6 +1380,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 </div>
               </Card>
             </div>
+
+            {/* Additional Comments */}
+            {quote.additionalComments && quote.additionalComments.trim() && (
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 text-slate-900 border-b border-slate-200 pb-2">
+                  Additional Information
+                </h3>
+                <div className="text-slate-700 whitespace-pre-wrap">
+                  {quote.additionalComments}
+                </div>
+              </Card>
+            )}
 
             {/* Next Steps */}
             <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">

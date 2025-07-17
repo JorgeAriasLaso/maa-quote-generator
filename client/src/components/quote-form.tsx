@@ -287,7 +287,9 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         // Service pricing fields - handle all string values properly
         studentAccommodationPerDay: currentQuote.studentAccommodationPerDay || "",
         teacherAccommodationPerDay: currentQuote.teacherAccommodationPerDay || "",
-        accommodationName: currentQuote.accommodationName || "",
+        studentAccommodationName: currentQuote.studentAccommodationName || "",
+        teacherAccommodationName: currentQuote.teacherAccommodationName || "",
+        additionalComments: currentQuote.additionalComments || "",
         breakfastPerDay: currentQuote.breakfastPerDay || "",
         lunchPerDay: currentQuote.lunchPerDay || "",
         dinnerPerDay: currentQuote.dinnerPerDay || "",
@@ -990,24 +992,44 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                 
 
 
-                {/* Accommodation Name */}
+                {/* Accommodation Names */}
                 <div>
-                  <FormField
-                    control={form.control}
-                    name="accommodationName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Hotel/Accommodation Name (Optional)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="e.g., Hotel ABC, Youth Hostel XYZ" 
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <h4 className="font-medium text-slate-700 mb-3">Accommodation Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="studentAccommodationName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Student Accommodation Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g., Youth Hostel Barcelona, Student Hotel" 
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="teacherAccommodationName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Teacher Accommodation Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g., Hotel Central, Teacher B&B" 
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
                 {/* Daily Rates */}
@@ -1356,6 +1378,31 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                 </div>
               </div>
             </div>
+          </Card>
+
+          {/* Additional Comments */}
+          <Card className="p-6">
+            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2 mb-4">
+              Additional Comments
+            </h3>
+            
+            <FormField
+              control={form.control}
+              name="additionalComments"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Additional Information (Optional)</FormLabel>
+                  <FormControl>
+                    <textarea 
+                      className="w-full min-h-24 p-3 border border-slate-300 rounded-md resize-vertical"
+                      placeholder="Add any special requirements, notes, or additional information about this trip..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </Card>
 
           {/* Generate Button */}

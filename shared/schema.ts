@@ -40,7 +40,10 @@ export const quotes = pgTable("quotes", {
   // Custom pricing inputs - daily rates
   studentAccommodationPerDay: text("student_accommodation_per_day"),
   teacherAccommodationPerDay: text("teacher_accommodation_per_day"),
-  accommodationName: text("accommodation_name"), // Hotel/accommodation name
+  // Accommodation details - separate for students and teachers
+  studentAccommodationName: text("student_accommodation_name"),
+  teacherAccommodationName: text("teacher_accommodation_name"),
+  additionalComments: text("additional_comments"),
   breakfastPerDay: text("breakfast_per_day"),
   lunchPerDay: text("lunch_per_day"),
   dinnerPerDay: text("dinner_per_day"),
@@ -79,7 +82,9 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   createdAt: true,
   quoteNumber: true,
 }).extend({
-  accommodationName: z.string().optional(),
+  studentAccommodationName: z.string().optional(),
+  teacherAccommodationName: z.string().optional(),
+  additionalComments: z.string().optional(),
   costStudentAccommodationPerDay: z.string().optional(),
   costTeacherAccommodationPerDay: z.string().optional(),
   costBreakfastPerDay: z.string().optional(),
