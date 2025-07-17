@@ -87,6 +87,19 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     queryKey: ["/api/clients"],
   });
 
+  // Helper function to calculate total cost for each pricing item
+  const calculateItemCost = (pricePerDay: string, totalQuantity: number, totalDays?: number) => {
+    const price = parseFloat(pricePerDay) || 0;
+    if (totalDays) {
+      return price * totalQuantity * totalDays;
+    }
+    return price * totalQuantity;
+  };
+
+  const duration = parseInt(formData.duration) || 0;
+  const numberOfStudents = parseInt(formData.numberOfStudents) || 0;
+  const numberOfTeachers = parseInt(formData.numberOfTeachers) || 0;
+
   // Load currentQuote data when available
   useEffect(() => {
     if (currentQuote) {
@@ -562,101 +575,155 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Student Accommodation (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.studentAccommodationPerDay}
-                onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.studentAccommodationPerDay}
+                  onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.studentAccommodationPerDay, numberOfStudents, duration))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Teacher Accommodation (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.teacherAccommodationPerDay}
-                onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.teacherAccommodationPerDay}
+                  onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.teacherAccommodationPerDay, numberOfTeachers, duration))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Breakfast (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.breakfastPerDay}
-                onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.breakfastPerDay}
+                  onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.breakfastPerDay, numberOfStudents + numberOfTeachers, duration))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Lunch (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.lunchPerDay}
-                onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.lunchPerDay}
+                  onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.lunchPerDay, numberOfStudents + numberOfTeachers, duration))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Dinner (€/day)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.dinnerPerDay}
-                onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.dinnerPerDay}
+                  onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.dinnerPerDay, numberOfStudents + numberOfTeachers, duration))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Local Transportation Card (€ total)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.transportCardTotal}
-                onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.transportCardTotal}
+                  onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.transportCardTotal, numberOfStudents + numberOfTeachers))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Student Coordination Fee (€ total)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.studentCoordinationFeeTotal}
-                onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.studentCoordinationFeeTotal}
+                  onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.studentCoordinationFeeTotal, numberOfStudents))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Teacher Coordination Fee (€ total)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.teacherCoordinationFeeTotal}
-                onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.teacherCoordinationFeeTotal}
+                  onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.teacherCoordinationFeeTotal, numberOfTeachers))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Airport Transfer (€ per person)</label>
-              <Input
-                type="number"
-                step="0.01"
-                value={formData.airportTransferPerPerson}
-                onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
-                placeholder="0.00"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.airportTransferPerPerson}
+                  onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
+                  placeholder="0.00"
+                  className="flex-1"
+                />
+                <div className="text-sm text-slate-600 min-w-[80px]">
+                  Total: {formatCurrency(calculateItemCost(formData.airportTransferPerPerson, numberOfStudents + numberOfTeachers))}
+                </div>
+              </div>
             </div>
           </div>
         </Card>
