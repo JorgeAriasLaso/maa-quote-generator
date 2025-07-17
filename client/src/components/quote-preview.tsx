@@ -661,8 +661,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const scaledWidth = contentWidth;
       const scaledHeight = (imgHeight * contentWidth) / imgWidth;
       
-      // Split at approximately 65% to ensure Educational Value starts on page 2
-      const splitPoint = Math.floor(imgHeight * 0.65);
+      // Calculate A4 page height in canvas pixels (accounting for scale and margins)
+      const a4HeightMm = 297;
+      const a4HeightPixels = ((a4HeightMm - 30) * imgWidth) / 210; // Subtract margins, scale to canvas width
+      
+      // Ensure split point doesn't exceed what fits on first page
+      let splitPoint = Math.floor(imgHeight * 0.6); // Start with 60%
+      if (splitPoint > a4HeightPixels) {
+        splitPoint = Math.floor(a4HeightPixels - 40); // Leave buffer for margins
+      }
+      
+      console.log(`PDF Split Info: Total height ${imgHeight}px, Split at ${splitPoint}px (${(splitPoint/imgHeight*100).toFixed(1)}%)`);
       
       // Page 1: Top portion
       const page1Height = splitPoint;
@@ -675,12 +684,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         const page1Data = page1Canvas.toDataURL('image/png', 1.0);
         const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
-        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
+        
+        // Ensure page 1 doesn't exceed A4 height
+        const maxPageHeight = a4HeightMm - 30; // A4 minus margins
+        const finalPage1Height = Math.min(page1ScaledHeight, maxPageHeight);
+        
+        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, finalPage1Height);
       }
       
-      // Page 2: Bottom portion (with small overlap to prevent gaps)
+      // Page 2: Bottom portion (with overlap to prevent gaps)
       pdf.addPage();
-      const page2StartY = splitPoint - 40; // Small overlap
+      const page2StartY = splitPoint - 50; // Larger overlap to ensure no content is missed
       const page2Height = imgHeight - page2StartY;
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
@@ -691,6 +705,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         const page2Data = page2Canvas.toDataURL('image/png', 1.0);
         const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
+        
+        // For page 2, allow it to use full height if needed
         pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
       }
 
