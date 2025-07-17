@@ -28,6 +28,10 @@ import bari1 from "@assets/bari1.jpg";
 import bari2 from "@assets/bari2.jpg";
 import bari3 from "@assets/bari3.jpg";
 import bari4 from "@assets/bari4.avif";
+import prague1 from "@assets/prague1.avif";
+import prague2 from "@assets/prague2.jpg";
+import prague3 from "@assets/prague3.png";
+import prague4 from "@assets/prague4.avif";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -277,28 +281,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
     // CZECH REPUBLIC
     else if (city.includes('prague')) {
-      return [
-        {
-          title: "Medieval Architecture Marvel",
-          description: "Explore over 1000 years of history through Gothic, Renaissance, and Baroque architecture in one of Europe's best-preserved medieval cities.",
-          image: "https://images.unsplash.com/photo-1519677100203-a0e668c92439?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Modern Tech Hub",
-          description: "Experience Prague as Eastern Europe's Silicon Valley with thriving tech startups, game development studios, and international business centers.",
-          image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Czech Cultural Heritage",
-          description: "Discover unique Czech traditions, sample local cuisine, and learn about the country's peaceful Velvet Revolution and EU integration.",
-          image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Central European Gateway",
-          description: "Perfect location for understanding Central European history, politics, and economics with excellent transport links across the region.",
-          image: "https://images.unsplash.com/photo-1541416938330-1f0b565b1660?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Prague offers students an extraordinary educational experience in the heart of Europe, where over 1000 years of Gothic, Renaissance, and Baroque architecture tell the story of Central European history and cultural development. Students explore one of the world's best-preserved medieval cities while discovering how Prague has transformed into Eastern Europe's Silicon Valley, hosting thriving tech startups, game development studios, and international business centers that drive modern Czech innovation. The city provides authentic insights into Czech cultural heritage through traditional cuisine, music, and customs, while learning about the country's peaceful Velvet Revolution and successful transition to democracy and EU membership. Prague's strategic position as Central Europe's gateway offers students valuable lessons in regional business culture, EU economic integration, and the dynamic relationship between historical preservation and modern European development.",
+        images: [
+          { src: prague1, alt: "Historic Prague Castle and Gothic architecture" },
+          { src: prague2, alt: "Prague bridges and autumn foliage cityscape" },
+          { src: prague3, alt: "Students enjoying riverside Prague views" },
+          { src: prague4, alt: "Modern Prague university and education district" }
+        ]
+      };
     }
     // POLAND
     else if (city.includes('krakow')) {
