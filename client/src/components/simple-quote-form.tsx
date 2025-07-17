@@ -557,11 +557,16 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             </p>
           </div>
           
-          <div className="space-y-4">
-            <h4 className="font-medium text-slate-700 mb-3">Accommodation Details</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* 1. Student Accommodation Cluster */}
+          <div className="space-y-4 border border-blue-200 bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+              <span className="bg-blue-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">1</span>
+              Student Accommodation
+            </h4>
+            
+            <div className="space-y-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Student Accommodation Name</label>
+                <label className="text-sm font-medium text-slate-700">Accommodation Name</label>
                 <Input
                   value={formData.studentAccommodationName}
                   onChange={(e) => updateFormData("studentAccommodationName", e.target.value)}
@@ -570,238 +575,276 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Teacher Accommodation Name</label>
+                <label className="text-sm font-medium text-slate-700">Daily Rate (€/day)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.studentAccommodationPerDay}
+                      onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costStudentAccommodationPerDay}
+                      onChange={(e) => updateFormData("costStudentAccommodationPerDay", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Teacher Accommodation Cluster */}
+          <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-green-800 mb-3 flex items-center">
+              <span className="bg-green-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">2</span>
+              Teacher Accommodation
+            </h4>
+            
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Accommodation Name</label>
                 <Input
                   value={formData.teacherAccommodationName}
                   onChange={(e) => updateFormData("teacherAccommodationName", e.target.value)}
                   placeholder="e.g., Hotel Central"
                 />
               </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Daily Rate (€/day)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.teacherAccommodationPerDay}
+                      onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costTeacherAccommodationPerDay}
+                      onChange={(e) => updateFormData("costTeacherAccommodationPerDay", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Student Accommodation (€/day)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.studentAccommodationPerDay}
-                    onChange={(e) => updateFormData("studentAccommodationPerDay", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
+          {/* 3. Meals Cluster */}
+          <div className="space-y-4 border border-orange-200 bg-orange-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-orange-800 mb-3 flex items-center">
+              <span className="bg-orange-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">3</span>
+              Meals
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Breakfast (€/day)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.breakfastPerDay}
+                      onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costBreakfastPerDay}
+                      onChange={(e) => updateFormData("costBreakfastPerDay", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costStudentAccommodationPerDay}
-                    onChange={(e) => updateFormData("costStudentAccommodationPerDay", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Lunch (€/day)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.lunchPerDay}
+                      onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costLunchPerDay}
+                      onChange={(e) => updateFormData("costLunchPerDay", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Dinner (€/day)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.dinnerPerDay}
+                      onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costDinnerPerDay}
+                      onChange={(e) => updateFormData("costDinnerPerDay", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Teacher Accommodation (€/day)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.teacherAccommodationPerDay}
-                    onChange={(e) => updateFormData("teacherAccommodationPerDay", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
+          {/* 4. Transportation & Transfers Cluster */}
+          <div className="space-y-4 border border-purple-200 bg-purple-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
+              <span className="bg-purple-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">4</span>
+              Transportation & Transfers
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Local Transportation Card (€ total)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.transportCardTotal}
+                      onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costLocalTransportationCard}
+                      onChange={(e) => updateFormData("costLocalTransportationCard", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costTeacherAccommodationPerDay}
-                    onChange={(e) => updateFormData("costTeacherAccommodationPerDay", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Airport Transfer (€ per person)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.airportTransferPerPerson}
+                      onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costAirportTransfer}
+                      onChange={(e) => updateFormData("costAirportTransfer", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Breakfast (€/day)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.breakfastPerDay}
-                    onChange={(e) => updateFormData("breakfastPerDay", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costBreakfastPerDay}
-                    onChange={(e) => updateFormData("costBreakfastPerDay", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
+          {/* 5. Coordination Fees Cluster */}
+          <div className="space-y-4 border border-indigo-200 bg-indigo-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-indigo-800 mb-3 flex items-center">
+              <span className="bg-indigo-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">5</span>
+              Coordination Fees
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Student Coordination Fee (€ total)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.studentCoordinationFeeTotal}
+                      onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costStudentCoordination}
+                      onChange={(e) => updateFormData("costStudentCoordination", e.target.value)}
+                      placeholder="Cost 60.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Lunch (€/day)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.lunchPerDay}
-                    onChange={(e) => updateFormData("lunchPerDay", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costLunchPerDay}
-                    onChange={(e) => updateFormData("costLunchPerDay", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Dinner (€/day)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.dinnerPerDay}
-                    onChange={(e) => updateFormData("dinnerPerDay", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costDinnerPerDay}
-                    onChange={(e) => updateFormData("costDinnerPerDay", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Local Transportation Card (€ total)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.transportCardTotal}
-                    onChange={(e) => updateFormData("transportCardTotal", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costLocalTransportationCard}
-                    onChange={(e) => updateFormData("costLocalTransportationCard", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Student Coordination Fee (€ total)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.studentCoordinationFeeTotal}
-                    onChange={(e) => updateFormData("studentCoordinationFeeTotal", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costStudentCoordination}
-                    onChange={(e) => updateFormData("costStudentCoordination", e.target.value)}
-                    placeholder="Cost 60.00"
-                    className="border-red-200 bg-red-50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Teacher Coordination Fee (€ total)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.teacherCoordinationFeeTotal}
-                    onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costTeacherCoordination}
-                    onChange={(e) => updateFormData("costTeacherCoordination", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Airport Transfer (€ per person)</label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.airportTransferPerPerson}
-                    onChange={(e) => updateFormData("airportTransferPerPerson", e.target.value)}
-                    placeholder="Price 0.00"
-                  />
-                </div>
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.costAirportTransfer}
-                    onChange={(e) => updateFormData("costAirportTransfer", e.target.value)}
-                    placeholder="Cost 0.00"
-                    className="border-red-200 bg-red-50"
-                  />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Teacher Coordination Fee (€ total)</label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.teacherCoordinationFeeTotal}
+                      onChange={(e) => updateFormData("teacherCoordinationFeeTotal", e.target.value)}
+                      placeholder="Price 0.00"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={formData.costTeacherCoordination}
+                      onChange={(e) => updateFormData("costTeacherCoordination", e.target.value)}
+                      placeholder="Cost 0.00"
+                      className="border-red-200 bg-red-50"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
