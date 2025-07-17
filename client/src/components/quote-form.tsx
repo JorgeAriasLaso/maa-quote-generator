@@ -984,399 +984,495 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
               Custom Pricing (Optional)
             </h3>
             
-            <Card className="bg-slate-50 p-4">
-              <div className="space-y-4">
-                <p className="text-sm text-slate-600 mb-4">
-                  Select each service you want to include by checking the box, then enter your pricing. Only selected services will appear in the quote:
-                </p>
+            <div className="bg-blue-50 border border-blue-200 p-3 rounded-md mb-6">
+              <p className="text-sm text-slate-700">
+                <span className="font-medium">Pricing Layout:</span> Each item has two fields side by side:
+                <span className="ml-2 inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Customer Price</span>
+                <span className="ml-1 inline-block bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">Internal Cost</span>
+              </p>
+            </div>
+            
+            {/* 1. Student Accommodation Cluster */}
+            <div className="space-y-4 border border-blue-200 bg-blue-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                <span className="bg-blue-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">1</span>
+                Student Accommodation
+              </h4>
+              
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="studentAccommodationName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Accommodation Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., Youth Hostel Barcelona" 
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
-
-
-                {/* Accommodation Names */}
-                <div>
-                  <h4 className="font-medium text-slate-700 mb-3">Accommodation Details</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="studentAccommodationName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Student Accommodation Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="e.g., Youth Hostel Barcelona, Student Hotel" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="teacherAccommodationName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Teacher Accommodation Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="e.g., Hotel Central, Teacher B&B" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* Daily Rates */}
-                <div>
-                  <h4 className="font-medium text-slate-700 mb-3">Daily Rates (per person per day)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="studentAccommodationPerDay"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Student Accommodation (€/day)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="teacherAccommodationPerDay"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Teacher Accommodation (€/day)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="breakfastPerDay"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Breakfast (€/day)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="lunchPerDay"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Lunch (€/day)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="dinnerPerDay"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Dinner (€/day)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                {/* Total Trip Amounts */}
-                <div>
-                  <h4 className="font-medium text-slate-700 mb-3">Total Trip Amounts (per person for entire trip)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="transportCardTotal"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Local Transportation Card (€/trip)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0.00" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="studentCoordinationFeeTotal"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Student Coordination (€/trip)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="teacherCoordinationFeeTotal"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Teacher Coordination (€/trip)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="airportTransferPerPerson"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Airport Transfer (€/person)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="0" 
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Daily Rate (€/day)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="studentAccommodationPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costStudentAccommodationPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
+
+            {/* 2. Teacher Accommodation Cluster */}
+            <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-3 flex items-center">
+                <span className="bg-green-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">2</span>
+                Teacher Accommodation
+              </h4>
+              
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="teacherAccommodationName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Accommodation Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="e.g., Hotel Central" 
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Daily Rate (€/day)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="teacherAccommodationPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costTeacherAccommodationPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Meals Cluster */}
+            <div className="space-y-4 border border-orange-200 bg-orange-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-orange-800 mb-3 flex items-center">
+                <span className="bg-orange-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">3</span>
+                Meals
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Breakfast (€/day)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="breakfastPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costBreakfastPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Lunch (€/day)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="lunchPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costLunchPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Dinner (€/day)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="dinnerPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costDinnerPerDay"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Transportation & Transfers Cluster */}
+            <div className="space-y-4 border border-purple-200 bg-purple-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
+                <span className="bg-purple-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">4</span>
+                Transportation & Transfers
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Local Transportation Card (€ total)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="transportCardTotal"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costLocalTransportationCard"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Airport Transfer (€ per person)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="airportTransferPerPerson"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costAirportTransfer"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Coordination Fees Cluster */}
+            <div className="space-y-4 border border-indigo-200 bg-indigo-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-indigo-800 mb-3 flex items-center">
+                <span className="bg-indigo-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">5</span>
+                Coordination Fees
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Student Coordination Fee (€ total)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="studentCoordinationFeeTotal"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costStudentCoordination"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 60.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Teacher Coordination Fee (€ total)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="teacherCoordinationFeeTotal"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Price 0.00" 
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="costTeacherCoordination"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input 
+                                placeholder="Cost 0.00" 
+                                className="border-red-200 bg-red-50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Additional Services */}
           <AdhocServicesSection form={form} numberOfStudents={numberOfStudents} numberOfTeachers={numberOfTeachers} />
 
-          {/* Internal Cost Analysis */}
+          {/* Additional Internal Costs */}
           <Card className="p-6 bg-red-50 border-red-200">
             <h3 className="text-lg font-semibold text-red-800 mb-4 flex items-center">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
-              Internal Cost Analysis (For Profitability)
+              Additional Internal Costs
             </h3>
             <p className="text-sm text-red-700 mb-4">
-              Enter your actual costs to calculate trip profitability. This section is for internal use only.
+              Other costs not covered in the main pricing clusters above.
             </p>
             
-            <div className="space-y-6">
-              {/* Accommodation Costs */}
-              <div>
-                <h4 className="font-medium text-red-700 mb-3">Accommodation Costs (per night)</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="costStudentAccommodationPerDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Student accommodation cost (€/night)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costTeacherAccommodationPerDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Teacher accommodation cost (€/night)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Meal Costs */}
-              <div>
-                <h4 className="font-medium text-red-700 mb-3">Meal Costs (per person per day)</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="costBreakfastPerDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Breakfast cost (€/day)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costLunchPerDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Lunch cost (€/day)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costDinnerPerDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dinner cost (€/day)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Other Costs */}
-              <div>
-                <h4 className="font-medium text-red-700 mb-3">Other Costs</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="costLocalTransportationCard"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Local transportation cost (€/person)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costStudentCoordination"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Student coordination cost (€/student)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="60.00" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costTeacherCoordination"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Teacher coordination cost (€/teacher)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="0.00" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="costLocalCoordinator"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Local coordinator cost (€/trip)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="150.00" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                {/* Airport Transfer Costs */}
-                <div>
-                  <h4 className="font-medium text-red-700 mb-3">Airport Transfer Costs</h4>
-                  <div className="grid grid-cols-1 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="costAirportTransfer"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Airport transfer cost (€/person)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="0.00" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="costLocalCoordinator"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local Coordinator Cost (€ total)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="150.00" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </Card>
 
