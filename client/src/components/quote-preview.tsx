@@ -586,14 +586,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         backgroundColor: quoteElement.style.backgroundColor,
       };
       
-      // Set standard PDF dimensions
+      // Set standard PDF dimensions with reduced padding to fit content in 2 pages
       quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
       quoteElement.style.width = '794px';
       quoteElement.style.margin = '0';
-      quoteElement.style.padding = '40px';
+      quoteElement.style.padding = '20px'; // Reduced from 40px to 20px
       quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '14px';
-      quoteElement.style.lineHeight = '1.6';
+      quoteElement.style.fontSize = '13px'; // Slightly smaller font
+      quoteElement.style.lineHeight = '1.5'; // Tighter line spacing
       
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -611,12 +611,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('quote-document');
           if (clonedElement) {
-            // Set consistent styling
+            // Set consistent styling with reduced padding
             clonedElement.style.maxWidth = '794px';
             clonedElement.style.width = '794px';
             clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '40px';
-            clonedElement.style.fontSize = '14px';
+            clonedElement.style.padding = '20px'; // Reduced padding
+            clonedElement.style.fontSize = '13px'; // Slightly smaller font
             
             // Fix image sizing
             const images = clonedElement.querySelectorAll('img');
@@ -654,9 +654,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const pdfWidth = 210 - 30; // A4 width minus margins
       const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
       
-      // Add pages as needed for the full content
+      // Add pages as needed for the full content - optimized for 2 pages
       let currentY = 0;
-      const pageHeight = 297 - 30; // A4 height minus margins
+      const pageHeight = 297 - 25; // A4 height with smaller margins (12.5mm each)
       let pageCount = 1;
       
       while (currentY < pdfHeight) {
