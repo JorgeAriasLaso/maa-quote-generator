@@ -124,12 +124,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Spain's Dynamic Capital",
           description: "Experience Madrid's vibrant business culture and modern European economy while exploring the heart of Spanish politics, finance, and innovation.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "World-Class Art & Culture",
           description: "Visit the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1512768387432-9b3a4e1c8e65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Spanish Language Immersion",
@@ -139,7 +139,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Historic Royal Heritage",
           description: "Explore the Royal Palace, Plaza Mayor, and Retiro Park while learning about Spain's rich history and its role in global exploration and trade.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('malaga')) {
@@ -147,22 +147,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Costa del Sol Gateway",
           description: "Experience the entrepreneurial spirit of southern Spain's tech hub, where tourism innovation meets traditional Andalusian culture.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Picasso's Birthplace",
           description: "Visit the Picasso Museum and explore the artistic heritage of Málaga, fostering creativity and cultural appreciation in students.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Mediterranean Business Culture",
           description: "Learn about Spain's tourism industry, port operations, and the growing tech sector in this modern Andalusian city.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1563789031959-4c02bcb41319?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Historic Moorish Heritage",
           description: "Discover the Alcazaba fortress and Roman Theatre, exploring Spain's multicultural history and architectural evolution.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('alicante')) {
@@ -170,22 +170,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Mediterranean Innovation Hub",
           description: "Explore Alicante's growing tech sector and university research facilities, connecting students with Spain's emerging digital economy.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1565531491644-76e7171c3b1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Coastal Business Environment",
           description: "Study sustainable tourism practices and marine conservation efforts along Spain's beautiful Costa Blanca.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Valencian Culture & Language",
           description: "Experience the unique Valencian culture and bilingual environment, enhancing language skills and cultural understanding.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Historic Castle & Port",
           description: "Visit Santa Bárbara Castle and learn about Mediterranean trade history while exploring modern port operations.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('valladolid')) {
@@ -193,22 +193,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Castilian Heritage Capital",
           description: "Discover the birthplace of Spanish language and literature in this historic Castilian city, perfect for language immersion.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1578061417017-ef9f3b9c6ec8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Automotive Industry Center",
           description: "Visit Renault and other automotive facilities to understand Spain's industrial transformation and modern manufacturing.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1619733921207-d2fdacb7e3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "University Town Atmosphere",
           description: "Experience authentic Spanish student life at one of Spain's oldest universities, fostering academic and cultural exchange.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Golden Age Architecture",
           description: "Explore Renaissance and Baroque architecture from Spain's imperial period, connecting history with modern Spanish identity.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('gijon')) {
@@ -216,22 +216,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Asturian Maritime Heritage",
           description: "Explore Spain's naval history and modern fishing industry in this vibrant northern Spanish port city.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Industrial Revolution Legacy",
           description: "Learn about Spain's industrial development through steel production and mining heritage, now transformed into cultural spaces.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Green Spain Experience",
           description: "Discover sustainable practices and environmental awareness in Spain's greenest region, promoting ecological education.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Celtic & Roman Influences",
           description: "Explore unique Asturian culture with Celtic traditions and Roman archaeological sites, broadening historical perspectives.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     }
@@ -246,17 +246,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Port Wine & Business Tradition",
           description: "Visit famous port cellars to understand Portuguese export traditions and family business management across generations.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Tech & Innovation Hub",
           description: "Discover Porto's growing startup ecosystem and tech companies, positioning Portugal as a European innovation center.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Maritime Exploration Legacy",
           description: "Learn about Portuguese Age of Discovery and modern shipping industry at this historic Atlantic port.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     }
@@ -271,17 +271,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Silk Industry Heritage",
           description: "Discover Lyon's historical role in silk production and textile innovation, connecting traditional crafts with modern design.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Biotech & Pharmaceutical Hub",
           description: "Explore Lyon's leadership in life sciences and medical research, inspiring students interested in healthcare and science.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Renaissance Architecture",
           description: "Walk through Vieux Lyon's Renaissance buildings and learn about French architectural history and urban development.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('paris')) {
@@ -319,17 +319,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Maritime Trading History",
           description: "Explore Bristol's role in historical trade and learn about modern sustainable business practices and ethical commerce.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Creative & Digital Industries",
           description: "Discover Bristol's thriving creative sector, from BBC production to video game development and digital media.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Environmental Sustainability",
           description: "Learn about Bristol's Green Capital initiatives and environmental technology, promoting sustainability awareness.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     }
@@ -764,7 +764,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               <img 
                 src={logoPath} 
                 alt="My Abroad Ally" 
-                className="h-16 w-16 object-contain mx-auto mb-3"
+                className="h-24 w-24 object-contain mx-auto mb-3"
               />
               <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
               <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
@@ -840,7 +840,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Learning Outcomes */}
-            <div className="mb-12">
+            <div className="mb-12" style={{ pageBreakBefore: 'always' }}>
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Educational Value & Learning Outcomes
               </h3>
@@ -856,10 +856,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
                     <span>Cross-cultural communication and adaptability skills</span>
                   </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Understanding of European history and political systems</span>
-                  </li>
+
                   <li className="flex items-start">
                     <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
                     <span>Language skills development (local language basics)</span>
@@ -888,7 +885,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-blue-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent})
+                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent}) - Average cost per student
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.student.totalForAllStudents || 0)}
@@ -900,10 +897,24 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                           <span>• Accommodation:</span>
                           <span>{formatCurrency(costBreakdown.student.accommodation)}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>• Meals (breakfast, lunch, dinner):</span>
-                          <span>{formatCurrency(costBreakdown.student.meals)}</span>
-                        </div>
+                        {costBreakdown.student.breakfastCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Breakfast:</span>
+                            <span>{formatCurrency(costBreakdown.student.breakfastCost)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.student.lunchCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Lunch:</span>
+                            <span>{formatCurrency(costBreakdown.student.lunchCost)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.student.dinnerCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Dinner:</span>
+                            <span>{formatCurrency(costBreakdown.student.dinnerCost)}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span>• Transport card:</span>
                           <span>{formatCurrency(costBreakdown.student.transportCard)}</span>
@@ -926,7 +937,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-green-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher})
+                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher}) - Average cost per teacher
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.teacher.totalForAllTeachers || 0)}
@@ -938,10 +949,24 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                           <span>• Accommodation:</span>
                           <span>{formatCurrency(costBreakdown.teacher.accommodation)}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>• Meals (breakfast, lunch, dinner):</span>
-                          <span>{formatCurrency(costBreakdown.teacher.meals)}</span>
-                        </div>
+                        {costBreakdown.teacher.breakfastCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Breakfast:</span>
+                            <span>{formatCurrency(costBreakdown.teacher.breakfastCost)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.teacher.lunchCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Lunch:</span>
+                            <span>{formatCurrency(costBreakdown.teacher.lunchCost)}</span>
+                          </div>
+                        )}
+                        {costBreakdown.teacher.dinnerCost > 0 && (
+                          <div className="flex justify-between">
+                            <span>• Dinner:</span>
+                            <span>{formatCurrency(costBreakdown.teacher.dinnerCost)}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span>• Transport card:</span>
                           <span>{formatCurrency(costBreakdown.teacher.transportCard)}</span>
@@ -1065,9 +1090,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         </div>
                       </div>
                     )}
-                    <p className="text-sm text-slate-600 mt-2">
-                      All-inclusive package with accommodation, meals, activities, and support
-                    </p>
+
                   </div>
                   
                   {/* Internal Profitability Analysis */}

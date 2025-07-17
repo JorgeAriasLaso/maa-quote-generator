@@ -205,6 +205,9 @@ export interface CostBreakdown {
   student: {
     accommodation: number;
     meals: number; // breakfast + lunch + dinner
+    breakfastCost: number;
+    lunchCost: number;
+    dinnerCost: number;
     transportCard: number;
     coordinationFee: number;
     airportTransfer: number;
@@ -214,6 +217,9 @@ export interface CostBreakdown {
   teacher: {
     accommodation: number;
     meals: number; // breakfast + lunch + dinner
+    breakfastCost: number;
+    lunchCost: number;
+    dinnerCost: number;
     transportCard: number;
     coordinationFee: number;
     airportTransfer: number;
@@ -346,7 +352,10 @@ export function calculateQuoteCost(
   
   // Calculate student costs
   const studentAccommodation = studentAccommodationRate * days * numberOfStudents;
-  const studentMeals = (breakfastRate + lunchRate + dinnerRate) * days * numberOfStudents;
+  const studentBreakfastCost = breakfastRate * days * numberOfStudents;
+  const studentLunchCost = lunchRate * days * numberOfStudents;
+  const studentDinnerCost = dinnerRate * days * numberOfStudents;
+  const studentMeals = studentBreakfastCost + studentLunchCost + studentDinnerCost;
   const studentTransportCard = transportCardTotal * numberOfStudents;
   const studentCoordinationFee = studentCoordinationTotal * numberOfStudents;
   const studentAirportTransfer = airportTransferRate * numberOfStudents;
@@ -359,7 +368,10 @@ export function calculateQuoteCost(
   
   // Calculate teacher costs (no discounts applied)
   const teacherAccommodation = teacherAccommodationRate * days * numberOfTeachers;
-  const teacherMeals = (breakfastRate + lunchRate + dinnerRate) * days * numberOfTeachers;
+  const teacherBreakfastCost = breakfastRate * days * numberOfTeachers;
+  const teacherLunchCost = lunchRate * days * numberOfTeachers;
+  const teacherDinnerCost = dinnerRate * days * numberOfTeachers;
+  const teacherMeals = teacherBreakfastCost + teacherLunchCost + teacherDinnerCost;
   const teacherTransportCard = transportCardTotal * numberOfTeachers;
   const teacherCoordinationFee = teacherCoordinationTotal * numberOfTeachers;
   const teacherAirportTransfer = airportTransferRate * numberOfTeachers;
@@ -499,6 +511,9 @@ export function calculateQuoteCost(
     student: {
       accommodation: studentAccommodation,
       meals: studentMeals,
+      breakfastCost: studentBreakfastCost,
+      lunchCost: studentLunchCost,
+      dinnerCost: studentDinnerCost,
       transportCard: studentTransportCard,
       coordinationFee: studentCoordinationFee,
       airportTransfer: studentAirportTransfer,
@@ -508,6 +523,9 @@ export function calculateQuoteCost(
     teacher: {
       accommodation: teacherAccommodation,
       meals: teacherMeals,
+      breakfastCost: teacherBreakfastCost,
+      lunchCost: teacherLunchCost,
+      dinnerCost: teacherDinnerCost,
       transportCard: teacherTransportCard,
       coordinationFee: teacherCoordinationFee,
       airportTransfer: teacherAirportTransfer,
