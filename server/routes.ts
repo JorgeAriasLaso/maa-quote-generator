@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import puppeteer from "puppeteer-core";
+import chromium from "chrome-aws-lambda";
 import { insertQuoteSchema, insertClientSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -288,7 +290,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PDF Generation endpoint - proper server-side PDF with page breaks
+  app.post('/api/generate-pdf', async (req, res) => {
+    try {
+      const { html } = req.body;
+      
+      if (!html) {
+        return res.status(400).json({ error: 'HTML content is required' });
+      }
 
+      // Launch browser
+      const browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
+      });
+
+      const page = await browser.newPage();
+      
+      // Set content with proper CSS for page breaks
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+      
+      // Add CSS for proper page breaks
+      await page.addStyleTag({
+        content: `
+          @page {
+            size: A4;
+            margin: 15mm;
+          }
+          
+          .educational-value {
+            page-break-before: always;
+          }
+          
+          /* Prevent orphans and widows */
+          h1, h2, h3 {
+            page-break-after: avoid;
+          }
+          
+          .destination-image {
+            page-break-inside: avoid;
+          }
+          
+          .cost-breakdown {
+            page-break-inside: avoid;
+          }
+        `
+      });
+
+      // Generate PDF
+      const pdf = await page.pdf({
+        format: 'A4',
+        margin: {
+          top: '15mm',
+          right: '15mm',
+          bottom: '15mm',
+          left: '15mm'
+        },
+        printBackground: true,
+      });
+
+      await browser.close();
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="quote.pdf"');
+      res.send(pdf);
+
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      res.status(500).json({ error: 'Failed to generate PDF' });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

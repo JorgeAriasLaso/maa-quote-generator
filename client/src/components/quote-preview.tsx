@@ -598,108 +598,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Create canvas from the quote document
-      const canvas = await html2canvas(quoteElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        imageTimeout: 30000,
-        width: 794,
-        height: null,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
-          if (clonedElement) {
-            clonedElement.style.maxWidth = '794px';
-            clonedElement.style.width = '794px';
-            clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '40px';
-            clonedElement.style.fontSize = '14px';
-            clonedElement.style.lineHeight = '1.6';
-            
-            // Improve image quality and size, special handling for logo
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0 || img.src.includes('logo') || img.src.includes('Logo') || img.alt?.includes('My Abroad Ally')) {
-                img.style.maxWidth = '200px';
-                img.style.width = 'auto';
-                img.style.height = 'auto';
-                img.style.maxHeight = '128px';
-                img.style.objectFit = 'contain';
-              } else {
-                img.style.width = '160px';
-                img.style.height = '120px';
-                img.style.objectFit = 'cover';
-              }
-            });
-            
-            const h1s = clonedElement.querySelectorAll('h1');
-            h1s.forEach(h => { h.style.fontSize = '20px'; h.style.fontWeight = 'bold'; });
-            const h2s = clonedElement.querySelectorAll('h2');
-            h2s.forEach(h => { h.style.fontSize = '18px'; h.style.fontWeight = 'bold'; });
-            const h3s = clonedElement.querySelectorAll('h3');
-            h3s.forEach(h => { h.style.fontSize = '16px'; h.style.fontWeight = 'bold'; });
-            const ps = clonedElement.querySelectorAll('p');
-            ps.forEach(p => { p.style.fontSize = '14px'; p.style.lineHeight = '1.6'; });
-          }
+      // Clone the element to create clean HTML for server-side PDF generation
+      const clonedElement = quoteElement.cloneNode(true) as HTMLElement;
+      
+      // Add educational-value class to trigger page break
+      const educationalValueHeadings = clonedElement.querySelectorAll('h2');
+      educationalValueHeadings.forEach(heading => {
+        if (heading.textContent?.includes('Educational Value')) {
+          heading.classList.add('educational-value');
         }
       });
 
-      // Create PDF with EXACTLY 2 pages - Educational Value starts page 2
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const margin = 15; // 15mm margins
-      const contentWidth = 210 - (2 * margin); // A4 width minus margins
-      const contentHeight = 297 - (2 * margin); // A4 height minus margins
-      
-      // Convert canvas to image
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      // Calculate scaling to fit width
-      const scaledWidth = contentWidth;
-      const scaledHeight = (imgHeight * contentWidth) / imgWidth;
-      
-      // SIMPLE RELIABLE APPROACH: Fixed 50% split with generous overlap
-      // This ensures predictable results without cutting content awkwardly
-      const splitPoint = Math.floor(imgHeight * 0.50); // Exactly half
-      
-      console.log(`PDF Split Info: Total height ${imgHeight}px, Split at ${splitPoint}px (50.0%) - SIMPLE FIXED SPLIT`);
-      
-      // Page 1: First half
-      const page1Height = splitPoint;
-      const page1Canvas = document.createElement('canvas');
-      const page1Ctx = page1Canvas.getContext('2d');
-      if (page1Ctx) {
-        page1Canvas.width = imgWidth;
-        page1Canvas.height = page1Height;
-        page1Ctx.drawImage(canvas, 0, 0, imgWidth, page1Height, 0, 0, imgWidth, page1Height);
-        
-        const page1Data = page1Canvas.toDataURL('image/png', 1.0);
-        const page1ScaledHeight = (page1Height * scaledWidth) / imgWidth;
-        
-        pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
-      }
-      
-      // Page 2: Second half with generous overlap to prevent gaps
-      pdf.addPage();
-      const page2StartY = splitPoint - 100; // Large overlap to ensure nothing is missed
-      const page2Height = imgHeight - page2StartY;
-      const page2Canvas = document.createElement('canvas');
-      const page2Ctx = page2Canvas.getContext('2d');
-      if (page2Ctx) {
-        page2Canvas.width = imgWidth;
-        page2Canvas.height = page2Height;
-        page2Ctx.drawImage(canvas, 0, page2StartY, imgWidth, page2Height, 0, 0, imgWidth, page2Height);
-        
-        const page2Data = page2Canvas.toDataURL('image/png', 1.0);
-        const page2ScaledHeight = (page2Height * scaledWidth) / imgWidth;
-        
-        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
-      }
-
-      // Restore original styling
+      // Restore original styles first
       Object.assign(quoteElement.style, originalStyles);
 
       // Show the header and internal analysis sections again
@@ -710,10 +620,67 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = '';
       });
-      
-      // Generate filename and save
-      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      pdf.save(filename);
+
+      // Create clean HTML for PDF generation
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { 
+              margin: 0; 
+              padding: 20px; 
+              font-family: Arial, sans-serif; 
+              font-size: 14px; 
+              line-height: 1.6; 
+              color: black; 
+              background: white;
+            }
+            img { 
+              max-width: 100%; 
+              height: auto; 
+            }
+            .educational-value { 
+              page-break-before: always; 
+            }
+            h1, h2, h3 {
+              page-break-after: avoid;
+            }
+            .destination-image, .cost-breakdown {
+              page-break-inside: avoid;
+            }
+          </style>
+        </head>
+        <body>
+          ${clonedElement.outerHTML}
+        </body>
+        </html>
+      `;
+
+      // Send to server for proper PDF generation with page breaks
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ html: htmlContent }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Server-side PDF generation failed');
+      }
+
+      // Download the properly generated PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
       
     } catch (error) {
       console.error('Error generating PDF:', error);
