@@ -146,6 +146,8 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Implemented simple Educational Value positioning detection with getBoundingClientRect()
 ✓ Manual canvas splitting at detected Educational Value position with 100px overlap buffer
 ✓ Removed Puppeteer dependency and server-side PDF generation endpoint
+✓ Fixed bottom margin issue by calculating maximum page height and cropping content to fit A4 boundaries
+✓ Added proper page height limits to ensure 15mm bottom margin is maintained on page 2
 
 ## System Architecture
 

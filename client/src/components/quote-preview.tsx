@@ -665,10 +665,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Page 2: Educational Value onwards
+      // Page 2: Educational Value onwards with proper bottom margin
       pdf.addPage();
       const page2StartY = educationalPixelStart - 100; // Small overlap
-      const page2Height = canvas.height - page2StartY;
+      let page2Height = canvas.height - page2StartY;
+      
+      // Calculate maximum height that fits on A4 page with margins
+      const maxPage2Height = ((297 - 30) * 794) / 210; // A4 height minus margins, scaled to canvas width
+      
+      // If content exceeds page height, crop it to fit with proper bottom margin
+      if (page2Height > maxPage2Height) {
+        page2Height = maxPage2Height;
+      }
+      
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
       if (page2Ctx) {
@@ -678,7 +687,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         const page2Data = page2Canvas.toDataURL('image/png', 1.0);
         const page2ScaledHeight = (page2Height * scaledWidth) / canvas.width;
-        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, page2ScaledHeight);
+        
+        // Ensure it doesn't exceed page boundaries
+        const maxScaledHeight = 297 - (2 * margin); // A4 height minus margins
+        const finalHeight = Math.min(page2ScaledHeight, maxScaledHeight);
+        
+        pdf.addImage(page2Data, 'PNG', margin, margin, scaledWidth, finalHeight);
       }
 
       // Restore original styling
