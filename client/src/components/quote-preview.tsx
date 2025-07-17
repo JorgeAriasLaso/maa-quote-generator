@@ -1041,6 +1041,23 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                               </span>
                             </div>
                             
+                            {/* Debug info for profit calculation */}
+                            <div className="border-t border-gray-200 pt-2 mb-2 text-xs text-gray-600">
+                              <div>DEBUG: Total Revenue: {formatCurrency(costBreakdown.profitability.revenue)}</div>
+                              <div>DEBUG: Total Costs: {formatCurrency(costBreakdown.profitability.costs)}</div>
+                              <div>DEBUG: Gross Profit: {formatCurrency(costBreakdown.profitability.grossProfit)}</div>
+                              <div>DEBUG: Net Profit: {formatCurrency(costBreakdown.profitability.netProfit)}</div>
+                              <div>DEBUG: Students: {quote?.numberOfStudents}, Teachers: {quote?.numberOfTeachers}</div>
+                              <div>DEBUG: Student Price: €{quote?.pricePerStudent}, Teacher Price: €{quote?.pricePerTeacher}</div>
+                              <div>DEBUG: Student Acco Cost: {formatCurrency(costBreakdown.internalCosts.studentAccommodation || 0)}</div>
+                              <div>DEBUG: Teacher Acco Cost: {formatCurrency(costBreakdown.internalCosts.teacherAccommodation || 0)}</div>
+                              <div>DEBUG: Meals Cost: {formatCurrency(costBreakdown.internalCosts.meals || 0)}</div>
+                              <div>DEBUG: Transport Cost: {formatCurrency(costBreakdown.internalCosts.localTransportation || 0)}</div>
+                              <div>DEBUG: Coordination Cost: {formatCurrency(costBreakdown.internalCosts.coordination || 0)}</div>
+                              <div>DEBUG: Local Coordinator: {formatCurrency(costBreakdown.internalCosts.localCoordinator || 0)}</div>
+                              <div>DEBUG: Additional Services: {formatCurrency(costBreakdown.internalCosts.additionalServices || 0)}</div>
+                            </div>
+
                             {/* Profit per participant breakdown */}
                             <div className="border-t border-red-200 pt-2 space-y-1">
                               <div className="flex justify-between items-center text-sm">
