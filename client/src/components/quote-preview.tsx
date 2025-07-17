@@ -691,13 +691,28 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const scaledWidth = contentWidth;
       const scaledHeight = (imgHeight * contentWidth) / imgWidth;
       
-      // FORCE EXACTLY 2 PAGES
-      // Page 1: From top to Educational Value section (approximately first 60% of content)
-      const page1Height = Math.floor(imgHeight * 0.6); // Approximately 60% for page 1
-      const page2StartY = page1Height - 50; // Small overlap to prevent gaps
-      const page2Height = imgHeight - page2StartY;
+      // FORCE EXACTLY 2 PAGES: Find Educational Value section's exact position
+      const educationalElement = quoteElement.querySelector('#educational-value-section');
+      let splitPixel = Math.floor(imgHeight * 0.65); // Default fallback
       
-      // Add page 1
+      if (educationalElement) {
+        // Get the actual pixel position where Educational Value starts
+        const elementRect = educationalElement.getBoundingClientRect();
+        const containerRect = quoteElement.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top;
+        
+        // Convert to canvas coordinates (accounting for scale and padding)
+        const paddingOffset = 80; // 40px padding * 2 scale
+        splitPixel = Math.floor((relativeTop + paddingOffset) * 2); // 2x scale factor
+        
+        // Ensure it's within reasonable bounds (not too early, not too late)
+        splitPixel = Math.max(Math.floor(imgHeight * 0.5), Math.min(splitPixel, Math.floor(imgHeight * 0.7)));
+      }
+      
+      console.log(`PDF Split: Educational Value at pixel ${splitPixel} of ${imgHeight} total height`);
+      
+      // Page 1: Everything before Educational Value
+      const page1Height = splitPixel;
       const page1Canvas = document.createElement('canvas');
       const page1Ctx = page1Canvas.getContext('2d');
       if (page1Ctx) {
@@ -710,8 +725,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Add page 2 (Educational Value onwards)
+      // Page 2: Educational Value onwards (with small overlap to prevent gaps)
       pdf.addPage();
+      const page2StartY = splitPixel - 30; // Small overlap
+      const page2Height = imgHeight - page2StartY;
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
       if (page2Ctx) {
