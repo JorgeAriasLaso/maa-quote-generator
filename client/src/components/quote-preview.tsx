@@ -773,11 +773,11 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               
               <div className="grid grid-cols-2 gap-4">
                 {/* Main Image */}
-                <div className="rounded-lg overflow-hidden shadow-md">
+                <div className="rounded-lg overflow-hidden shadow-md h-32 relative">
                   <img 
                     src={quote.destination.toLowerCase().includes('madrid') ? madrid1 : getDestinationImage(quote.destination)} 
                     alt={quote.destination} 
-                    className="w-full h-32 object-fill"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
 
