@@ -242,31 +242,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
     // ITALY
     else if (city.includes('bari')) {
-      const bariImages = [
-        bari1, bari2, bari3, bari4
-      ];
-      return [
-        {
-          title: "Historic Fishing Harbor",
-          description: "Explore Bari's traditional fishing port and experience the authentic maritime culture of Southern Italy's Adriatic coast.",
-          image: bariImages[0]
-        },
-        {
-          title: "Crystal Waters & Ancient Walls",
-          description: "Discover pristine Mediterranean beaches and historic fortifications that tell the story of Bari's strategic importance.",
-          image: bariImages[1]
-        },
-        {
-          title: "Traditional Pasta Making",
-          description: "Learn authentic Pugliese culinary traditions including orecchiette pasta preparation from local artisans.",
-          image: bariImages[2]
-        },
-        {
-          title: "Adriatic Gateway",
-          description: "Experience Bari's role as Italy's gateway to the Balkans and Eastern Europe, understanding Mediterranean trade networks.",
-          image: bariImages[3]
-        }
-      ];
+      return {
+        description: "Bari offers students an authentic Southern Italian experience in Puglia's vibrant capital, where maritime traditions blend with modern Mediterranean culture. Students explore the historic fishing harbor and experience the traditional Adriatic coastal lifestyle, learning about sustainable fishing practices and maritime commerce that have sustained local communities for centuries. The city's crystalline waters and ancient fortifications tell the story of Bari's strategic importance as Italy's gateway to the Balkans and Eastern Europe, connecting students to centuries of cross-cultural exchange and trade networks. Students discover authentic Pugliese culinary traditions through hands-on pasta making workshops with local artisans, learning the time-honored techniques of orecchiette preparation while understanding the region's agricultural heritage and farm-to-table movement that defines Southern Italian gastronomy.",
+        images: [
+          { src: bari1, alt: "Historic fishing harbor with colorful boats" },
+          { src: bari2, alt: "Crystal clear waters and ancient coastal walls" },
+          { src: bari3, alt: "Traditional pasta making workshop" },
+          { src: bari4, alt: "Adriatic gateway architecture" }
+        ]
+      };
     } else if (city.includes('catania')) {
       return [
         {
