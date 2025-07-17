@@ -586,6 +586,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       quoteElement.style.margin = '0';
       quoteElement.style.padding = '40px';
       quoteElement.style.backgroundColor = '#ffffff';
+      quoteElement.style.fontSize = '16px';
       
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -605,6 +606,23 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             clonedElement.style.width = '800px';
             clonedElement.style.backgroundColor = '#ffffff';
             clonedElement.style.padding = '40px';
+            clonedElement.style.fontSize = '16px';
+            
+            // Increase font sizes for better PDF readability
+            const headings = clonedElement.querySelectorAll('h1, h2, h3, h4');
+            headings.forEach(heading => {
+              const currentSize = window.getComputedStyle(heading).fontSize;
+              const newSize = parseFloat(currentSize) * 1.2;
+              heading.style.fontSize = `${newSize}px`;
+            });
+            
+            // Make body text more readable
+            const bodyText = clonedElement.querySelectorAll('p, span, div');
+            bodyText.forEach(text => {
+              if (text.style.fontSize === '' || text.style.fontSize === 'small') {
+                text.style.fontSize = '16px';
+              }
+            });
           }
         }
       });
@@ -625,7 +643,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
       const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-      const margin = 20; // 20mm margins
+      const margin = 10; // 10mm margins for better space utilization
       
       // Convert canvas to image data
       const imgData = canvas.toDataURL('image/png', 1.0);
