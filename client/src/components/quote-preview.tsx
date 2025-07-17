@@ -661,23 +661,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const scaledWidth = contentWidth;
       const scaledHeight = (imgHeight * contentWidth) / imgWidth;
       
-      // Calculate maximum content height that fits on A4 page with margins
-      const a4ContentHeightMm = 297 - 30; // A4 minus top/bottom margins
-      const maxContentHeightPixels = (a4ContentHeightMm * imgWidth) / 210; // Scale to canvas width
+      // SIMPLE RELIABLE APPROACH: Fixed 50% split with generous overlap
+      // This ensures predictable results without cutting content awkwardly
+      const splitPoint = Math.floor(imgHeight * 0.50); // Exactly half
       
-      // Find optimal split point - balance between filling page and not cutting images
-      let splitPoint = Math.floor(maxContentHeightPixels * 0.85); // Use 85% of available space
+      console.log(`PDF Split Info: Total height ${imgHeight}px, Split at ${splitPoint}px (50.0%) - SIMPLE FIXED SPLIT`);
       
-      // Ensure reasonable bounds - between 55% and 70% of total content
-      const minSplit = Math.floor(imgHeight * 0.55);
-      const maxSplit = Math.floor(imgHeight * 0.70);
-      
-      if (splitPoint < minSplit) splitPoint = minSplit;
-      if (splitPoint > maxSplit) splitPoint = maxSplit;
-      
-      console.log(`PDF Split Info: Total height ${imgHeight}px, Max page height ${maxContentHeightPixels}px, Split at ${splitPoint}px (${(splitPoint/imgHeight*100).toFixed(1)}%)`);
-      
-      // Page 1: Fill the page properly
+      // Page 1: First half
       const page1Height = splitPoint;
       const page1Canvas = document.createElement('canvas');
       const page1Ctx = page1Canvas.getContext('2d');
@@ -692,9 +682,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         pdf.addImage(page1Data, 'PNG', margin, margin, scaledWidth, page1ScaledHeight);
       }
       
-      // Page 2: Remaining content with minimal overlap
+      // Page 2: Second half with generous overlap to prevent gaps
       pdf.addPage();
-      const page2StartY = splitPoint - 30; // Small overlap to prevent gaps
+      const page2StartY = splitPoint - 100; // Large overlap to ensure nothing is missed
       const page2Height = imgHeight - page2StartY;
       const page2Canvas = document.createElement('canvas');
       const page2Ctx = page2Canvas.getContext('2d');
