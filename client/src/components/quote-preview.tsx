@@ -120,28 +120,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     
     // SPAIN
     if (city.includes('madrid')) {
-      return [
-        {
-          title: "Spain's Dynamic Capital",
-          description: "Experience Madrid's vibrant business culture and modern European economy while exploring the heart of Spanish politics, finance, and innovation.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "World-Class Art & Culture",
-          description: "Visit the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance.",
-          image: "https://images.unsplash.com/photo-1512768387432-9b3a4e1c8e65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Spanish Language Immersion",
-          description: "Practice Spanish in its native environment while engaging with local professionals and experiencing authentic Spanish hospitality and culture.",
-          image: "https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Historic Royal Heritage",
-          description: "Explore the Royal Palace, Plaza Mayor, and Retiro Park while learning about Spain's rich history and its role in global exploration and trade.",
-          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Madrid offers an exceptional educational experience as Spain's dynamic capital and the heart of European business, culture, and politics. Students will experience vibrant business culture and modern European economy while exploring the center of Spanish politics, finance, and innovation. The city provides world-class art and culture with visits to the Prado Museum, Reina Sofia, and Thyssen-Bornemisza - three of the world's most important art museums, all within walking distance. Students practice Spanish in its native environment while engaging with local professionals and experiencing authentic Spanish hospitality and culture. The historic Royal Palace, Plaza Mayor, and Retiro Park offer insights into Spain's rich history and its role in global exploration and trade, making Madrid an ideal destination for comprehensive educational travel.",
+        images: [
+          { src: "@assets/5fa53648e38b2_1752761191307.jpeg", alt: "Madrid cityscape" },
+          { src: "@assets/vistas-palacio-real_1752761191308.avif", alt: "Royal Palace of Madrid" },
+          { src: "@assets/895-adobestock110515761_1752761191309.jpeg", alt: "Madrid landmarks" },
+          { src: "@assets/348698-Madrid_1752761191309.jpg", alt: "Madrid Gran Via at night" },
+          { src: "@assets/0_-_BCC-2023-MADRID-LANDMARKS-0_1752761191309.avif", alt: "Madrid architectural landmarks" }
+        ]
+      };
     } else if (city.includes('malaga')) {
       return [
         {
@@ -824,19 +812,42 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 Why {quote.destination} for Educational Travel?
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {highlights.map((highlight, index) => (
-                  <div key={index} className="space-y-4">
-                    <img 
-                      src={highlight.image} 
-                      alt={highlight.title} 
-                      className="w-full h-40 object-cover rounded-lg"
-                    />
-                    <h4 className="font-semibold text-slate-800">{highlight.title}</h4>
-                    <p className="text-slate-600 text-sm">{highlight.description}</p>
+              {/* Check if highlights has description (new format) or is array (old format) */}
+              {highlights && highlights.description ? (
+                <div className="space-y-6">
+                  <p className="text-slate-700 text-sm leading-relaxed">
+                    {highlights.description}
+                  </p>
+                  
+                  {/* Image gallery - 5 images in a nice layout */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {highlights.images.map((image, index) => (
+                      <div key={index} className={`${index === 0 ? 'col-span-2 md:col-span-1' : ''} ${index === 4 ? 'col-span-2 md:col-span-1' : ''}`}>
+                        <img 
+                          src={image.src} 
+                          alt={image.alt} 
+                          className="w-full h-48 object-cover rounded-lg shadow-md"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                // Fallback to old format for other cities
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {highlights && Array.isArray(highlights) && highlights.map((highlight, index) => (
+                    <div key={index} className="space-y-4">
+                      <img 
+                        src={highlight.image} 
+                        alt={highlight.title} 
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                      <h4 className="font-semibold text-slate-800">{highlight.title}</h4>
+                      <p className="text-slate-600 text-sm">{highlight.description}</p>
+                    </div>
+                  )) || <div className="text-center text-slate-500">No destination highlights available</div>}
+                </div>
+              )}
             </div>
 
             {/* Learning Outcomes */}
