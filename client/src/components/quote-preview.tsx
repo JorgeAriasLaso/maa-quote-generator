@@ -583,6 +583,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     
     setIsExportingSheets(true);
     try {
+      console.log('Starting Google Sheets export for quote:', quote.quoteNumber);
+      console.log('Cost breakdown data:', costBreakdown);
+      
+      // Ensure costBreakdown exists
+      if (!costBreakdown) {
+        throw new Error('Cost breakdown data is not available');
+      }
+      
       // Create comprehensive spreadsheet data including all internal calculations
       const spreadsheetData = {
         // Basic Quote Information
@@ -644,38 +652,38 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         // Internal Cost Analysis
         internalCosts: {
-          'Student Accommodation Cost': `€${costBreakdown.internalCosts.studentAccommodation.toFixed(2)}`,
-          'Teacher Accommodation Cost': `€${costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}`,
-          'Meals Cost': `€${costBreakdown.internalCosts.meals.toFixed(2)}`,
-          'Local Transportation Cost': `€${costBreakdown.internalCosts.localTransportation.toFixed(2)}`,
-          'Coordination Fees Cost': `€${costBreakdown.internalCosts.coordination.toFixed(2)}`,
-          'Local Coordinator Cost': `€${costBreakdown.internalCosts.localCoordinator.toFixed(2)}`,
-          'Airport Transfer Cost': `€${costBreakdown.internalCosts.airportTransfer.toFixed(2)}`,
-          'Additional Services Cost': `€${costBreakdown.internalCosts.additionalServices.toFixed(2)}`,
-          'Total Internal Costs': `€${costBreakdown.internalCosts.totalCosts.toFixed(2)}`
+          'Student Accommodation Cost': `€${(costBreakdown.internalCosts?.studentAccommodation || 0).toFixed(2)}`,
+          'Teacher Accommodation Cost': `€${(costBreakdown.internalCosts?.teacherAccommodation || 0).toFixed(2)}`,
+          'Meals Cost': `€${(costBreakdown.internalCosts?.meals || 0).toFixed(2)}`,
+          'Local Transportation Cost': `€${(costBreakdown.internalCosts?.localTransportation || 0).toFixed(2)}`,
+          'Coordination Fees Cost': `€${(costBreakdown.internalCosts?.coordination || 0).toFixed(2)}`,
+          'Local Coordinator Cost': `€${(costBreakdown.internalCosts?.localCoordinator || 0).toFixed(2)}`,
+          'Airport Transfer Cost': `€${(costBreakdown.internalCosts?.airportTransfer || 0).toFixed(2)}`,
+          'Additional Services Cost': `€${(costBreakdown.internalCosts?.additionalServices || 0).toFixed(2)}`,
+          'Total Internal Costs': `€${(costBreakdown.internalCosts?.totalCosts || 0).toFixed(2)}`
         },
         
         // Profitability Analysis
         profitability: {
-          'Total Revenue': `€${costBreakdown.revenue.total.toFixed(2)}`,
-          'Total Costs': `€${costBreakdown.internalCosts.totalCosts.toFixed(2)}`,
-          'Gross Profit': `€${costBreakdown.profit.gross.toFixed(2)}`,
-          'Net Profit (after VAT)': `€${costBreakdown.profit.net.toFixed(2)}`,
-          'Average Profit per Traveller': `€${costBreakdown.profit.averagePerTraveller.toFixed(2)}`,
-          'Gross Margin': `${costBreakdown.profit.grossMargin.toFixed(1)}%`,
-          'Net Margin': `${costBreakdown.profit.netMargin.toFixed(1)}%`
+          'Total Revenue': `€${(costBreakdown.revenue?.total || 0).toFixed(2)}`,
+          'Total Costs': `€${(costBreakdown.internalCosts?.totalCosts || 0).toFixed(2)}`,
+          'Gross Profit': `€${(costBreakdown.profit?.gross || 0).toFixed(2)}`,
+          'Net Profit (after VAT)': `€${(costBreakdown.profit?.net || 0).toFixed(2)}`,
+          'Average Profit per Traveller': `€${(costBreakdown.profit?.averagePerTraveller || 0).toFixed(2)}`,
+          'Gross Margin': `${(costBreakdown.profit?.grossMargin || 0).toFixed(1)}%`,
+          'Net Margin': `${(costBreakdown.profit?.netMargin || 0).toFixed(1)}%`
         },
         
         // Erasmus+ Funding (if available)
         erasmusFunding: costBreakdown.erasmusFunding ? {
-          'Country Group': costBreakdown.erasmusFunding.countryGroup,
-          'Student Funding (Days 1-14)': `€${costBreakdown.erasmusFunding.student.days1to14.toFixed(2)}`,
-          'Student Funding (Days 15+)': `€${costBreakdown.erasmusFunding.student.days15plus.toFixed(2)}`,
-          'Total Student Funding': `€${costBreakdown.erasmusFunding.student.total.toFixed(2)}`,
-          'Teacher Funding (Days 1-14)': `€${costBreakdown.erasmusFunding.teacher.days1to14.toFixed(2)}`,
-          'Teacher Funding (Days 15+)': `€${costBreakdown.erasmusFunding.teacher.days15plus.toFixed(2)}`,
-          'Total Teacher Funding': `€${costBreakdown.erasmusFunding.teacher.total.toFixed(2)}`,
-          'Total Available Funding': `€${costBreakdown.erasmusFunding.total.toFixed(2)}`
+          'Country Group': costBreakdown.erasmusFunding.countryGroup || 'N/A',
+          'Student Funding (Days 1-14)': `€${(costBreakdown.erasmusFunding.student?.days1to14 || 0).toFixed(2)}`,
+          'Student Funding (Days 15+)': `€${(costBreakdown.erasmusFunding.student?.days15plus || 0).toFixed(2)}`,
+          'Total Student Funding': `€${(costBreakdown.erasmusFunding.student?.total || 0).toFixed(2)}`,
+          'Teacher Funding (Days 1-14)': `€${(costBreakdown.erasmusFunding.teacher?.days1to14 || 0).toFixed(2)}`,
+          'Teacher Funding (Days 15+)': `€${(costBreakdown.erasmusFunding.teacher?.days15plus || 0).toFixed(2)}`,
+          'Total Teacher Funding': `€${(costBreakdown.erasmusFunding.teacher?.total || 0).toFixed(2)}`,
+          'Total Available Funding': `€${(costBreakdown.erasmusFunding.total || 0).toFixed(2)}`
         } : {},
         
         // Additional Information
