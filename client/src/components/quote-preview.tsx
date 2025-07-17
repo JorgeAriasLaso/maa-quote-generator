@@ -665,13 +665,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       const a4ContentHeightMm = 297 - 30; // A4 minus top/bottom margins
       const maxContentHeightPixels = (a4ContentHeightMm * imgWidth) / 210; // Scale to canvas width
       
-      // Use a more aggressive split to fill page 1 properly
-      let splitPoint = Math.floor(maxContentHeightPixels * 0.95); // Use 95% of available space
+      // Find optimal split point - balance between filling page and not cutting images
+      let splitPoint = Math.floor(maxContentHeightPixels * 0.85); // Use 85% of available space
       
-      // Ensure we don't exceed total height
-      if (splitPoint > imgHeight * 0.75) {
-        splitPoint = Math.floor(imgHeight * 0.75); // Maximum 75% on first page
-      }
+      // Ensure reasonable bounds - between 55% and 70% of total content
+      const minSplit = Math.floor(imgHeight * 0.55);
+      const maxSplit = Math.floor(imgHeight * 0.70);
+      
+      if (splitPoint < minSplit) splitPoint = minSplit;
+      if (splitPoint > maxSplit) splitPoint = maxSplit;
       
       console.log(`PDF Split Info: Total height ${imgHeight}px, Max page height ${maxContentHeightPixels}px, Split at ${splitPoint}px (${(splitPoint/imgHeight*100).toFixed(1)}%)`);
       
