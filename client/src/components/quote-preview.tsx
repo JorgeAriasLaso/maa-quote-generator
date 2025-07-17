@@ -20,6 +20,10 @@ import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
 import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
 import malaga3 from "@assets/feria-malaga.webp";
 import malaga4 from "@assets/malaga-cityview.webp";
+import alicante1 from "@assets/_methode_times_prod_web_bin_ee791ff0-d38e-11e7-9825-214165100f73_1752773266119.webp";
+import alicante2 from "@assets/alicante_1752773266119.jpg";
+import alicante3 from "@assets/50849-Playa-San-Juan_1752773266120.webp";
+import alicante4 from "@assets/explanada-paseo-alicante_1752773266120.webp";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -159,10 +163,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Alicante offers students a unique Mediterranean experience where innovation meets tradition along Spain's beautiful Costa Blanca. As a growing tech hub with expanding university research facilities, students connect with Spain's emerging digital economy and startup culture. The city's sustainable tourism practices and marine conservation efforts provide practical insights into environmental responsibility and coastal management. Students experience the distinctive Valencian culture and bilingual environment, enhancing both Spanish and Valencian language skills while building cultural understanding. The historic Santa Bárbara Castle and modern port operations offer lessons in Mediterranean trade history and contemporary logistics, making Alicante an ideal destination for comprehensive educational travel that combines business innovation, cultural immersion, and environmental awareness.",
         images: [
-          { src: "https://images.unsplash.com/photo-1565531491644-76e7171c3b1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Alicante tech innovation" },
-          { src: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Costa Blanca coastline" },
-          { src: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Valencian culture" },
-          { src: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Santa Bárbara Castle" }
+          { src: alicante1, alt: "Colorful historic quarter of Alicante" },
+          { src: alicante2, alt: "Aerial view of Alicante port and city" },
+          { src: alicante3, alt: "Playa San Juan beautiful coastline" },
+          { src: alicante4, alt: "Explanada de España palm-lined promenade" }
         ]
       };
     } else if (city.includes('valladolid')) {
