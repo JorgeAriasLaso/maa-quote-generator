@@ -24,6 +24,10 @@ import alicante1 from "@assets/_methode_times_prod_web_bin_ee791ff0-d38e-11e7-98
 import alicante2 from "@assets/alicante_1752773266119.jpg";
 import alicante3 from "@assets/50849-Playa-San-Juan_1752773266120.webp";
 import alicante4 from "@assets/explanada-paseo-alicante_1752773266120.webp";
+import bari1 from "@assets/bari1.jpg";
+import bari2 from "@assets/bari2.jpg";
+import bari3 from "@assets/bari3.jpg";
+import bari4 from "@assets/bari4.avif";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState } from 'react';
@@ -238,26 +242,29 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
     // ITALY
     else if (city.includes('bari')) {
+      const bariImages = [
+        bari1, bari2, bari3, bari4
+      ];
       return [
         {
+          title: "Historic Fishing Harbor",
+          description: "Explore Bari's traditional fishing port and experience the authentic maritime culture of Southern Italy's Adriatic coast.",
+          image: bariImages[0]
+        },
+        {
+          title: "Crystal Waters & Ancient Walls",
+          description: "Discover pristine Mediterranean beaches and historic fortifications that tell the story of Bari's strategic importance.",
+          image: bariImages[1]
+        },
+        {
+          title: "Traditional Pasta Making",
+          description: "Learn authentic Pugliese culinary traditions including orecchiette pasta preparation from local artisans.",
+          image: bariImages[2]
+        },
+        {
           title: "Adriatic Gateway",
-          description: "Explore Bari's role as Italy's gateway to the Balkans and Eastern Europe, understanding Mediterranean trade and cultural exchange.",
-          image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Pugliese Agricultural Excellence",
-          description: "Learn about sustainable agriculture, olive oil production, and Italy's farm-to-table movement in Puglia's fertile lands.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Romanesque Architecture",
-          description: "Visit the Basilica of San Nicola and explore Southern Italian Norman and Byzantine architectural influences.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "University & Research Hub",
-          description: "Experience Bari's academic atmosphere and learn about Italian higher education and Mediterranean research initiatives.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          description: "Experience Bari's role as Italy's gateway to the Balkans and Eastern Europe, understanding Mediterranean trade networks.",
+          image: bariImages[3]
         }
       ];
     } else if (city.includes('catania')) {
