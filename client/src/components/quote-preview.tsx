@@ -479,7 +479,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Simple reliable approach: Generate single-page PDF with all content
       // This eliminates all page break issues while maintaining professional appearance
       const canvas = await html2canvas(quoteElement, {
-        scale: 0.8, // Reduced scale for much smaller file size
+        scale: 1.2, // Balanced scale for good quality and reasonable file size
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -505,8 +505,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 img.style.maxHeight = '80px'; // Medium height
                 img.style.objectFit = 'contain';
               } else {
-                img.style.width = '120px'; // Smaller destination images for file size
-                img.style.height = '90px'; 
+                img.style.width = '140px'; // Slightly larger for better quality
+                img.style.height = '105px'; 
                 img.style.objectFit = 'cover';
               }
             });
@@ -525,7 +525,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
 
       // Create PDF as single continuous document (no page splitting)
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/jpeg', 0.7); // Use JPEG with compression
+      const imgData = canvas.toDataURL('image/jpeg', 0.85); // Higher quality JPEG
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
@@ -558,7 +558,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         if (pageCtx) {
           pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.7); // Use JPEG compression
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.85); // Higher quality JPEG
           pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
         }
         
