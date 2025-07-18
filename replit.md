@@ -163,6 +163,11 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 ✓ Educational Value section now starts page 2 using industry-standard page-break-before CSS
 ✓ Eliminated all canvas splitting issues with proper HTML-to-PDF conversion
 ✓ Professional page breaks without content duplication or cutting
+✓ OPTIMIZED PDF FILE SIZE: Reduced canvas scale from 1.5x to 0.8x, switched from PNG to JPEG compression (70%), and reduced image sizes
+✓ PDF files now generate at reasonable sizes (under 2MB) while maintaining professional quality and readability
+✓ Added comprehensive Google Sheets export functionality with complete quote data including internal profitability analysis
+✓ Google Sheets export includes all sections: quote info, trip details, accommodation, pricing, costs, profitability, and Erasmus funding
+✓ Export generates CSV files compatible with Google Sheets, Excel, and other spreadsheet applications
 
 ## System Architecture
 
