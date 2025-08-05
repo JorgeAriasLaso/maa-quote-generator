@@ -12,9 +12,59 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText, Copy, Trash2 } from "lucide-react";
+import { Plus, Quote as QuoteIcon, Search, Filter, Download, MapPin, Calendar, Users, GraduationCap, Eye, FileText, Copy, Trash2, Home } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
+import { calculateQuoteCost, type AdhocService } from "@shared/costing";
+
+// Helper function to calculate profitability metrics for a quote
+function calculateQuoteProfitability(quote: Quote) {
+  const adhocServices: AdhocService[] = quote.adhocServices ? JSON.parse(quote.adhocServices) : [];
+  
+  const customPricing = {
+    studentAccommodationPerDay: parseFloat(quote.studentAccommodationPerDay || "0"),
+    teacherAccommodationPerDay: parseFloat(quote.teacherAccommodationPerDay || "0"),
+    breakfastPerDay: parseFloat(quote.breakfastPerDay || "0"),
+    lunchPerDay: parseFloat(quote.lunchPerDay || "0"),
+    dinnerPerDay: parseFloat(quote.dinnerPerDay || "0"),
+    transportCardTotal: parseFloat(quote.transportCardTotal || "0"),
+    studentCoordinationFeeTotal: parseFloat(quote.studentCoordinationFeeTotal || "0"),
+    teacherCoordinationFeeTotal: parseFloat(quote.teacherCoordinationFeeTotal || "0"),
+    airportTransferPerPerson: parseFloat(quote.airportTransferPerPerson || "0"),
+  };
+
+  const internalCosts = {
+    costStudentAccommodationPerDay: parseFloat(quote.costStudentAccommodationPerDay || "0"),
+    costTeacherAccommodationPerDay: parseFloat(quote.costTeacherAccommodationPerDay || "0"),
+    costBreakfastPerDay: parseFloat(quote.costBreakfastPerDay || "0"),
+    costLunchPerDay: parseFloat(quote.costLunchPerDay || "0"),
+    costDinnerPerDay: parseFloat(quote.costDinnerPerDay || "0"),
+    costLocalTransportationCard: parseFloat(quote.costLocalTransportationCard || "0"),
+    costStudentCoordination: parseFloat(quote.costStudentCoordination || "60"),
+    costTeacherCoordination: parseFloat(quote.costTeacherCoordination || "0"),
+    costLocalCoordinator: parseFloat(quote.costLocalCoordinator || "150"),
+    costAirportTransfer: quote.costAirportTransfer || "0",
+  };
+
+  const costBreakdown = calculateQuoteCost(
+    quote.destination,
+    quote.duration,
+    quote.numberOfStudents,
+    quote.numberOfTeachers,
+    adhocServices,
+    customPricing,
+    internalCosts
+  );
+
+  const totalTravellers = quote.numberOfStudents + quote.numberOfTeachers;
+  const averageProfitPerTraveller = totalTravellers > 0 ? costBreakdown.profitability.netProfit / totalTravellers : 0;
+
+  return {
+    netProfit: costBreakdown.profitability.netProfit,
+    averageProfitPerTraveller,
+    total: costBreakdown.total
+  };
+}
 
 export default function Quotes() {
   const [viewingQuote, setViewingQuote] = useState<Quote | null>(null);
@@ -212,57 +262,66 @@ export default function Quotes() {
                 <table className="w-full">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left p-4 font-medium text-slate-700">Quote Number</th>
-                      <th className="text-left p-4 font-medium text-slate-700">School</th>
-                      <th className="text-left p-4 font-medium text-slate-700">Destination</th>
-                      <th className="text-left p-4 font-medium text-slate-700">Total</th>
-                      <th className="text-left p-4 font-medium text-slate-700">Date</th>
-                      <th className="text-right p-4 font-medium text-slate-700">Actions</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">Quote Number</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">School</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">Destination</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">Students Accommodation</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Total</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Profit</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Avg Profit/Traveller</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredQuotes.map((quote) => {
-                      const totalCost = (parseFloat(quote.pricePerStudent) * quote.numberOfStudents) + 
-                                       (parseFloat(quote.pricePerTeacher) * quote.numberOfTeachers);
+                      const { total, netProfit, averageProfitPerTraveller } = calculateQuoteProfitability(quote);
                       return (
                         <tr key={quote.id} className="border-b border-slate-100 hover:bg-slate-50">
-                          <td className="p-4">
-                            <div className="font-medium text-primary">{quote.quoteNumber}</div>
-                            <div className="text-sm text-slate-500">{quote.tripType}</div>
+                          <td className="p-3">
+                            <div className="font-medium text-primary text-sm">{quote.quoteNumber}</div>
+                            <div className="text-xs text-slate-500">{quote.tripType}</div>
                           </td>
-                          <td className="p-4">
-                            <div className="font-medium text-slate-900">{quote.fiscalName}</div>
-                            <div className="text-sm text-slate-500">{quote.email}</div>
+                          <td className="p-3">
+                            <div className="font-medium text-slate-900 text-sm">{quote.fiscalName}</div>
+                            <div className="text-xs text-slate-500">{quote.email}</div>
                           </td>
-                          <td className="p-4">
-                            <div className="font-medium text-slate-900">{quote.destination}</div>
-                            <div className="text-sm text-slate-500">
-                              {quote.numberOfStudents} students, {quote.numberOfTeachers} teachers
+                          <td className="p-3">
+                            <div className="font-medium text-slate-900 text-sm">{quote.destination}</div>
+                            <div className="text-xs text-slate-500">
+                              {quote.numberOfStudents}S / {quote.numberOfTeachers}T • {quote.duration}
                             </div>
                           </td>
-                          <td className="p-4">
-                            <div className="font-semibold text-lg text-slate-900">
-                              €{totalCost.toFixed(2)}
-                            </div>
-                            <div className="text-sm text-slate-500">{quote.duration}</div>
-                          </td>
-                          <td className="p-4">
-                            <div className="text-sm text-slate-700">
-                              {format(new Date(quote.createdAt), "MMM d, yyyy")}
+                          <td className="p-3">
+                            <div className="text-sm text-slate-900">
+                              {quote.studentAccommodationName || 'Not specified'}
                             </div>
                             <div className="text-xs text-slate-500">
-                              {format(new Date(quote.createdAt), "HH:mm")}
+                              {format(new Date(quote.createdAt), "MMM d, yyyy")}
                             </div>
                           </td>
-                          <td className="p-4 text-right">
-                            <div className="flex gap-2 justify-end">
+                          <td className="p-3 text-right">
+                            <div className="font-semibold text-slate-900 text-sm">
+                              €{Math.round(total).toLocaleString()}
+                            </div>
+                          </td>
+                          <td className="p-3 text-right">
+                            <div className={`font-medium text-sm ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              €{Math.round(netProfit).toLocaleString()}
+                            </div>
+                          </td>
+                          <td className="p-3 text-right">
+                            <div className={`font-medium text-sm ${averageProfitPerTraveller >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              €{Math.round(averageProfitPerTraveller).toLocaleString()}
+                            </div>
+                          </td>
+                          <td className="p-3 text-right">
+                            <div className="flex gap-1 justify-end">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleViewQuote(quote)}
                               >
-                                <Eye className="w-4 h-4 mr-1" />
-                                View
+                                <Eye className="w-3 h-3" />
                               </Button>
                               <Button
                                 variant="outline"
@@ -270,8 +329,7 @@ export default function Quotes() {
                                 onClick={() => handleCopyQuote(quote)}
                                 disabled={copyQuoteMutation.isPending}
                               >
-                                <Copy className="w-4 h-4 mr-1" />
-                                Copy
+                                <Copy className="w-3 h-3" />
                               </Button>
                               <Button
                                 variant="outline"
@@ -287,7 +345,7 @@ export default function Quotes() {
                                 disabled={deleteQuoteMutation.isPending}
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </div>
                           </td>
