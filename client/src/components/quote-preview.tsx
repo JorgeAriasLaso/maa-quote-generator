@@ -49,11 +49,160 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
 
+  // Auto-download trigger function
+  const triggerAutoDownload = async () => {
+    if (!quote || isExporting) return;
+    
+    setIsExporting(true);
+    try {
+      // Find the quote document element
+      const quoteElement = document.getElementById('quote-document');
+      if (!quoteElement) {
+        console.error('Quote document element not found');
+        return;
+      }
+
+      // Temporarily hide the preview header and internal analysis sections for PDF
+      const previewHeader = document.querySelector('.preview-header');
+      const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
+      
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = 'none';
+      }
+      
+      // Hide internal analysis sections
+      internalAnalysisSections.forEach((section) => {
+        (section as HTMLElement).style.display = 'none';
+      });
+
+      // Set a fixed width for consistent PDF generation
+      const originalStyles = {
+        maxWidth: quoteElement.style.maxWidth,
+        width: quoteElement.style.width,
+        margin: quoteElement.style.margin,
+        padding: quoteElement.style.padding,
+        backgroundColor: quoteElement.style.backgroundColor,
+      };
+      
+      // Set standard PDF dimensions for 2-page layout
+      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
+      quoteElement.style.width = '794px';
+      quoteElement.style.margin = '0';
+      quoteElement.style.padding = '20px'; // Reduced padding to save space
+      quoteElement.style.backgroundColor = '#ffffff';
+      quoteElement.style.fontSize = '12px'; // Slightly larger for readability
+      quoteElement.style.lineHeight = '1.4'; // Tighter spacing for more content
+      
+      // Allow time for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2.0, // Higher scale for crisp text rendering
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 10000,
+        width: 794,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            // Set consistent styling for 2-page layout
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
+            clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '20px'; // Reduced padding
+            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
+            
+            // Fix image sizing - medium logo as requested
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0) { // Logo - medium size
+                img.style.maxWidth = '160px'; // Medium size between small and large
+                img.style.height = 'auto';
+                img.style.maxHeight = '80px'; // Medium height
+                img.style.objectFit = 'contain';
+              } else {
+                img.style.width = '140px'; // Slightly larger for better quality
+                img.style.height = '105px'; 
+                img.style.objectFit = 'cover';
+              }
+            });
+          }
+        }
+      });
+
+      // Restore original styles
+      Object.assign(quoteElement.style, originalStyles);
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = '';
+      }
+      internalAnalysisSections.forEach((section) => {
+        (section as HTMLElement).style.display = '';
+      });
+
+      // Create PDF as single continuous document (no page splitting)
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.92); // Higher quality for crisp text
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Scale to fit A4 width with margins
+      const pdfWidth = 210 - 30; // A4 width minus margins
+      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+      
+      // Add pages as needed for the full content - optimized for exactly 2 pages
+      let currentY = 0;
+      const pageHeight = 297 - 20; // Smaller margins to fit more content
+      let pageCount = 1;
+      
+      while (currentY < pdfHeight) {
+        if (pageCount > 1) {
+          pdf.addPage();
+        }
+        
+        const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
+        const sourceY = currentY * (imgHeight / pdfHeight);
+        const sourceHeight = heightToAdd * (imgHeight / pdfHeight);
+        
+        // Create a temporary canvas for this page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = sourceHeight;
+        const pageCtx = pageCanvas.getContext('2d');
+        
+        if (pageCtx) {
+          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92); // Higher quality for better text clarity
+          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
+        }
+        
+        currentY += heightToAdd;
+        pageCount++;
+        
+        // Safety limit to prevent infinite loop
+        if (pageCount > 3) break;
+      }
+
+      // Generate filename
+      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      
+      // Download the PDF
+      pdf.save(filename);
+      
+    } catch (error) {
+      console.error('PDF generation error:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   // Listen for auto-download event
   useEffect(() => {
     const handleAutoDownload = () => {
       if (quote) {
-        exportToPDF();
+        triggerAutoDownload();
       }
     };
 
