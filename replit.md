@@ -61,10 +61,14 @@ The application has reached a stable, fully functional state suitable for produc
 - Google Sheets export functionality
 - My Abroad Ally branding and favicon integration
 
-### VERSION 1.1 IMPROVEMENTS (In Progress)
+### VERSION 1.1 IMPROVEMENTS (Completed - January 2025)
 Enhanced Quote History with expanded information display:
 ✓ Added Students Accommodation column between Destination and Total
 ✓ Added Net Profit column showing real-time profitability calculations
 ✓ Added Average Profit per Traveller column for per-person profitability analysis
 ✓ Improved visual layout with color-coded profit indicators (green/red)
 ✓ Condensed layout with 6-column grid for better information density
+✓ Added direct PDF download icon in quote history table
+✓ Enhanced PDF text resolution with 2.0x canvas scale and 92% JPEG quality
+✓ Fixed Malaga-specific PDF page break issues with improved Investment Summary positioning
+✓ Implemented auto-download functionality through dedicated quote detail pages
