@@ -49,3 +49,22 @@ Trip types: Work Experience Mobility, Job Shadowing, School Exchange, Other
 - **Date Handling**: date-fns
 - **Carousel**: Embla Carousel React
 - **PDF Generation**: Puppeteer (server-side)
+
+## Version History
+
+### VERSION 1.0 MILESTONE COMPLETED
+The application has reached a stable, fully functional state suitable for production use with all core features implemented:
+- Complete quote generation system with real-time calculations
+- Professional PDF export with optimized file sizes  
+- Client management with CSV import capabilities
+- Internal profitability analysis with Erasmus+ funding calculations
+- Google Sheets export functionality
+- My Abroad Ally branding and favicon integration
+
+### VERSION 1.1 IMPROVEMENTS (In Progress)
+Enhanced Quote History with expanded information display:
+✓ Added Students Accommodation column between Destination and Total
+✓ Added Net Profit column showing real-time profitability calculations
+✓ Added Average Profit per Traveller column for per-person profitability analysis
+✓ Improved visual layout with color-coded profit indicators (green/red)
+✓ Condensed layout with 6-column grid for better information density
