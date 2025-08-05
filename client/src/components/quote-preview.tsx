@@ -476,10 +476,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Simple reliable approach: Generate single-page PDF with all content
-      // This eliminates all page break issues while maintaining professional appearance
+      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
       const canvas = await html2canvas(quoteElement, {
-        scale: 1.2, // Balanced scale for good quality and reasonable file size
+        scale: 2.0, // Higher scale for crisp text rendering
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -525,7 +524,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
 
       // Create PDF as single continuous document (no page splitting)
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/jpeg', 0.85); // Higher quality JPEG
+      const imgData = canvas.toDataURL('image/jpeg', 0.92); // Higher quality for crisp text
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
@@ -558,7 +557,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         
         if (pageCtx) {
           pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.85); // Higher quality JPEG
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92); // Higher quality for better text clarity
           pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
         }
         
