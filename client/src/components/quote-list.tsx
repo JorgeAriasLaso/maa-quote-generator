@@ -163,7 +163,8 @@ export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote, onDeleteQuote
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-4"
+                 data-v11-enhanced="true">
               <div className="flex items-center gap-2 text-sm">
                 <MapPin className="h-4 w-4 text-slate-500" />
                 <span className="font-medium">{quote.destination}</span>
