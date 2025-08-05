@@ -274,6 +274,7 @@ export default function Quotes() {
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Total</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Profit</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Per Person</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Margin%</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Actions</th>
                     </tr>
                   </thead>
@@ -317,6 +318,11 @@ export default function Quotes() {
                           <td className="p-3 text-right">
                             <div className={`font-medium text-sm ${averageProfitPerTraveller >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                               €{Math.round(averageProfitPerTraveller).toLocaleString()}
+                            </div>
+                          </td>
+                          <td className="p-3 text-right">
+                            <div className={`font-medium text-sm ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {total > 0 ? `${((netProfit / total) * 100).toFixed(1)}%` : '0.0%'}
                             </div>
                           </td>
                           <td className="p-3 text-right">
