@@ -938,9 +938,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </Card>
             </div>
 
-            {/* Pricing Summary */}
-            <div className="mb-12">
-              <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
+            {/* Pricing Summary - Add extra spacing to prevent page split */}
+            <div className="mb-12 mt-16" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
+              <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2" style={{ breakAfter: 'avoid', pageBreakAfter: 'avoid' }}>
                 Investment Summary
               </h3>
               
