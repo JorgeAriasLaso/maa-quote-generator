@@ -268,7 +268,7 @@ export default function Quotes() {
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">Students Accommodation</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Total</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Profit</th>
-                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Avg Profit/Traveller</th>
+                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Per Person</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Actions</th>
                     </tr>
                   </thead>
