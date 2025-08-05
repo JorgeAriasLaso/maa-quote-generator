@@ -158,6 +158,11 @@ export default function Quotes() {
     setQuoteToDelete(quote);
   };
 
+  const handleDownloadQuote = async (quote: Quote) => {
+    // Navigate to the quote page with a download flag
+    window.location.href = `/quotes/${quote.id}?download=true`;
+  };
+
   const confirmDeleteQuote = () => {
     if (quoteToDelete) {
       deleteQuoteMutation.mutate(quoteToDelete.id);
@@ -320,14 +325,24 @@ export default function Quotes() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleViewQuote(quote)}
+                                title="View Quote"
                               >
                                 <Eye className="w-3 h-3" />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
+                                onClick={() => handleDownloadQuote(quote)}
+                                title="Download PDF"
+                              >
+                                <Download className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
                                 onClick={() => handleCopyQuote(quote)}
                                 disabled={copyQuoteMutation.isPending}
+                                title="Copy Quote"
                               >
                                 <Copy className="w-3 h-3" />
                               </Button>
@@ -335,6 +350,7 @@ export default function Quotes() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleEditQuote(quote)}
+                                title="Edit Quote"
                               >
                                 Edit
                               </Button>
@@ -344,6 +360,7 @@ export default function Quotes() {
                                 onClick={() => handleDeleteQuote(quote)}
                                 disabled={deleteQuoteMutation.isPending}
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                title="Delete Quote"
                               >
                                 <Trash2 className="w-3 h-3" />
                               </Button>

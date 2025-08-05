@@ -7,6 +7,7 @@ import { MainNav } from "@/components/main-nav";
 import Home from "@/pages/home";
 import Clients from "@/pages/clients";
 import Quotes from "@/pages/quotes";
+import QuoteDetail from "@/pages/quote-detail";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
@@ -19,6 +20,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/clients" component={Clients} />
           <Route path="/quotes" component={Quotes} />
+          <Route path="/quotes/:id" component={QuoteDetail} />
           <Route path="/settings" component={Settings} />
           <Route component={NotFound} />
         </Switch>

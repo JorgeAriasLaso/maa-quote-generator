@@ -38,7 +38,7 @@ import budapest3 from "@assets/budapest3.webp";
 import budapest4 from "@assets/budapest4.webp";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface QuotePreviewProps {
   quote: Quote | null;
@@ -48,6 +48,21 @@ interface QuotePreviewProps {
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
+
+  // Listen for auto-download event
+  useEffect(() => {
+    const handleAutoDownload = () => {
+      if (quote) {
+        exportToPDF();
+      }
+    };
+
+    document.addEventListener('download-pdf', handleAutoDownload);
+    
+    return () => {
+      document.removeEventListener('download-pdf', handleAutoDownload);
+    };
+  }, [quote]);
   
   // Parse adhoc services from quote
   const adhocServices: AdhocService[] = quote?.adhocServices ? 

@@ -290,6 +290,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
+
   // PDF Generation endpoint - proper server-side PDF with page breaks
   app.post('/api/generate-pdf', async (req, res) => {
     try {
