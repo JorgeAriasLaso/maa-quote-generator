@@ -38,16 +38,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Automatic cleanup on server startup - remove quotes older than 7 days
-  try {
-    const deletedCount = await storage.cleanupOldQuotes(7);
-    if (deletedCount > 0) {
-      log(`Startup cleanup: Removed ${deletedCount} quotes older than 7 days`);
-    }
-  } catch (error) {
-    log(`Warning: Failed to run startup cleanup: ${error}`);
-  }
-
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
