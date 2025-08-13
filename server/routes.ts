@@ -137,6 +137,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cleanup old quotes (7-day retention)
+  app.post("/api/quotes/cleanup", async (req, res) => {
+    try {
+      const retentionDays = req.body.retentionDays || 7; // Default to 7 days
+      const deletedCount = await storage.cleanupOldQuotes(retentionDays);
+      
+      res.json({ 
+        message: `Cleaned up ${deletedCount} quotes older than ${retentionDays} days`,
+        deletedCount,
+        retentionDays
+      });
+    } catch (error) {
+      console.error("Error during cleanup:", error);
+      res.status(500).json({ message: "Failed to cleanup old quotes" });
+    }
+  });
+
   // Client management routes
   // Get all clients
   app.get("/api/clients", async (req, res) => {

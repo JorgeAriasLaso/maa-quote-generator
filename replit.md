@@ -72,3 +72,5 @@ Enhanced Quote History with expanded information display:
 ✓ Enhanced PDF text resolution with 2.0x canvas scale and 92% JPEG quality
 ✓ Fixed Malaga-specific PDF page break issues with improved Investment Summary positioning
 ✓ Implemented auto-download functionality through dedicated quote detail pages
+✓ Added Net Margin% column in quote history table positioned after Per Person profit column
+✓ Implemented 7-day quote retention policy with automatic cleanup on server startup

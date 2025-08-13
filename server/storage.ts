@@ -8,6 +8,7 @@ export interface IStorage {
   createQuote(quote: InsertQuote): Promise<Quote>;
   updateQuote(id: number, quote: Partial<InsertQuote>): Promise<Quote | undefined>;
   deleteQuote(id: number): Promise<boolean>;
+  cleanupOldQuotes(retentionDays: number): Promise<number>;
   
   // Client operations
   getClient(id: number): Promise<Client | undefined>;
@@ -100,6 +101,21 @@ export class MemStorage implements IStorage {
 
   async deleteQuote(id: number): Promise<boolean> {
     return this.quotes.delete(id);
+  }
+
+  async cleanupOldQuotes(retentionDays: number): Promise<number> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    
+    let deletedCount = 0;
+    for (const [id, quote] of this.quotes.entries()) {
+      if (new Date(quote.createdAt) < cutoffDate) {
+        this.quotes.delete(id);
+        deletedCount++;
+      }
+    }
+    
+    return deletedCount;
   }
 
   // Client operations
@@ -211,6 +227,20 @@ export class DatabaseStorage implements IStorage {
       .where(eq(quotes.id, id))
       .returning();
     return result.length > 0;
+  }
+
+  async cleanupOldQuotes(retentionDays: number): Promise<number> {
+    const { lt } = await import('drizzle-orm');
+    
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    
+    const result = await db
+      .delete(quotes)
+      .where(lt(quotes.createdAt, cutoffDate))
+      .returning();
+    
+    return result.length;
   }
 
   // Client operations
