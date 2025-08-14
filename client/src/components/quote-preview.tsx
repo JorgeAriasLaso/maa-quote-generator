@@ -53,6 +53,47 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
 
+  // Function to get learning outcomes based on trip type
+  const getLearningOutcomes = (tripType: string) => {
+    const type = tripType.toLowerCase();
+    
+    if (type.includes('school exchange')) {
+      return {
+        title: "Students will gain:",
+        outcomes: [
+          "Cultural immersion through shared daily life with peers",
+          "Improved communication and teamwork in diverse settings", 
+          "Exposure to different educational systems and teaching styles",
+          "Broader global awareness and intercultural sensitivity",
+          "Increased confidence, curiosity, and personal growth"
+        ]
+      };
+    } else if (type.includes('job shadowing')) {
+      return {
+        title: "Participants will gain:",
+        outcomes: [
+          "Firsthand insight into European vocational training systems",
+          "Understanding of workplace practices and professional standards",
+          "Improved cross-cultural collaboration and observation skills", 
+          "Broader perspective on teaching methodologies and innovation",
+          "Inspiration for adapting new approaches in their own institutions"
+        ]
+      };
+    } else {
+      // Default to Work Experience Mobility
+      return {
+        title: "Students will gain:",
+        outcomes: [
+          "Professional work experience in European business environment",
+          "Cross-cultural communication and adaptability skills",
+          "Language skills development (local language basics)",
+          "Enhanced global perspective and career readiness",
+          "Independence and problem-solving capabilities"
+        ]
+      };
+    }
+  };
+
   // Auto-download trigger function
   const triggerAutoDownload = async () => {
     if (!quote || isExporting) return;
@@ -1065,30 +1106,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </h3>
               
               <Card className="bg-blue-50 p-6">
-                <h4 className="font-semibold text-blue-900 mb-4">Students will gain:</h4>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Professional work experience in European business environment</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Cross-cultural communication and adaptability skills</span>
-                  </li>
-
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Language skills development (local language basics)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Enhanced global perspective and career readiness</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                    <span>Independence and problem-solving capabilities</span>
-                  </li>
-                </ul>
+                {(() => {
+                  const learningOutcomes = getLearningOutcomes(quote?.tripType || '');
+                  return (
+                    <>
+                      <h4 className="font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
+                        {learningOutcomes.outcomes.map((outcome, index) => (
+                          <li key={index} className="flex items-start">
+                            <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
+                            <span>{outcome}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  );
+                })()}
               </Card>
             </div>
 
