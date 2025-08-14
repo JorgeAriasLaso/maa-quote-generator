@@ -264,13 +264,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     if (city.includes('madrid')) {
       return "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('malaga') || city.includes('málaga')) {
-      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1539650116574-75c0c6d73ded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('alicante')) {
       return "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('valladolid')) {
-      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('gijon')) {
-      return "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1562577309-2592ab84b1bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('gijon') || city.includes('gijón')) {
+      return "https://images.unsplash.com/photo-1580237541049-2d715a09486e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('barcelona')) {
       return "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Portugal
@@ -288,17 +288,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     } else if (city.includes('bari')) {
       return "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('catania')) {
-      return "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1566313793781-6bf9c8e9e3e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Czech Republic
     } else if (city.includes('prague')) {
       return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Poland
-    } else if (city.includes('krakow')) {
-      return "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    } else if (city.includes('poznan')) {
+    } else if (city.includes('krakow') || city.includes('kraków')) {
+      return "https://images.unsplash.com/photo-1598533582210-9e6d5c0bb4ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('poznan') || city.includes('poznań')) {
       return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('warsaw')) {
-      return "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1576976658624-7eb635d39ce4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Hungary
     } else if (city.includes('budapest')) {
       return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
@@ -461,27 +461,27 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       };
     }
     // POLAND
-    else if (city.includes('krakow')) {
+    else if (city.includes('krakow') || city.includes('kraków')) {
       return [
         {
           title: "Medieval Royal Capital",
           description: "Explore Poland's former royal capital with its stunning medieval market square and castle, learning about Central European monarchy.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1598533582210-9e6d5c0bb4ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Academic Excellence",
           description: "Visit one of Europe's oldest universities, Jagiellonian University, where Copernicus studied, inspiring scientific curiosity.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1586275405097-6c4a09d7b06c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Historical Reflection",
           description: "Learn about 20th-century European history through visits to nearby Auschwitz-Birkenau, promoting tolerance and human rights education.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         },
         {
           title: "Cultural Renaissance",
           description: "Experience Kraków's vibrant cultural scene and learn about Poland's post-communist transformation and EU membership journey.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: "https://images.unsplash.com/photo-1578928055763-5e78ef8ba1f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
         }
       ];
     } else if (city.includes('poznan')) {
