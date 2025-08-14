@@ -872,6 +872,98 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           </div>
         </Card>
 
+        {/* Additional Services Section */}
+        <Card className="p-6">
+          <div className="space-y-4">
+            <h4 className="font-semibold text-emerald-800 mb-3 flex items-center">
+              <span className="bg-emerald-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">6</span>
+              Additional Services
+            </h4>
+
+            <div className="space-y-4">
+              {adhocServices.map((service, index) => (
+                <div key={index} className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Service Description
+                      </label>
+                      <Input
+                        placeholder="e.g., Travel Insurance, Tour Guide"
+                        value={service.name}
+                        onChange={(e) => {
+                          const updated = [...adhocServices];
+                          updated[index] = { ...updated[index], name: e.target.value };
+                          setAdhocServices(updated);
+                        }}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Price per Person (€)
+                      </label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={service.pricePerPerson || ""}
+                        onChange={(e) => {
+                          const updated = [...adhocServices];
+                          updated[index] = { ...updated[index], pricePerPerson: parseFloat(e.target.value) || 0 };
+                          setAdhocServices(updated);
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-slate-600">
+                        Total: <span className="font-medium">
+                          {formatCurrency(service.pricePerPerson * (numberOfStudents + numberOfTeachers))}
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setAdhocServices(adhocServices.filter((_, i) => i !== index));
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setAdhocServices([...adhocServices, { name: "", pricePerPerson: 0 }]);
+                }}
+                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Service
+              </Button>
+
+              {adhocServices.length > 0 && (
+                <div className="bg-emerald-100 p-4 rounded-lg">
+                  <div className="text-sm font-medium text-emerald-800">
+                    Total Additional Services: 
+                    <span className="ml-2 text-emerald-900 font-bold">
+                      {formatCurrency(adhocServices.reduce((total, service) => 
+                        total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0))}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+
         {/* Additional Comments */}
         <Card className="p-6">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Additional Comments</h2>
