@@ -72,3 +72,9 @@ Enhanced Quote History with expanded information display:
 ✓ Enhanced PDF text resolution with 2.0x canvas scale and 92% JPEG quality
 ✓ Fixed Malaga-specific PDF page break issues with improved Investment Summary positioning
 ✓ Implemented auto-download functionality through dedicated quote detail pages
+
+### VERSION 1.2 BUG FIXES (Completed - January 2025)
+✓ Fixed Additional Services disappearing issue by adding proper AdhocServicesSection to SimpleQuoteForm
+✓ Corrected Kraków destination images to use proper local assets instead of incorrect Unsplash URLs
+✓ Added 4 high-quality Kraków images: Market Square evening, medieval sculpture, Wawel Castle, aerial castle view
+✓ Improved destination image consistency across all Polish cities

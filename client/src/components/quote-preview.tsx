@@ -36,6 +36,10 @@ import budapest1 from "@assets/budapest1.jpg";
 import budapest2 from "@assets/budapest2.jpg";
 import budapest3 from "@assets/budapest3.webp";
 import budapest4 from "@assets/budapest4.webp";
+import krakow1 from "@assets/Krakow 1_1755169545243.jpg";
+import krakow2 from "@assets/Krakow 2_1755169545243.webp";
+import krakow3 from "@assets/Krakow 3_1755169545243.webp";
+import krakow4 from "@assets/Krakow 4_1755169545242.jpg";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
@@ -294,7 +298,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Poland
     } else if (city.includes('krakow') || city.includes('kraków')) {
-      return "https://images.unsplash.com/photo-1598533582210-9e6d5c0bb4ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return krakow1;
     } else if (city.includes('poznan') || city.includes('poznań')) {
       return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('warsaw')) {
@@ -462,28 +466,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
     // POLAND
     else if (city.includes('krakow') || city.includes('kraków')) {
-      return [
-        {
-          title: "Medieval Royal Capital",
-          description: "Explore Poland's former royal capital with its stunning medieval market square and castle, learning about Central European monarchy.",
-          image: "https://images.unsplash.com/photo-1598533582210-9e6d5c0bb4ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Academic Excellence",
-          description: "Visit one of Europe's oldest universities, Jagiellonian University, where Copernicus studied, inspiring scientific curiosity.",
-          image: "https://images.unsplash.com/photo-1586275405097-6c4a09d7b06c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Historical Reflection",
-          description: "Learn about 20th-century European history through visits to nearby Auschwitz-Birkenau, promoting tolerance and human rights education.",
-          image: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        },
-        {
-          title: "Cultural Renaissance",
-          description: "Experience Kraków's vibrant cultural scene and learn about Poland's post-communist transformation and EU membership journey.",
-          image: "https://images.unsplash.com/photo-1578928055763-5e78ef8ba1f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
-        }
-      ];
+      return {
+        description: "Kraków offers students an extraordinary educational experience in Poland's historic royal capital, where medieval architecture and UNESCO World Heritage sites create an unparalleled backdrop for learning about Central European history and culture. Students explore the magnificent Main Market Square, one of Europe's largest and most beautiful medieval squares, while discovering how Kraków has maintained its role as Poland's cultural and intellectual center through centuries of political change. The city provides authentic insights into Polish traditions, language, and customs, while visits to the historic Jagiellonian University - where Copernicus studied - inspire scientific curiosity and academic excellence. Kraków's strategic position as a gateway between Western and Eastern Europe offers students valuable lessons in regional politics, EU integration, and the dynamic transformation of post-communist countries into modern European democracies.",
+        images: [
+          { src: krakow1, alt: "Historic Kraków Main Market Square evening illumination" },
+          { src: krakow2, alt: "Iconic sculpture in Kraków's medieval market square" },
+          { src: krakow3, alt: "Wawel Castle towers and Gothic architecture" },
+          { src: krakow4, alt: "Aerial view of Wawel Royal Castle complex" }
+        ]
+      };
     } else if (city.includes('poznan')) {
       return [
         {
