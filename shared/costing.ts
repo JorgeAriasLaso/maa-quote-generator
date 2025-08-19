@@ -384,8 +384,11 @@ export function calculateQuoteCost(
   
   // Calculate adhoc services
   const additionalServices = {
-    adhocServices: adhocServices.reduce((total, service) => 
-      total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0),
+    adhocServices: adhocServices.reduce((total, service) => {
+      const serviceTotal = service.pricePerPerson * (numberOfStudents + numberOfTeachers);
+      console.log(`Service: ${service.name}, Price per person: ${service.pricePerPerson}, Students: ${numberOfStudents}, Teachers: ${numberOfTeachers}, Total participants: ${numberOfStudents + numberOfTeachers}, Service total: ${serviceTotal}`);
+      return total + serviceTotal;
+    }, 0),
     total: 0,
   };
   
