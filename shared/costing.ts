@@ -453,9 +453,19 @@ export function calculateQuoteCost(
   const costLunch = (internalCosts?.costLunchPerDay || 0) * days * (numberOfStudents + numberOfTeachers);
   const costDinner = (internalCosts?.costDinnerPerDay || 0) * days * (numberOfStudents + numberOfTeachers);
   const costLocalTransport = (internalCosts?.costLocalTransportationCard || 0) * (numberOfStudents + numberOfTeachers);
-  const costStudentCoord = (internalCosts?.costStudentCoordination || 60) * numberOfStudents;
-  const costTeacherCoord = (internalCosts?.costTeacherCoordination || 0) * numberOfTeachers;
-  const costLocalCoord = internalCosts?.costLocalCoordinator || 150;
+  // Only apply default coordination costs if the user hasn't set coordination fees to zero
+  const userStudentCoordFee = parseFloat(String(studentCoordinationTotal || "0"));
+  const userTeacherCoordFee = parseFloat(String(teacherCoordinationTotal || "0"));
+  
+  const costStudentCoord = userStudentCoordFee > 0 
+    ? (internalCosts?.costStudentCoordination ? parseFloat(String(internalCosts.costStudentCoordination)) : 60) * numberOfStudents
+    : 0;
+  const costTeacherCoord = userTeacherCoordFee > 0
+    ? (internalCosts?.costTeacherCoordination ? parseFloat(String(internalCosts.costTeacherCoordination)) : 0) * numberOfTeachers  
+    : 0;
+  const costLocalCoord = (userStudentCoordFee > 0 || userTeacherCoordFee > 0)
+    ? (internalCosts?.costLocalCoordinator ? parseFloat(String(internalCosts.costLocalCoordinator)) : 150)
+    : 0;
   
   // Add airport transfer internal costs
   const costAirportTransfer = (internalCosts?.costAirportTransfer ? parseFloat(internalCosts.costAirportTransfer) : 0) * (numberOfStudents + numberOfTeachers);
