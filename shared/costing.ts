@@ -302,6 +302,7 @@ function parseDuration(duration: string): number {
 export interface AdhocService {
   name: string;
   pricePerPerson: number;
+  costPerPerson?: number; // Optional internal cost per person
 }
 
 export function calculateQuoteCost(
@@ -384,11 +385,8 @@ export function calculateQuoteCost(
   
   // Calculate adhoc services
   const additionalServices = {
-    adhocServices: adhocServices.reduce((total, service) => {
-      const serviceTotal = service.pricePerPerson * (numberOfStudents + numberOfTeachers);
-      console.log(`Service: ${service.name}, Price per person: ${service.pricePerPerson}, Students: ${numberOfStudents}, Teachers: ${numberOfTeachers}, Total participants: ${numberOfStudents + numberOfTeachers}, Service total: ${serviceTotal}`);
-      return total + serviceTotal;
-    }, 0),
+    adhocServices: adhocServices.reduce((total, service) => 
+      total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0),
     total: 0,
   };
   
@@ -462,11 +460,11 @@ export function calculateQuoteCost(
   // Add airport transfer internal costs
   const costAirportTransfer = (internalCosts?.costAirportTransfer ? parseFloat(internalCosts.costAirportTransfer) : 0) * (numberOfStudents + numberOfTeachers);
 
-  // Calculate internal costs for additional services (assume 50% cost ratio as default)
+  // Calculate internal costs for additional services
   const internalAdditionalServicesCosts = Array.isArray(adhocServices) ? adhocServices.reduce((total, service) => {
-    // You can make this configurable later - for now assume 50% of selling price as cost
-    const costRatio = 0.5; // 50% of selling price as internal cost
-    return total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers) * costRatio);
+    // Use actual cost per person if provided, otherwise default to 50% of selling price
+    const actualCostPerPerson = service.costPerPerson !== undefined ? service.costPerPerson : (service.pricePerPerson * 0.5);
+    return total + (actualCostPerPerson * (numberOfStudents + numberOfTeachers));
   }, 0) : 0;
 
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 
