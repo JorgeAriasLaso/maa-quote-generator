@@ -463,9 +463,7 @@ export function calculateQuoteCost(
   const costTeacherCoord = userTeacherCoordFee > 0
     ? (internalCosts?.costTeacherCoordination ? parseFloat(String(internalCosts.costTeacherCoordination)) : 0) * numberOfTeachers  
     : 0;
-  const costLocalCoord = (userStudentCoordFee > 0 || userTeacherCoordFee > 0)
-    ? (internalCosts?.costLocalCoordinator ? parseFloat(String(internalCosts.costLocalCoordinator)) : 150)
-    : 0;
+  const costLocalCoord = internalCosts?.costLocalCoordinator ? parseFloat(String(internalCosts.costLocalCoordinator)) : 0;
   
   // Add airport transfer internal costs
   const costAirportTransfer = (internalCosts?.costAirportTransfer ? parseFloat(internalCosts.costAirportTransfer) : 0) * (numberOfStudents + numberOfTeachers);
