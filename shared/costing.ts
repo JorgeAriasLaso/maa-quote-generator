@@ -458,7 +458,7 @@ export function calculateQuoteCost(
   const userTeacherCoordFee = parseFloat(String(teacherCoordinationTotal || "0"));
   
   const costStudentCoord = userStudentCoordFee > 0 
-    ? (internalCosts?.costStudentCoordination ? parseFloat(String(internalCosts.costStudentCoordination)) : 60) * numberOfStudents
+    ? (internalCosts?.costStudentCoordination ? parseFloat(String(internalCosts.costStudentCoordination)) : 0) * numberOfStudents
     : 0;
   const costTeacherCoord = userTeacherCoordFee > 0
     ? (internalCosts?.costTeacherCoordination ? parseFloat(String(internalCosts.costTeacherCoordination)) : 0) * numberOfTeachers  
