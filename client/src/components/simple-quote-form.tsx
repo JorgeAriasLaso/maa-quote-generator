@@ -176,7 +176,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
       setSelectedClientData(selectedClient);
       setFormData(prev => ({
         ...prev,
-        clientId: selectedClient.id,
         fiscalName: selectedClient.fiscalName || "",
         taxId: selectedClient.taxId || "",
         email: selectedClient.email || "",
@@ -446,7 +445,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                             value={client.fiscalName}
                             onSelect={() => {
                               setSelectedClientData(client);
-                              updateFormData("clientId", client.id);
                               updateFormData("fiscalName", client.fiscalName);
                               updateFormData("taxId", client.taxId || "");
                               updateFormData("email", client.email || "");
@@ -979,10 +977,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                 <Plus className="mr-2 h-4 w-4" />
                 Add Service
               </Button>
-              
-              <div className="text-xs text-amber-600 italic mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded">
-                ⚠ All services are subject to availability and may vary depending on local conditions and seasonal schedules.
-              </div>
 
               {adhocServices.length > 0 && (
                 <div className="bg-emerald-100 p-4 rounded-lg">

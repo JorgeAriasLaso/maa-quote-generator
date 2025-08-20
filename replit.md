@@ -78,11 +78,3 @@ Enhanced Quote History with expanded information display:
 ✓ Corrected Kraków destination images to use proper local assets instead of incorrect Unsplash URLs
 ✓ Added 4 high-quality Kraków images: Market Square evening, medieval sculpture, Wawel Castle, aerial castle view
 ✓ Improved destination image consistency across all Polish cities
-
-### VERSION 1.3 ENHANCEMENTS (Completed - August 2025)
-✓ Fixed quote copying issue by properly handling null values in schema validation (studentAccommodationName, teacherAccommodationName, additionalComments, internalNotes)
-✓ Added "Subject to availability" disclaimer to all Additional Services sections in both quote forms and previews
-✓ Enhanced quote displays with customer details and creation date visibility in quote headers and preview sections
-✓ Fixed client quotes viewing functionality by resolving null clientId database values and updating linking logic
-✓ Updated Valladolid destination images to use new local assets replacing incorrect external URLs
-✓ Resolved PDF page break issues by reorganizing customer details to display side-by-side with trip details, preventing text cutoff in "Educational Value & Learning Outcomes" section
