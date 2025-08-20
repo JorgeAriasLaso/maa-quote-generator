@@ -40,6 +40,10 @@ import krakow1 from "@assets/Krakow 1_1755169545243.jpg";
 import krakow2 from "@assets/Krakow 2_1755169545243.webp";
 import krakow3 from "@assets/Krakow 3_1755169545243.webp";
 import krakow4 from "@assets/Krakow 4_1755169545242.jpg";
+import valladolid1 from "@assets/Valladolid 1_1755702788593.jpg";
+import valladolid2 from "@assets/Valladolid 2_1755702788592.jpg";
+import valladolid3 from "@assets/Valladolid 3_1755702788592.jpg";
+import valladolid4 from "@assets/Valladolid 4_1755702788591.avif";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
@@ -395,10 +399,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Valladolid stands as the birthplace of Spanish language and literature, offering students unparalleled language immersion in this historic Castilian city. As a major automotive industry center, students visit Renault and other manufacturing facilities to understand Spain's industrial transformation and modern production methods. The city's authentic university town atmosphere provides opportunities to experience genuine Spanish student life at one of the country's oldest institutions, fostering meaningful academic and cultural exchange. Students explore Renaissance and Baroque architecture from Spain's Golden Age, connecting imperial history with contemporary Spanish identity. This combination of linguistic heritage, industrial innovation, academic tradition, and architectural splendor makes Valladolid an exceptional destination for comprehensive educational travel.",
         images: [
-          { src: "https://images.unsplash.com/photo-1578061417017-ef9f3b9c6ec8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Valladolid historic center" },
-          { src: "https://images.unsplash.com/photo-1619733921207-d2fdacb7e3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Automotive industry" },
-          { src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "University atmosphere" },
-          { src: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Golden Age architecture" }
+          { src: valladolid1, alt: "Santa María la Antigua Church and historic architecture" },
+          { src: valladolid2, alt: "Peñafiel Castle overlooking traditional Spanish village" },
+          { src: valladolid3, alt: "Plaza Mayor with historic Town Hall and monument" },
+          { src: valladolid4, alt: "Golden Age Renaissance architecture" }
         ]
       };
     } else if (city.includes('gijon')) {
