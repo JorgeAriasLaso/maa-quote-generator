@@ -270,7 +270,9 @@ export default function Quotes() {
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">Quote Number</th>
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">School</th>
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">Destination</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">Trip Type</th>
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">Students Accommodation</th>
+                      <th className="text-left p-3 font-medium text-slate-700 text-sm">Teachers Accommodation</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Total</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Profit</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Per Person</th>
@@ -290,7 +292,9 @@ export default function Quotes() {
                                 <span className="inline-block w-2 h-2 bg-red-500 rounded-full" title="Has internal notes"></span>
                               )}
                             </div>
-                            <div className="text-xs text-slate-500">{quote.tripType}</div>
+                            <div className="text-xs text-slate-500">
+                              {format(new Date(quote.createdAt), "MMM d, yyyy")}
+                            </div>
                           </td>
                           <td className="p-3">
                             <div className="font-medium text-slate-900 text-sm">{quote.fiscalName}</div>
@@ -303,11 +307,16 @@ export default function Quotes() {
                             </div>
                           </td>
                           <td className="p-3">
+                            <div className="text-sm text-slate-900 font-medium">{quote.tripType}</div>
+                          </td>
+                          <td className="p-3">
                             <div className="text-sm text-slate-900">
                               {quote.studentAccommodationName || 'Not specified'}
                             </div>
-                            <div className="text-xs text-slate-500">
-                              {format(new Date(quote.createdAt), "MMM d, yyyy")}
+                          </td>
+                          <td className="p-3">
+                            <div className="text-sm text-slate-900">
+                              {quote.teacherAccommodationName || 'Not specified'}
                             </div>
                           </td>
                           <td className="p-3 text-right">
