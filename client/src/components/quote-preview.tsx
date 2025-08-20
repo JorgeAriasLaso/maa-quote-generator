@@ -1050,28 +1050,62 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Customer Information - Compact version for better page spacing */}
-            <div className="mb-6">
-              <div className="flex justify-center">
-                <Card className="bg-blue-50 p-3 max-w-lg w-full border-blue-200">
-                  <h4 className="text-sm font-semibold text-slate-800 mb-2 text-center">Customer Details</h4>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+            {/* Customer and Trip Details Side by Side */}
+            <div className="grid grid-cols-2 gap-6 mb-8">
+              {/* Customer Information */}
+              <div>
+                <Card className="bg-blue-50 p-4 border-blue-200">
+                  <h4 className="text-sm font-semibold text-slate-800 mb-3">Customer Details</h4>
+                  <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-slate-700">School:</span>
-                      <div className="text-slate-600 truncate">{quote.fiscalName}</div>
+                      <span className="font-medium text-slate-700 block text-xs">School:</span>
+                      <span className="text-slate-600 text-xs leading-tight">{quote.fiscalName}</span>
                     </div>
                     <div>
-                      <span className="font-medium text-slate-700">Location:</span>
-                      <div className="text-slate-600">{quote.city}, {quote.country}</div>
+                      <span className="font-medium text-slate-700 block text-xs">Location:</span>
+                      <span className="text-slate-600 text-xs">{quote.city}, {quote.country}</span>
                     </div>
                     {quote.email && (
-                      <>
-                        <div className="col-span-2">
-                          <span className="font-medium text-slate-700">Email:</span>
-                          <div className="text-slate-600 truncate">{quote.email}</div>
-                        </div>
-                      </>
+                      <div>
+                        <span className="font-medium text-slate-700 block text-xs">Email:</span>
+                        <span className="text-slate-600 text-xs break-all">{quote.email}</span>
+                      </div>
                     )}
+                  </div>
+                </Card>
+              </div>
+              {/* Trip Details - Matching the original summary format */}
+              <div>
+                <Card className="bg-slate-50 p-4">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Duration:</span>
+                      <span className="text-slate-600">{quote.duration}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Students:</span>
+                      <span className="text-slate-600">{quote.numberOfStudents}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Teachers:</span>
+                      <span className="text-slate-600">{quote.numberOfTeachers}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Dates:</span>
+                      <span className="text-slate-600 text-xs">
+                        {new Date(quote.startDate).toLocaleDateString()} - {new Date(quote.endDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Quote #:</span>
+                      <span className="text-slate-600 font-mono text-xs">{quote.quoteNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Created:</span>
+                      <span className="text-slate-600 text-xs">
+                        {new Date(quote.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
                 </Card>
               </div>

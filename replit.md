@@ -85,4 +85,4 @@ Enhanced Quote History with expanded information display:
 ✓ Enhanced quote displays with customer details and creation date visibility in quote headers and preview sections
 ✓ Fixed client quotes viewing functionality by resolving null clientId database values and updating linking logic
 ✓ Updated Valladolid destination images to use new local assets replacing incorrect external URLs
-✓ Added prominent customer information section to quote previews with school name, email, and location details
+✓ Resolved PDF page break issues by reorganizing customer details to display side-by-side with trip details, preventing text cutoff in "Educational Value & Learning Outcomes" section
