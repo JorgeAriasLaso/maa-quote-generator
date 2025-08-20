@@ -118,6 +118,9 @@ export function QuoteList({ onViewQuote, onEditQuote, onCopyQuote, onDeleteQuote
                 </CardTitle>
                 <p className="text-slate-600 font-medium">{quote.fiscalName}</p>
                 <p className="text-sm text-slate-500">{quote.email}</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Created: {format(new Date(quote.createdAt), "MMM d, yyyy 'at' HH:mm")}
+                </p>
               </div>
               <div className="flex gap-2">
                 {onViewQuote && (

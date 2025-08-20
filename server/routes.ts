@@ -118,9 +118,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const randomId = Math.floor(100000 + Math.random() * 900000);
       const newQuoteNumber = `TPQ-${year}-${randomId}`;
 
+      // Ensure null values are converted to empty strings for validation
       const newQuoteData = {
         ...quoteCopy,
         quoteNumber: newQuoteNumber,
+        studentAccommodationName: quoteCopy.studentAccommodationName || "",
+        teacherAccommodationName: quoteCopy.teacherAccommodationName || "",
+        additionalComments: quoteCopy.additionalComments || "",
+        internalNotes: quoteCopy.internalNotes || "",
       };
 
       const validatedData = insertQuoteSchema.parse(newQuoteData);

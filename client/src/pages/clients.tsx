@@ -99,6 +99,7 @@ export default function Clients() {
   // Get client quotes
   const { data: clientQuotes, isLoading: quotesLoading } = useQuery({
     queryKey: ["/api/clients", viewingQuotes, "quotes"],
+    queryFn: () => fetch(`/api/clients/${viewingQuotes}/quotes`).then(res => res.json()),
     enabled: !!viewingQuotes,
   });
 

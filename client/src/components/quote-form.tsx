@@ -129,6 +129,10 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
           <Plus className="mr-2 h-4 w-4" />
           Add Service
         </Button>
+        
+        <div className="text-xs text-amber-600 italic mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded">
+          ⚠ All services are subject to availability and may vary depending on local conditions and seasonal schedules.
+        </div>
 
         {services.length > 0 && (
           <div className="bg-slate-50 p-4 rounded-lg">
@@ -232,6 +236,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
 
   const handleClientSelect = (client: Client) => {
     setCurrentSelectedClient(client);
+    form.setValue("clientId", client.id);
     form.setValue("fiscalName", client.fiscalName);
     form.setValue("taxId", client.taxId || "");
     form.setValue("email", client.email || "");
@@ -246,6 +251,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   useEffect(() => {
     if (selectedClient && !currentSelectedClient) {
       setCurrentSelectedClient(selectedClient);
+      form.setValue("clientId", selectedClient.id);
       form.setValue("fiscalName", selectedClient.fiscalName);
       form.setValue("taxId", selectedClient.taxId || "");
       form.setValue("email", selectedClient.email || "");

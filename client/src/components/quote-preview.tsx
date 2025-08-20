@@ -20,6 +20,10 @@ import malaga1 from "@assets/centro-pompidou_1752771123519.webp";
 import malaga2 from "@assets/ok-la-malagueta_1752771123520.jpg";
 import malaga3 from "@assets/feria-malaga.webp";
 import malaga4 from "@assets/malaga-cityview.webp";
+import valladolid1 from "@assets/Valladolid 1_1755696716207.jpg";
+import valladolid2 from "@assets/Valladolid 2_1755696716206.jpg";
+import valladolid3 from "@assets/Valladolid 3_1755696716206.jpg";
+import valladolid4 from "@assets/Valladolid 4_1755696716205.avif";
 import alicante1 from "@assets/_methode_times_prod_web_bin_ee791ff0-d38e-11e7-9825-214165100f73_1752773266119.webp";
 import alicante2 from "@assets/alicante_1752773266119.jpg";
 import alicante3 from "@assets/50849-Playa-San-Juan_1752773266120.webp";
@@ -395,10 +399,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Valladolid stands as the birthplace of Spanish language and literature, offering students unparalleled language immersion in this historic Castilian city. As a major automotive industry center, students visit Renault and other manufacturing facilities to understand Spain's industrial transformation and modern production methods. The city's authentic university town atmosphere provides opportunities to experience genuine Spanish student life at one of the country's oldest institutions, fostering meaningful academic and cultural exchange. Students explore Renaissance and Baroque architecture from Spain's Golden Age, connecting imperial history with contemporary Spanish identity. This combination of linguistic heritage, industrial innovation, academic tradition, and architectural splendor makes Valladolid an exceptional destination for comprehensive educational travel.",
         images: [
-          { src: "https://images.unsplash.com/photo-1578061417017-ef9f3b9c6ec8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Valladolid historic center" },
-          { src: "https://images.unsplash.com/photo-1619733921207-d2fdacb7e3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Automotive industry" },
-          { src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "University atmosphere" },
-          { src: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Golden Age architecture" }
+          { src: valladolid1, alt: "Valladolid Cathedral" },
+          { src: valladolid2, alt: "Peñafiel Castle" },
+          { src: valladolid3, alt: "Plaza Mayor statue" },
+          { src: valladolid4, alt: "Historic architecture" }
         ]
       };
     } else if (city.includes('gijon')) {
@@ -1035,6 +1039,37 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                       <span className="font-medium text-slate-700">Quote #:</span>
                       <span className="text-slate-600">{quote.quoteNumber}</span>
                     </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Created:</span>
+                      <span className="text-slate-600 text-xs">
+                        {new Date(quote.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+
+            {/* Customer Information */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 text-center">Customer Information</h3>
+              <div className="flex justify-center">
+                <Card className="bg-blue-50 p-4 max-w-md w-full border-blue-200">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">School:</span>
+                      <span className="text-slate-600 text-right max-w-48 truncate">{quote.fiscalName}</span>
+                    </div>
+                    {quote.email && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-slate-700">Email:</span>
+                        <span className="text-slate-600 text-right max-w-48 truncate">{quote.email}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Location:</span>
+                      <span className="text-slate-600 text-right">{quote.city}, {quote.country}</span>
+                    </div>
                   </div>
                 </Card>
               </div>
@@ -1254,6 +1289,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                             <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-slate-200 mt-1">
                               <span className="text-slate-600">Services Subtotal</span>
                               <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.total)}</span>
+                            </div>
+                            <div className="text-xs text-slate-500 italic mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded">
+                              ⚠ All services are subject to availability and may vary depending on local conditions and seasonal schedules.
                             </div>
                           </>
                         ) : (
