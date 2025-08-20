@@ -1078,7 +1078,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Destination Highlights */}
-            <div className="mb-12">
+            <div className="mb-12 allow-page-break-after">
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Why {quote.destination} for Educational Travel?
               </h3>
@@ -1137,12 +1137,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Learning Outcomes - ABSOLUTE PAGE BREAK - MUST START ON PAGE 2 */}
-            <div className="mb-12" id="educational-value-section" style={{ 
-              pageBreakBefore: 'always', 
-              breakBefore: 'always',
-              pageBreakInside: 'avoid',
-              breakInside: 'avoid'
-            }}>
+            <div className="mb-12 force-page-break" id="educational-value-section">
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Educational Value & Learning Outcomes
               </h3>
