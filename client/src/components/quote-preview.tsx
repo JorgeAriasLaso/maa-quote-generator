@@ -1005,7 +1005,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             {/* Trip Summary */}
             <div className="mb-8">
               <div className="text-center mb-4">
-                <h2 className="text-xl font-semibold text-slate-800 mb-2">{quote.tripType}</h2>
+                <h2 className="text-xl font-semibold text-slate-800 mb-2">
+                  {quote.tripType} • Quote created: {new Date(quote.createdAt).toLocaleDateString()}
+                </h2>
                 <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
               
