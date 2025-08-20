@@ -76,6 +76,11 @@ export class MemStorage implements IStorage {
       costAirportTransfer: insertQuote.costAirportTransfer || null,
       // Set defaults for adhoc services
       adhocServices: insertQuote.adhocServices || null,
+      // Set defaults for accommodation names and comments
+      studentAccommodationName: insertQuote.studentAccommodationName || null,
+      teacherAccommodationName: insertQuote.teacherAccommodationName || null,
+      additionalComments: insertQuote.additionalComments || null,
+      internalNotes: insertQuote.internalNotes || null,
       // Set clientId to null if undefined
       clientId: insertQuote.clientId || null,
     };

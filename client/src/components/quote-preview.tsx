@@ -1050,26 +1050,28 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Customer Information */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4 text-center">Customer Information</h3>
+            {/* Customer Information - Compact version for better page spacing */}
+            <div className="mb-6">
               <div className="flex justify-center">
-                <Card className="bg-blue-50 p-4 max-w-md w-full border-blue-200">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                <Card className="bg-blue-50 p-3 max-w-lg w-full border-blue-200">
+                  <h4 className="text-sm font-semibold text-slate-800 mb-2 text-center">Customer Details</h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                    <div>
                       <span className="font-medium text-slate-700">School:</span>
-                      <span className="text-slate-600 text-right max-w-48 truncate">{quote.fiscalName}</span>
+                      <div className="text-slate-600 truncate">{quote.fiscalName}</div>
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Location:</span>
+                      <div className="text-slate-600">{quote.city}, {quote.country}</div>
                     </div>
                     {quote.email && (
-                      <div className="flex justify-between">
-                        <span className="font-medium text-slate-700">Email:</span>
-                        <span className="text-slate-600 text-right max-w-48 truncate">{quote.email}</span>
-                      </div>
+                      <>
+                        <div className="col-span-2">
+                          <span className="font-medium text-slate-700">Email:</span>
+                          <div className="text-slate-600 truncate">{quote.email}</div>
+                        </div>
+                      </>
                     )}
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Location:</span>
-                      <span className="text-slate-600 text-right">{quote.city}, {quote.country}</span>
-                    </div>
                   </div>
                 </Card>
               </div>
