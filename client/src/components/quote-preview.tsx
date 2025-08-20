@@ -1582,6 +1582,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
               </div>
             </Card>
+
+            {/* Disclaimer */}
+            <div className="mt-4 p-4 bg-slate-100 border border-slate-200 rounded-lg">
+              <p className="text-xs text-slate-600 text-center leading-relaxed">
+                Please note that accommodation and service prices, as well as availability, are subject to change until final confirmation and booking. We recommend early confirmation to secure the quoted rates and options.
+              </p>
+            </div>
           </div>
         </div>
       </div>
