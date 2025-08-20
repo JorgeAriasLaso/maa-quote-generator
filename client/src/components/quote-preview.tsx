@@ -1011,7 +1011,33 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
               
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-8">
+                {/* Customer Info */}
+                <Card className="bg-slate-50 p-4 max-w-md w-full">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">School:</span>
+                      <span className="text-slate-600 text-right">{quote.fiscalName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Contact:</span>
+                      <span className="text-slate-600 text-right">{quote.email}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">City:</span>
+                      <span className="text-slate-600 text-right">{quote.city}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Country:</span>
+                      <span className="text-slate-600 text-right">{quote.country}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-slate-700">Address:</span>
+                      <span className="text-slate-600 text-xs text-right">{quote.address}</span>
+                    </div>
+                  </div>
+                </Card>
+                
                 {/* Trip Details */}
                 <Card className="bg-slate-50 p-4 max-w-md w-full">
                   <div className="space-y-2 text-sm">
