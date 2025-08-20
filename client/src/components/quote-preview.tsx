@@ -1013,41 +1013,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
               
-              <div className="flex justify-center">
-                {/* Trip Details */}
-                <Card className="bg-slate-50 p-4 max-w-md w-full">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Duration:</span>
-                      <span className="text-slate-600">{quote.duration}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Students:</span>
-                      <span className="text-slate-600">{quote.numberOfStudents}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Teachers:</span>
-                      <span className="text-slate-600">{quote.numberOfTeachers}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Dates:</span>
-                      <span className="text-slate-600 text-xs">
-                        {new Date(quote.startDate).toLocaleDateString()} - {new Date(quote.endDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Quote #:</span>
-                      <span className="text-slate-600">{quote.quoteNumber}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">Created:</span>
-                      <span className="text-slate-600 text-xs">
-                        {new Date(quote.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </div>
+
             </div>
 
             {/* Customer and Trip Details Side by Side */}
