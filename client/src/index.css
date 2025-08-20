@@ -100,4 +100,16 @@
     page-break-after: auto !important;
     break-after: auto !important;
   }
+  
+  /* Force consistent first page height - stop content at 950px */
+  .first-page-content {
+    max-height: 950px !important;
+    overflow: hidden !important;
+  }
+  
+  /* Ensure destination content doesn't exceed page boundaries */
+  .destination-content {
+    max-height: 400px !important;
+    overflow: hidden !important;
+  }
 }

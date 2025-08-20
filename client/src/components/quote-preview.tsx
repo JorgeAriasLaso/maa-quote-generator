@@ -1077,22 +1077,27 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Destination Highlights */}
-            <div className="mb-12 allow-page-break-after">
+            {/* Destination Highlights - CONTROLLED HEIGHT */}
+            <div className="mb-12 allow-page-break-after destination-content">
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                 Why {quote.destination} for Educational Travel?
               </h3>
               
               {/* Unified layout - apply Madrid's working format to all cities */}
               <div className="space-y-4">
-                {/* Text content first - convert all formats to single text block */}
-                <div className="text-slate-700 text-sm leading-relaxed space-y-3">
+                {/* Text content - TRUNCATED TO PREVENT OVERFLOW */}
+                <div className="text-slate-700 text-sm leading-relaxed space-y-3" style={{ maxHeight: '200px', overflow: 'hidden' }}>
                   {highlights && highlights.description ? (
-                    // Madrid format - single description
-                    <div dangerouslySetInnerHTML={{ __html: highlights.description.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
+                    // Madrid format - single description (truncated for Prague)
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: (highlights.description.length > 400 
+                        ? highlights.description.substring(0, 400) + '...' 
+                        : highlights.description
+                      ).replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') 
+                    }} />
                   ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
-                    // Other cities - convert array to continuous text
-                    highlights.map((highlight, index) => (
+                    // Other cities - limit to first 2 highlights to control height
+                    highlights.slice(0, 2).map((highlight, index) => (
                       <p key={index}>
                         <strong>{highlight.title}:</strong> {highlight.description}
                       </p>
