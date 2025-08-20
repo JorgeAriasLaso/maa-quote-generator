@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card } from "@/components/ui/card";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -1495,6 +1495,35 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Card>
+
+          {/* Internal Notes - Only for your use */}
+          <Card className="p-6 internal-analysis-only border-red-200 bg-red-50">
+            <h3 className="text-lg font-medium text-red-900 border-b border-red-200 pb-2 mb-4 flex items-center">
+              <span className="bg-red-100 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">⚠</span>
+              Internal Notes (Private - Not shown to clients)
+            </h3>
+            
+            <FormField
+              control={form.control}
+              name="internalNotes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-red-700">Private Notes & Reminders</FormLabel>
+                  <FormControl>
+                    <textarea 
+                      className="w-full min-h-32 p-3 border border-red-300 bg-white rounded-md resize-vertical"
+                      placeholder="Add your private notes, reminders, contact details, special arrangements, profit targets, or any internal information that should NOT be shared with the client..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-red-600">
+                    🔒 This information will never appear in client quotes or PDF exports
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

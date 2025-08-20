@@ -60,6 +60,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     costTeacherCoordination: "",
     costLocalCoordinator: "",
     costAirportTransfer: "",
+    internalNotes: "",
   });
 
   const [selectedDestination, setSelectedDestination] = useState<string>("");
@@ -142,6 +143,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
         costTeacherCoordination: currentQuote.costTeacherCoordination || "",
         costLocalCoordinator: currentQuote.costLocalCoordinator || "",
         costAirportTransfer: currentQuote.costAirportTransfer || "",
+        internalNotes: currentQuote.internalNotes || "",
       });
 
       // Handle destination
@@ -1003,6 +1005,27 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               onChange={(e) => updateFormData("additionalComments", e.target.value)}
               placeholder="Add any special requirements, notes, or additional information about this trip..."
             />
+          </div>
+        </Card>
+
+        {/* Internal Notes - Only for your use */}
+        <Card className="p-6 internal-analysis-only border-red-200 bg-red-50">
+          <h2 className="text-2xl font-bold text-red-900 mb-6 flex items-center">
+            <span className="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">⚠</span>
+            Internal Notes (Private - Not shown to clients)
+          </h2>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-red-700">Private Notes & Reminders</label>
+            <textarea
+              className="w-full min-h-32 p-3 border border-red-300 bg-white rounded-md resize-vertical"
+              value={formData.internalNotes}
+              onChange={(e) => updateFormData("internalNotes", e.target.value)}
+              placeholder="Add your private notes, reminders, contact details, special arrangements, profit targets, or any internal information that should NOT be shared with the client..."
+            />
+            <p className="text-xs text-red-600">
+              🔒 This information will never appear in client quotes or PDF exports
+            </p>
           </div>
         </Card>
 

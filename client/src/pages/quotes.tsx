@@ -284,7 +284,12 @@ export default function Quotes() {
                       return (
                         <tr key={quote.id} className="border-b border-slate-100 hover:bg-slate-50">
                           <td className="p-3">
-                            <div className="font-medium text-primary text-sm">{quote.quoteNumber}</div>
+                            <div className="font-medium text-primary text-sm flex items-center gap-2">
+                              {quote.quoteNumber}
+                              {quote.internalNotes && quote.internalNotes.trim() && (
+                                <span className="inline-block w-2 h-2 bg-red-500 rounded-full" title="Has internal notes"></span>
+                              )}
+                            </div>
                             <div className="text-xs text-slate-500">{quote.tripType}</div>
                           </td>
                           <td className="p-3">

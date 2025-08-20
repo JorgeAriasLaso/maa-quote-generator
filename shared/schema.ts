@@ -73,6 +73,9 @@ export const quotes = pgTable("quotes", {
   costLocalCoordinator: text("cost_local_coordinator").default("150"),
   costAirportTransfer: text("cost_airport_transfer"),
   
+  // Internal notes (not shown to clients)
+  internalNotes: text("internal_notes"),
+  
   quoteNumber: text("quote_number").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -95,6 +98,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   costTeacherCoordination: z.string().optional(),
   costLocalCoordinator: z.string().optional(),
   costAirportTransfer: z.string().optional(),
+  internalNotes: z.string().optional(),
 });
 
 // Relations
