@@ -97,8 +97,8 @@ export default function Clients() {
   });
 
   // Get client quotes
-  const { data: clientQuotes, isLoading: quotesLoading } = useQuery({
-    queryKey: ["/api/clients", viewingQuotes, "quotes"],
+  const { data: clientQuotes, isLoading: quotesLoading } = useQuery<any[]>({
+    queryKey: [`/api/clients/${viewingQuotes}/quotes`],
     enabled: !!viewingQuotes,
   });
 
@@ -201,7 +201,7 @@ export default function Clients() {
               <ClientForm
                 onSubmit={handleUpdateClient}
                 isLoading={updateClientMutation.isPending}
-                initialData={editingClient}
+                initialData={editingClient as any}
                 title=""
               />
             </div>
