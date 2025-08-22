@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Users, Quote, Upload } from "lucide-react";
+import { Plus, Users, Quote, Upload, Edit, Copy } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function Clients() {
@@ -225,18 +225,17 @@ export default function Clients() {
             ) : (
               <div className="space-y-3">
                 {clientQuotes.map((quote: any) => (
-                  <Card 
-                    key={quote.id} 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => {
-                      // Save quote for editing and navigate to quotes page
-                      sessionStorage.setItem('editingQuote', JSON.stringify(quote));
-                      setLocation('/quotes');
-                    }}
-                  >
+                  <Card key={quote.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start">
-                        <div>
+                        <div 
+                          className="flex-1 cursor-pointer"
+                          onClick={() => {
+                            // Save quote for viewing and navigate to quotes page
+                            sessionStorage.setItem('editingQuote', JSON.stringify(quote));
+                            setLocation('/quotes');
+                          }}
+                        >
                           <h4 className="font-medium text-blue-600">{quote.quoteNumber}</h4>
                           <p className="text-sm text-slate-600">
                             {quote.destination} • {quote.duration} • {quote.numberOfStudents} students, {quote.numberOfTeachers} teachers
@@ -245,9 +244,45 @@ export default function Clients() {
                             {new Date(quote.createdAt).toLocaleDateString()}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold">€{quote.pricePerStudent}/student</p>
-                          <p className="text-sm text-slate-600">€{quote.pricePerTeacher}/teacher</p>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right mr-4">
+                            <p className="font-semibold">€{quote.pricePerStudent}/student</p>
+                            <p className="text-sm text-slate-600">€{quote.pricePerTeacher}/teacher</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Navigate to home to edit the quote
+                                window.location.href = `/?edit=${quote.id}`;
+                              }}
+                              title="Edit Quote"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Copy quote functionality
+                                fetch(`/api/quotes/${quote.id}/copy`, { method: 'POST' })
+                                  .then(response => response.json())
+                                  .then(newQuote => {
+                                    // Navigate to edit the new copied quote
+                                    window.location.href = `/?edit=${newQuote.id}`;
+                                  })
+                                  .catch(error => {
+                                    console.error('Copy quote error:', error);
+                                  });
+                              }}
+                              title="Copy Quote"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
