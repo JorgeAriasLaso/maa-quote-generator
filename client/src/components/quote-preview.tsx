@@ -1574,19 +1574,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             )}
 
             {/* Next Steps */}
-            <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
-              <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
-              <p className="mb-6 text-gray-800">
-                Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
-              </p>
-              
-              <div className="space-y-2 text-sm font-medium">
-                <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
-                <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
-                <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
-              </div>
-            </Card>
-
             {/* Disclaimer */}
             <div className="mt-4 p-4 bg-slate-100 border border-slate-200 rounded-lg">
               <p className="text-xs text-slate-600 text-center leading-relaxed">
@@ -1603,6 +1590,20 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <p>• Some accommodation providers require full prepayment earlier than one week before arrival. In those cases, My Abroad Ally will inform the school, and the accommodation cost will need to be covered at the time required by the provider in order to secure the reservation.</p>
               </div>
             </div>
+
+            {/* Contact Information - Moved to Bottom */}
+            <Card className="mt-4 bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
+              <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
+              <p className="mb-6 text-gray-800">
+                Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
+              </p>
+              
+              <div className="space-y-2 text-sm font-medium">
+                <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
+                <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
+                <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
