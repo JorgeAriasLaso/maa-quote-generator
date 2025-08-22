@@ -257,6 +257,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
       adhocServices: JSON.stringify(adhocServices),
       numberOfStudents: Number(formData.numberOfStudents),
       numberOfTeachers: Number(formData.numberOfTeachers),
+      clientId: selectedClientData?.id || selectedClient?.id || null,
     };
     
     onSubmit(submitData);

@@ -441,7 +441,13 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit((data) => {
+          const submitData = {
+            ...data,
+            clientId: currentSelectedClient?.id || selectedClient?.id || null,
+          };
+          onSubmit(submitData);
+        })} className="space-y-6">
           {/* School Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">School Information</h3>
