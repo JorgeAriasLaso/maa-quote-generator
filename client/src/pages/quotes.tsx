@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -77,6 +77,21 @@ export default function Quotes() {
   const { data: quotes, isLoading } = useQuery<Quote[]>({
     queryKey: ["/api/quotes"],
   });
+
+  // Handle editing quote from sessionStorage (from client management navigation)
+  useEffect(() => {
+    const storedQuote = sessionStorage.getItem('editingQuote');
+    if (storedQuote) {
+      try {
+        const quote = JSON.parse(storedQuote);
+        setViewingQuote(quote);
+        // Clear the stored quote so it doesn't persist
+        sessionStorage.removeItem('editingQuote');
+      } catch (e) {
+        console.error('Error parsing editing quote from sessionStorage:', e);
+      }
+    }
+  }, []);
 
   // Copy quote mutation
   const copyQuoteMutation = useMutation({

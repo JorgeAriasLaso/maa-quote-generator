@@ -225,11 +225,19 @@ export default function Clients() {
             ) : (
               <div className="space-y-3">
                 {clientQuotes.map((quote: any) => (
-                  <Card key={quote.id}>
+                  <Card 
+                    key={quote.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => {
+                      // Save quote for editing and navigate to quotes page
+                      sessionStorage.setItem('editingQuote', JSON.stringify(quote));
+                      setLocation('/quotes');
+                    }}
+                  >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-medium">{quote.quoteNumber}</h4>
+                          <h4 className="font-medium text-blue-600">{quote.quoteNumber}</h4>
                           <p className="text-sm text-slate-600">
                             {quote.destination} • {quote.duration} • {quote.numberOfStudents} students, {quote.numberOfTeachers} teachers
                           </p>
