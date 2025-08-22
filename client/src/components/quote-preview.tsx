@@ -1593,6 +1593,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 Please note that accommodation and service prices, as well as availability, are subject to change until final confirmation and booking. We recommend early confirmation to secure the quoted rates and options.
               </p>
             </div>
+
+            {/* Payment Conditions Section */}
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h4 className="text-sm font-semibold text-yellow-800 mb-3 text-center">Payment Conditions – My Abroad Ally</h4>
+              <div className="space-y-2 text-xs text-yellow-700 leading-relaxed">
+                <p>• A 30% deposit is required at the time of booking.</p>
+                <p>• The remaining 70% is due one week before the start of the program/trip.</p>
+                <p>• Some accommodation providers require full prepayment earlier than one week before arrival. In those cases, My Abroad Ally will inform the school, and the accommodation cost will need to be covered at the time required by the provider in order to secure the reservation.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
