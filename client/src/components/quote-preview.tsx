@@ -1277,14 +1277,29 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         <h5 className="font-medium text-slate-700 mb-2">Additional Services:</h5>
                         {adhocServices.length > 0 ? (
                           <>
-                            {adhocServices.map((service, index) => (
-                              <div key={index} className="flex justify-between items-center text-sm">
-                                <span className="text-slate-600">{service.name}</span>
-                                <span className="text-slate-700">
-                                  {formatCurrency(service.pricePerPerson * (quote.numberOfStudents + quote.numberOfTeachers))}
-                                </span>
-                              </div>
-                            ))}
+                            {adhocServices.map((service, index) => {
+                              // Use backward compatibility for participant counts
+                              const studentCount = service.studentCount !== undefined ? service.studentCount : quote.numberOfStudents;
+                              const teacherCount = service.teacherCount !== undefined ? service.teacherCount : quote.numberOfTeachers;
+                              const totalParticipants = studentCount + teacherCount;
+                              
+                              return (
+                                <div key={index} className="space-y-1">
+                                  <div className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-600">{service.name}</span>
+                                    <span className="text-slate-700">
+                                      {formatCurrency(service.pricePerPerson * totalParticipants)}
+                                    </span>
+                                  </div>
+                                  <div className="text-xs text-slate-500 ml-2">
+                                    {studentCount > 0 && `${studentCount} student${studentCount !== 1 ? 's' : ''}`}
+                                    {studentCount > 0 && teacherCount > 0 && ' + '}
+                                    {teacherCount > 0 && `${teacherCount} teacher${teacherCount !== 1 ? 's' : ''}`}
+                                    {` × €${service.pricePerPerson.toFixed(2)} = €${(service.pricePerPerson * totalParticipants).toFixed(2)}`}
+                                  </div>
+                                </div>
+                              );
+                            })}
                             <div className="flex justify-between items-center text-sm font-medium pt-1 border-t border-slate-200 mt-1">
                               <span className="text-slate-600">Services Subtotal</span>
                               <span className="text-slate-700">{formatCurrency(costBreakdown.additionalServices.total)}</span>
