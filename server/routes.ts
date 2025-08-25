@@ -118,10 +118,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const randomId = Math.floor(100000 + Math.random() * 900000);
       const newQuoteNumber = `TPQ-${year}-${randomId}`;
 
-      // Convert null values to empty strings for validation
-      const sanitizedQuoteCopy = Object.fromEntries(
-        Object.entries(quoteCopy).map(([key, value]) => [key, value === null ? "" : value])
-      );
+      // Properly handle data types for validation
+      const sanitizedQuoteCopy: any = {};
+      
+      // Define numeric fields that should be numbers or null
+      const numericFields = ['clientId', 'numberOfStudents', 'numberOfTeachers'];
+      
+      // Define decimal fields that should be decimal or string
+      const decimalFields = ['pricePerStudent'];
+      
+      for (const [key, value] of Object.entries(quoteCopy)) {
+        if (numericFields.includes(key)) {
+          // Handle numeric fields - keep as number or null
+          sanitizedQuoteCopy[key] = value === null ? null : value;
+        } else if (decimalFields.includes(key)) {
+          // Handle decimal fields - keep as is
+          sanitizedQuoteCopy[key] = value;
+        } else {
+          // Handle text fields - convert null to empty string
+          sanitizedQuoteCopy[key] = value === null ? "" : value;
+        }
+      }
 
       const newQuoteData = {
         ...sanitizedQuoteCopy,

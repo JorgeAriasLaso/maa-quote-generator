@@ -86,6 +86,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   createdAt: true,
   quoteNumber: true,
 }).extend({
+  clientId: z.number().nullable().optional(),
   customTripType: z.string().nullable().optional(),
   studentAccommodationName: z.string().nullable().optional(),
   teacherAccommodationName: z.string().nullable().optional(),
