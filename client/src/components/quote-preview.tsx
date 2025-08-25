@@ -329,7 +329,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // France  
     } else if (city.includes('lyon')) {
-      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1524863479829-916d8e77f114?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('paris')) {
       return "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // UK
@@ -342,7 +342,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1566313793781-6bf9c8e9e3e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Czech Republic
     } else if (city.includes('prague')) {
-      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1544986581-efac024faf62?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Poland
     } else if (city.includes('krakow') || city.includes('kraków')) {
       return krakow1;
@@ -352,7 +352,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1576976658624-7eb635d39ce4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Hungary
     } else if (city.includes('budapest')) {
-      return "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return "https://images.unsplash.com/photo-1541697141938-ac7b57ab6df0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Denmark
     } else if (city.includes('copenhagen')) {
       return "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
@@ -414,7 +414,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           { src: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Gijón maritime port" },
           { src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Industrial heritage" },
           { src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Green Spain landscape" },
-          { src: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Asturian cultural heritage" }
+          { src: "https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Asturian cultural heritage" }
         ]
       };
     }
@@ -435,10 +435,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Lyon stands as France's undisputed culinary capital, offering students an immersive experience in world-renowned gastronomy while learning about French culinary traditions, food science, and hospitality management from master chefs and industry professionals. The city's remarkable silk industry heritage provides insights into Lyon's historical role in textile innovation, connecting traditional French crafts with contemporary design and manufacturing excellence. As a leading biotech and pharmaceutical hub, Lyon showcases France's advancement in life sciences and medical research, inspiring students interested in healthcare careers and scientific innovation. Students explore Vieux Lyon's Renaissance architecture and UNESCO World Heritage sites, gaining deep understanding of French architectural history and urban development principles that have influenced cities worldwide.",
         images: [
-          { src: "https://images.unsplash.com/photo-1541849546-216549ae216d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Lyon gastronomy" },
-          { src: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Silk heritage" },
-          { src: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Biotech research" },
-          { src: "https://images.unsplash.com/photo-1609688669309-fc65dd68b2f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Renaissance architecture" }
+          { src: "https://images.unsplash.com/photo-1524863479829-916d8e77f114?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Lyon gastronomy" },
+          { src: "https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Silk heritage" },
+          { src: "https://images.unsplash.com/photo-1567306301408-9b74779a11af?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Biotech research" },
+          { src: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Renaissance architecture" }
         ]
       };
     } else if (city.includes('paris')) {
