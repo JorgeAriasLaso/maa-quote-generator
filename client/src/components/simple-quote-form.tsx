@@ -895,7 +895,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             <div className="space-y-4">
               {adhocServices.map((service, index) => (
                 <div key={index} className="border border-emerald-200 bg-emerald-50 p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">
                         Service Description
@@ -928,6 +928,40 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Students
+                      </label>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        value={service.studentCount || ""}
+                        onChange={(e) => {
+                          const updated = [...adhocServices];
+                          updated[index] = { ...updated[index], studentCount: parseInt(e.target.value) || 0 };
+                          setAdhocServices(updated);
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Teachers
+                      </label>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        value={service.teacherCount || ""}
+                        onChange={(e) => {
+                          const updated = [...adhocServices];
+                          updated[index] = { ...updated[index], teacherCount: parseInt(e.target.value) || 0 };
+                          setAdhocServices(updated);
+                        }}
+                      />
+                    </div>
+
                     <div className="internal-analysis-only">
                       <label className="block text-sm font-medium text-red-700 mb-1">
                         Cost per Person (€)
@@ -952,12 +986,12 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                     <div className="flex flex-col gap-2">
                       <div className="text-sm text-slate-600">
                         Revenue: <span className="font-medium text-green-700">
-                          {formatCurrency(service.pricePerPerson * (numberOfStudents + numberOfTeachers))}
+                          {formatCurrency(service.pricePerPerson * (service.studentCount + service.teacherCount))}
                         </span>
                       </div>
                       <div className="text-sm text-slate-600 internal-analysis-only">
                         Cost: <span className="font-medium text-red-700">
-                          {formatCurrency((service.costPerPerson !== undefined ? service.costPerPerson : service.pricePerPerson * 0.5) * (numberOfStudents + numberOfTeachers))}
+                          {formatCurrency((service.costPerPerson !== undefined ? service.costPerPerson : service.pricePerPerson * 0.5) * (service.studentCount + service.teacherCount))}
                         </span>
                       </div>
                       <Button
@@ -980,7 +1014,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setAdhocServices([...adhocServices, { name: "", pricePerPerson: 0, costPerPerson: undefined }]);
+                  setAdhocServices([...adhocServices, { name: "", pricePerPerson: 0, costPerPerson: undefined, studentCount: numberOfStudents, teacherCount: numberOfTeachers }]);
                 }}
                 className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
               >
@@ -994,7 +1028,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                     Total Additional Services: 
                     <span className="ml-2 text-emerald-900 font-bold">
                       {formatCurrency(adhocServices.reduce((total, service) => 
-                        total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0))}
+                        total + (service.pricePerPerson * (service.studentCount + service.teacherCount)), 0))}
                     </span>
                   </div>
                 </div>

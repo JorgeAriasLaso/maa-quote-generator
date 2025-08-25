@@ -303,6 +303,8 @@ export interface AdhocService {
   name: string;
   pricePerPerson: number;
   costPerPerson?: number; // Optional internal cost per person
+  studentCount: number; // Number of students using this service
+  teacherCount: number; // Number of teachers using this service
 }
 
 export function calculateQuoteCost(
@@ -386,7 +388,7 @@ export function calculateQuoteCost(
   // Calculate adhoc services
   const additionalServices = {
     adhocServices: adhocServices.reduce((total, service) => 
-      total + (service.pricePerPerson * (numberOfStudents + numberOfTeachers)), 0),
+      total + (service.pricePerPerson * (service.studentCount + service.teacherCount)), 0),
     total: 0,
   };
   
@@ -472,7 +474,7 @@ export function calculateQuoteCost(
   const internalAdditionalServicesCosts = Array.isArray(adhocServices) ? adhocServices.reduce((total, service) => {
     // Use actual cost per person if provided, otherwise default to 50% of selling price
     const actualCostPerPerson = service.costPerPerson !== undefined ? service.costPerPerson : (service.pricePerPerson * 0.5);
-    return total + (actualCostPerPerson * (numberOfStudents + numberOfTeachers));
+    return total + (actualCostPerPerson * (service.studentCount + service.teacherCount));
   }, 0) : 0;
 
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 

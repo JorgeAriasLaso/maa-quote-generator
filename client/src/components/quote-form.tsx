@@ -53,7 +53,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
   }, [services, form]);
 
   const addService = () => {
-    setServices([...services, { name: "", pricePerPerson: 0 }]);
+    setServices([...services, { name: "", pricePerPerson: 0, studentCount: numberOfStudents, teacherCount: numberOfTeachers }]);
   };
 
   const removeService = (index: number) => {
@@ -77,7 +77,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
       <div className="space-y-4">
         {services.map((service, index) => (
           <Card key={index} className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Service Description
@@ -100,11 +100,37 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
                   onChange={(e) => updateService(index, "pricePerPerson", parseFloat(e.target.value) || 0)}
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Students
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  min="0"
+                  value={service.studentCount || ""}
+                  onChange={(e) => updateService(index, "studentCount", parseInt(e.target.value) || 0)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Teachers
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  min="0"
+                  value={service.teacherCount || ""}
+                  onChange={(e) => updateService(index, "teacherCount", parseInt(e.target.value) || 0)}
+                />
+              </div>
               
               <div className="flex items-center justify-between">
                 <div className="text-sm text-slate-600">
                   Total: <span className="font-medium">
-                    {formatCurrency(service.pricePerPerson * totalParticipants)}
+                    {formatCurrency(service.pricePerPerson * (service.studentCount + service.teacherCount))}
                   </span>
                 </div>
                 <Button
@@ -136,7 +162,7 @@ function AdhocServicesSection({ form, numberOfStudents, numberOfTeachers }: Adho
               Total Additional Services: 
               <span className="ml-2 text-primary font-bold">
                 {formatCurrency(services.reduce((total, service) => 
-                  total + (service.pricePerPerson * totalParticipants), 0))}
+                  total + (service.pricePerPerson * (service.studentCount + service.teacherCount)), 0))}
               </span>
             </div>
           </div>
