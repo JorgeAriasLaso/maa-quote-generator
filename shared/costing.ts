@@ -387,8 +387,13 @@ export function calculateQuoteCost(
   
   // Calculate adhoc services
   const additionalServices = {
-    adhocServices: adhocServices.reduce((total, service) => 
-      total + (service.pricePerPerson * (service.studentCount + service.teacherCount)), 0),
+    adhocServices: adhocServices.reduce((total, service) => {
+      // For backward compatibility: if studentCount/teacherCount are missing, use total participants
+      const participants = (service.studentCount !== undefined && service.teacherCount !== undefined) 
+        ? (service.studentCount + service.teacherCount)
+        : (numberOfStudents + numberOfTeachers);
+      return total + (service.pricePerPerson * participants);
+    }, 0),
     total: 0,
   };
   
@@ -474,7 +479,11 @@ export function calculateQuoteCost(
   const internalAdditionalServicesCosts = Array.isArray(adhocServices) ? adhocServices.reduce((total, service) => {
     // Use actual cost per person if provided, otherwise default to 50% of selling price
     const actualCostPerPerson = service.costPerPerson !== undefined ? service.costPerPerson : (service.pricePerPerson * 0.5);
-    return total + (actualCostPerPerson * (service.studentCount + service.teacherCount));
+    // For backward compatibility: if studentCount/teacherCount are missing, use total participants
+    const participants = (service.studentCount !== undefined && service.teacherCount !== undefined) 
+      ? (service.studentCount + service.teacherCount)
+      : (numberOfStudents + numberOfTeachers);
+    return total + (actualCostPerPerson * participants);
   }, 0) : 0;
 
   const totalInternalCosts = costStudentAccom + costTeacherAccom + costBreakfast + costLunch + costDinner + 

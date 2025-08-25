@@ -163,7 +163,13 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
       if (currentQuote.adhocServices) {
         try {
           const parsed = JSON.parse(currentQuote.adhocServices);
-          setAdhocServices(parsed);
+          // Add backward compatibility for existing quotes
+          const servicesWithCounts = parsed.map((service: any) => ({
+            ...service,
+            studentCount: service.studentCount !== undefined ? service.studentCount : numberOfStudents,
+            teacherCount: service.teacherCount !== undefined ? service.teacherCount : numberOfTeachers,
+          }));
+          setAdhocServices(servicesWithCounts);
         } catch (e) {
           setAdhocServices([]);
         }
