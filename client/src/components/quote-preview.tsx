@@ -58,8 +58,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
   const [isExportingSheets, setIsExportingSheets] = useState(false);
 
   // Function to get learning outcomes based on trip type
-  const getLearningOutcomes = (tripType: string) => {
-    const type = tripType.toLowerCase();
+  const getLearningOutcomes = (tripType: string, customTripType?: string) => {
+    // Use custom trip type if trip type is "Other" and custom type is provided
+    const effectiveType = tripType === "Other" && customTripType ? customTripType : tripType;
+    const type = effectiveType.toLowerCase();
     
     if (type.includes('school exchange')) {
       return {
@@ -1010,7 +1012,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             <div className="mb-8">
               <div className="text-center mb-4">
                 <h2 className="text-xl font-semibold text-slate-800 mb-2">
-                  {quote.tripType} • Quote created: {new Date(quote.createdAt).toLocaleDateString()}
+                  {quote.tripType === "Other" && quote.customTripType ? quote.customTripType : quote.tripType} • Quote created: {new Date(quote.createdAt).toLocaleDateString()}
                 </h2>
                 <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
               </div>
@@ -1139,7 +1141,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               
               <Card className="bg-blue-50 p-6">
                 {(() => {
-                  const learningOutcomes = getLearningOutcomes(quote?.tripType || '');
+                  const learningOutcomes = getLearningOutcomes(quote?.tripType || '', quote?.customTripType);
                   return (
                     <>
                       <h4 className="font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
