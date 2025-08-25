@@ -37,6 +37,10 @@ import budapest2 from "@assets/budapest2.jpg";
 import budapest3 from "@assets/budapest3.webp";
 import budapest4 from "@assets/budapest4.webp";
 import krakow1 from "@assets/Krakow 1_1755169545243.jpg";
+import porto1 from "@assets/porto1.jpg";
+import porto2 from "@assets/porto2.webp";
+import porto3 from "@assets/porto3.jpg";
+import porto4 from "@assets/porto4.jpg";
 import krakow2 from "@assets/Krakow 2_1755169545243.webp";
 import krakow3 from "@assets/Krakow 3_1755169545243.webp";
 import krakow4 from "@assets/Krakow 4_1755169545242.jpg";
@@ -423,10 +427,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return {
         description: "Porto offers students an extraordinary educational experience in Portugal's UNESCO World Heritage historic center, where centuries-old architecture, traditional azulejo tiles, and exemplary urban planning preservation create living lessons in cultural heritage management. Students visit the world-famous port wine cellars to understand Portuguese export traditions and discover how family businesses have thrived across generations, building international brands and maintaining quality standards. As Portugal's emerging tech and innovation hub, Porto showcases a dynamic startup ecosystem that positions the country as a modern European innovation center, blending traditional industries with cutting-edge technology. The city's rich maritime exploration legacy connects students to the Portuguese Age of Discovery while exploring today's modern shipping industry, making Porto an ideal destination for comprehensive cultural, business, and historical education.",
         images: [
-          { src: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Porto UNESCO center" },
-          { src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Port wine cellars" },
-          { src: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Tech innovation" },
-          { src: "https://images.unsplash.com/photo-1627388234628-c8e9b1d0d22f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Maritime heritage" }
+          { src: porto1, alt: "Porto historic waterfront" },
+          { src: porto2, alt: "Livraria Lello bookstore" },
+          { src: porto3, alt: "Dom Luís I Bridge" },
+          { src: porto4, alt: "São Bento Station azulejos" }
         ]
       };
     }
