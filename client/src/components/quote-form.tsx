@@ -336,6 +336,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   const startDate = form.watch("startDate");
   const endDate = form.watch("endDate");
   const destination = form.watch("destination");
+  const tripType = form.watch("tripType");
   const duration = form.watch("duration");
   const numberOfStudents = form.watch("numberOfStudents");
   const numberOfTeachers = form.watch("numberOfTeachers");
@@ -702,6 +703,25 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                     </FormItem>
                   )}
                 />
+                
+                {tripType === "Other" && (
+                  <FormField
+                    control={form.control}
+                    name="customTripType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Custom Trip Type *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Please specify the trip type"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
               
               {selectedDestination === "Other" && (

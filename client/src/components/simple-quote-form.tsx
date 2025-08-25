@@ -25,6 +25,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
   const [formData, setFormData] = useState<any>({
     destination: "",
     tripType: "",
+    customTripType: "",
     startDate: "",
     endDate: "",
     duration: "",
@@ -174,7 +175,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
   useEffect(() => {
     if (selectedClient) {
       setSelectedClientData(selectedClient);
-      setFormData(prev => ({
+      setFormData((prev: any) => ({
         ...prev,
         fiscalName: selectedClient.fiscalName || "",
         taxId: selectedClient.taxId || "",
@@ -189,7 +190,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
 
   // Update form data
   const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       [field]: value
     }));
@@ -363,6 +364,14 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                   <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              
+              {formData.tripType === "Other" && (
+                <Input
+                  placeholder="Please specify the trip type"
+                  value={formData.customTripType || ""}
+                  onChange={(e) => updateFormData("customTripType", e.target.value)}
+                />
+              )}
             </div>
 
             {/* Start Date */}

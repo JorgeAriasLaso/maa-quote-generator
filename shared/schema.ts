@@ -22,6 +22,7 @@ export const quotes = pgTable("quotes", {
   clientId: integer("client_id").references(() => clients.id),
   destination: text("destination").notNull(),
   tripType: text("trip_type").notNull(),
+  customTripType: text("custom_trip_type"), // For when tripType is "Other"
   startDate: text("start_date").notNull(),
   endDate: text("end_date").notNull(),
   duration: text("duration").notNull(),
@@ -85,6 +86,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   createdAt: true,
   quoteNumber: true,
 }).extend({
+  customTripType: z.string().optional(),
   studentAccommodationName: z.string().optional(),
   teacherAccommodationName: z.string().optional(),
   additionalComments: z.string().optional(),
