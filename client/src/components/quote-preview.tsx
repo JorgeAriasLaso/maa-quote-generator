@@ -309,6 +309,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   ) : null);
 
+  // Debug additional services
+  if (quote && adhocServices.length > 0) {
+    console.log("Debug - Quote ID:", quote.id);
+    console.log("Debug - adhocServices:", adhocServices);
+    console.log("Debug - additionalServices total:", costBreakdown?.additionalServices?.total);
+  }
+
   const calculateTotal = () => {
     return costBreakdown ? costBreakdown.total : 0;
   };
