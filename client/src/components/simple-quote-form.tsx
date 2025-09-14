@@ -77,6 +77,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     "Denmark": ["Copenhagen"],
     "France": ["Lyon", "Paris"],
     "Hungary": ["Budapest"],
+    "Ireland": ["Dublin"],
     "Italy": ["Bari", "Catania"],
     "Poland": ["Kraków", "Poznań", "Warsaw"],
     "Portugal": ["Porto"],

@@ -194,6 +194,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
     "Denmark": ["Copenhagen"],
     "France": ["Lyon", "Paris"],
     "Hungary": ["Budapest"],
+    "Ireland": ["Dublin"],
     "Italy": ["Bari", "Catania"],
     "Poland": ["Kraków", "Poznań", "Warsaw"],
     "Portugal": ["Porto"],
