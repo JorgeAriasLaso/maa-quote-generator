@@ -44,6 +44,10 @@ import porto4 from "@assets/porto4.jpg";
 import krakow2 from "@assets/Krakow 2_1755169545243.webp";
 import krakow3 from "@assets/Krakow 3_1755169545243.webp";
 import krakow4 from "@assets/Krakow 4_1755169545242.jpg";
+import dublin1 from "@assets/Dublin 1_1757872030313.webp";
+import dublin2 from "@assets/Dublin 2_1757872030313.webp";
+import dublin3 from "@assets/Dublin 3_1757872030312.gif";
+import dublin4 from "@assets/Dublin 4_1757872030312.jpg";
 import valladolid1 from "@assets/Valladolid 1_1755702788593.jpg";
 import valladolid2 from "@assets/Valladolid 2_1755702788592.jpg";
 import valladolid3 from "@assets/Valladolid 3_1755702788592.jpg";
@@ -309,12 +313,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   ) : null);
 
-  // Debug additional services
-  if (quote && adhocServices.length > 0) {
-    console.log("Debug - Quote ID:", quote.id);
-    console.log("Debug - adhocServices:", adhocServices);
-    console.log("Debug - additionalServices total:", costBreakdown?.additionalServices?.total);
-  }
 
   const calculateTotal = () => {
     return costBreakdown ? costBreakdown.total : 0;
@@ -343,9 +341,11 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1524863479829-916d8e77f114?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('paris')) {
       return "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
-    // UK
+    // UK & Ireland
     } else if (city.includes('bristol')) {
       return "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+    } else if (city.includes('dublin')) {
+      return dublin1;
     // Italy
     } else if (city.includes('bari')) {
       return "https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
@@ -463,7 +463,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         ]
       };
     }
-    // UK
+    // UK & Ireland
     else if (city.includes('bristol')) {
       return {
         description: "Bristol provides students with exceptional access to British aerospace innovation through visits to Airbus facilities, where they learn about engineering design, sustainable aviation technology, and the UK's leadership in aerospace manufacturing. The city's fascinating maritime trading history offers insights into historical commerce while exploring modern sustainable business practices and ethical trading principles. Students discover Bristol's thriving creative and digital industries, from BBC production facilities to cutting-edge video game development studios and digital media companies that shape British entertainment. As a former European Green Capital, Bristol showcases environmental sustainability initiatives and green technology innovations, promoting ecological awareness and sustainable development practices among students.",
@@ -472,6 +472,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           { src: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Maritime heritage" },
           { src: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Creative industries" },
           { src: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250", alt: "Green initiatives" }
+        ]
+      };
+    } else if (city.includes('dublin')) {
+      return {
+        description: "Dublin offers students an immersive experience in Ireland's vibrant capital, where literary heritage meets modern innovation and European business leadership. Students explore the historic Trinity College and its famous Old Library, home to the Book of Kells, while discovering Ireland's rich literary tradition through the Dublin Writers Museum and the footsteps of Joyce, Wilde, and Shaw. The city's thriving tech sector, known as the 'Silicon Docks,' provides insights into how Ireland became Europe's technology hub, hosting European headquarters for major global companies. Students experience authentic Irish culture through traditional music sessions in historic Temple Bar, while learning about Ireland's journey from agricultural nation to modern knowledge economy. The Georgian architecture and cobblestone streets tell the story of Dublin's colonial past and its transformation into a cosmopolitan European capital.",
+        images: [
+          { src: dublin1, alt: "Colorful Dublin street scene with traditional shops" },
+          { src: dublin2, alt: "Dublin River Liffey with bridges and cityscape" },
+          { src: dublin3, alt: "The Temple Bar pub with traditional red facade" },
+          { src: dublin4, alt: "Trinity College Dublin with iconic bell tower" }
         ]
       };
     }

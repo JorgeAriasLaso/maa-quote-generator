@@ -97,6 +97,15 @@ export const DESTINATION_PRICING = {
     coordinationFee: 15,
     teacherDiscount: 0.65,
   },
+  "Ireland": {
+    accommodation: 60,
+    breakfast: 22,
+    lunch: 28,
+    dinner: 32,
+    transportCard: 8,
+    coordinationFee: 16,
+    teacherDiscount: 0.65,
+  },
 } as const;
 
 // Airport transfer pricing by destination
@@ -111,6 +120,7 @@ export const AIRPORT_TRANSFER_PRICING = {
   "Italy": 45,
   "United Kingdom": 55,
   "UK": 55,
+  "Ireland": 60,
 } as const;
 
 // Additional services pricing
