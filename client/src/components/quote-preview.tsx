@@ -209,31 +209,98 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Send HTML to server for PDF generation
-      const response = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ html: htmlContent }),
-      });
+      // Try server-side PDF generation first, fallback to client-side if it fails
+      try {
+        const response = await fetch('/api/generate-pdf', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ html: htmlContent }),
+        });
 
-      if (!response.ok) {
-        throw new Error('PDF generation failed');
+        if (response.ok) {
+          // Server-side generation successful - selectable text
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+          return;
+        }
+      } catch (serverError) {
+        console.warn('Server PDF generation failed, falling back to client-side:', serverError);
       }
 
-      // Create blob and download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      // Fallback to client-side generation (existing working method)
+      // Set a fixed width for consistent PDF generation
+      const originalStyles = {
+        maxWidth: quoteElement.style.maxWidth,
+        width: quoteElement.style.width,
+        margin: quoteElement.style.margin,
+        padding: quoteElement.style.padding,
+        backgroundColor: quoteElement.style.backgroundColor,
+      };
       
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      // Set standard PDF dimensions
+      quoteElement.style.maxWidth = '794px';
+      quoteElement.style.width = '794px';
+      quoteElement.style.margin = '0';
+      quoteElement.style.padding = '20px';
+      quoteElement.style.backgroundColor = '#ffffff';
+      
+      // Allow time for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Generate with html2canvas (fallback)
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2.0,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      // Restore original styles
+      Object.assign(quoteElement.style, originalStyles);
+
+      // Create PDF with jsPDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Scale to fit A4
+      const pdfWidth = 210 - 30;
+      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+      
+      let currentY = 0;
+      const pageHeight = 297 - 20;
+      let pageCount = 1;
+      
+      while (currentY < pdfHeight) {
+        if (pageCount > 1) {
+          pdf.addPage();
+        }
+        
+        const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
+        pdf.addImage(imgData, 'JPEG', 15, 15 + (currentY * -1), pdfWidth, pdfHeight);
+        
+        currentY += heightToAdd;
+        pageCount++;
+        
+        if (pageCount > 3) break;
+      }
+
+      // Download the PDF
+      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      pdf.save(filename);
       
     } catch (error) {
       console.error('PDF generation error:', error);
