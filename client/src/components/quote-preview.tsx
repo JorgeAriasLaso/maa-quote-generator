@@ -1,5 +1,6 @@
 import { type Quote } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
+import { getTranslation, type Language } from "@shared/translations";
 
 // Helper function to parse duration for calculations
 function parseDuration(duration: string): number {
@@ -64,6 +65,12 @@ interface QuotePreviewProps {
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
+  
+  // Translation helper function
+  const t = (key: keyof typeof import("@shared/translations").translations.English) => {
+    if (!quote?.language) return key;
+    return getTranslation(quote.language as Language, key);
+  };
 
   // Function to get learning outcomes based on trip type
   const getLearningOutcomes = (tripType: string, customTripType?: string) => {
