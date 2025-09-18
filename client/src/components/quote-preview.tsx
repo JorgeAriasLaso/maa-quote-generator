@@ -1,6 +1,5 @@
 import { type Quote } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
-import { getTranslation, type Language } from "@shared/translations";
 
 // Helper function to parse duration for calculations
 function parseDuration(duration: string): number {
@@ -66,11 +65,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
   
-  // Translation helper function
-  const t = (key: keyof typeof import("@shared/translations").translations.English) => {
-    if (!quote?.language) return key;
-    return getTranslation(quote.language as Language, key);
-  };
 
   // Function to get learning outcomes based on trip type
   const getLearningOutcomes = (tripType: string, customTripType?: string) => {
@@ -1076,25 +1070,25 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <Card className="bg-slate-50 p-4 max-w-md w-full">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">{t('duration')}:</span>
+                      <span className="font-medium text-slate-700">Duration:</span>
                       <span className="text-slate-600">{quote.duration}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">{t('students')}:</span>
+                      <span className="font-medium text-slate-700">Students:</span>
                       <span className="text-slate-600">{quote.numberOfStudents}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">{t('teachers')}:</span>
+                      <span className="font-medium text-slate-700">Teachers:</span>
                       <span className="text-slate-600">{quote.numberOfTeachers}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">{t('dates')}:</span>
+                      <span className="font-medium text-slate-700">Dates:</span>
                       <span className="text-slate-600 text-xs">
                         {new Date(quote.startDate).toLocaleDateString()} - {new Date(quote.endDate).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="font-medium text-slate-700">{t('quoteNumber')} #:</span>
+                      <span className="font-medium text-slate-700">Quote #:</span>
                       <span className="text-slate-600">{quote.quoteNumber}</span>
                     </div>
                   </div>
@@ -1190,7 +1184,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             {/* Pricing Summary - Add extra spacing to prevent page split */}
             <div className="mb-12 mt-16" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
               <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2" style={{ breakAfter: 'avoid', pageBreakAfter: 'avoid' }}>
-                {t('investmentSummary')}
+                Investment Summary
               </h3>
               
               <Card className="bg-slate-50 p-6">
@@ -1387,7 +1381,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   
                   <div className="border-t border-slate-300 pt-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-slate-900">{t('totalInvestment')}</span>
+                      <span className="text-lg font-semibold text-slate-900">Total Investment</span>
                       <span className="text-2xl font-bold text-primary">€{calculateTotal().toLocaleString()}</span>
                     </div>
                     {costBreakdown && costBreakdown.erasmusFunding && (

@@ -358,24 +358,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               )}
             </div>
 
-            {/* Language */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Quote Language</label>
-              <Select value={formData.language} onValueChange={(value) => updateFormData("language", value)}>
-                <SelectTrigger data-testid="select-language">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="English">English</SelectItem>
-                  <SelectItem value="Spanish">Spanish</SelectItem>
-                  <SelectItem value="French">French</SelectItem>
-                  <SelectItem value="German">German</SelectItem>
-                  <SelectItem value="Italian">Italian</SelectItem>
-                  <SelectItem value="Portuguese">Portuguese</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* Trip Type */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Trip Type</label>
