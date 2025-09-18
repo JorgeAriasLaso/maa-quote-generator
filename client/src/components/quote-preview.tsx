@@ -108,7 +108,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   };
 
-  // Auto-download trigger function - server-side PDF with selectable text
+  // Print PDF with selectable text
   const triggerAutoDownload = async () => {
     if (!quote || isExporting) return;
     
@@ -121,7 +121,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         return;
       }
 
-      // Temporarily hide internal analysis sections for PDF
+      // Hide internal analysis sections for printing
       const previewHeader = document.querySelector('.preview-header');
       const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
       
@@ -134,8 +134,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Get the full HTML document with styles
-      const htmlContent = `
+      // Create print window with selectable text PDF
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        throw new Error('Could not open print window');
+      }
+
+      printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
@@ -143,6 +148,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           <title>Quote ${quote.quoteNumber}</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            
+            @page {
+              size: A4;
+              margin: 15mm;
+            }
+            
+            @media print {
+              * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+              body { font-size: 12px; line-height: 1.4; }
+              .educational-value { page-break-before: always; }
+              h1, h2, h3 { page-break-after: avoid; }
+              .destination-image, .cost-breakdown { page-break-inside: avoid; }
+            }
             
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
@@ -152,12 +170,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               line-height: 1.5;
             }
             .quote-document {
-              max-width: 794px;
-              margin: 0 auto;
-              padding: 20px;
+              max-width: 100%;
+              margin: 0;
+              padding: 0;
               background: white;
             }
-            .logo { max-width: 200px; height: auto; object-fit: contain; }
+            .logo { max-width: 160px; height: auto; max-height: 80px; object-fit: contain; }
             .destination-image { width: 140px; height: 105px; object-fit: cover; border-radius: 8px; }
             .font-semibold { font-weight: 600; }
             .font-bold { font-weight: 700; }
@@ -187,19 +205,23 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             .text-slate-600 { color: #475569; }
             .text-right { text-align: right; }
             .font-mono { font-family: 'Courier New', monospace; }
-            
-            /* Page break styles */
-            .educational-value { page-break-before: always; }
-            h1, h2, h3 { page-break-after: avoid; }
-            .destination-image { page-break-inside: avoid; }
-            .cost-breakdown { page-break-inside: avoid; }
           </style>
         </head>
         <body>
           ${quoteElement.outerHTML}
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+                window.close();
+              }, 500);
+            }
+          </script>
         </body>
         </html>
-      `;
+      `);
+      
+      printWindow.document.close();
 
       // Restore display for internal sections
       if (previewHeader) {
@@ -208,97 +230,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = '';
       });
-
-      // Set a fixed width for consistent PDF generation
-      const originalStyles = {
-        maxWidth: quoteElement.style.maxWidth,
-        width: quoteElement.style.width,
-        margin: quoteElement.style.margin,
-        padding: quoteElement.style.padding,
-        backgroundColor: quoteElement.style.backgroundColor,
-      };
-      
-      // Set standard PDF dimensions
-      quoteElement.style.maxWidth = '794px';
-      quoteElement.style.width = '794px';
-      quoteElement.style.margin = '0';
-      quoteElement.style.padding = '20px';
-      quoteElement.style.backgroundColor = '#ffffff';
-      
-      // Allow time for DOM to update
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Generate with html2canvas with correct logo size
-      const canvas = await html2canvas(quoteElement, {
-        scale: 2.0,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
-          if (clonedElement) {
-            // Fix logo size
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0) { // Logo - original size
-                img.style.maxWidth = '160px';
-                img.style.height = 'auto';
-                img.style.maxHeight = '80px';
-                img.style.objectFit = 'contain';
-              }
-            });
-          }
-        }
-      });
-
-      // Restore original styles
-      Object.assign(quoteElement.style, originalStyles);
-
-      // Create PDF with jsPDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      // Scale to fit A4
-      const pdfWidth = 210 - 30;
-      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
-      
-      let currentY = 0;
-      const pageHeight = 297 - 20;
-      let pageCount = 1;
-      
-      while (currentY < pdfHeight) {
-        if (pageCount > 1) {
-          pdf.addPage();
-        }
-        
-        const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
-        const sourceY = currentY * (imgHeight / pdfHeight);
-        const sourceHeight = heightToAdd * (imgHeight / pdfHeight);
-        
-        // Create a temporary canvas for this page
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = imgWidth;
-        pageCanvas.height = sourceHeight;
-        const pageCtx = pageCanvas.getContext('2d');
-        
-        if (pageCtx) {
-          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92);
-          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
-        }
-        
-        currentY += heightToAdd;
-        pageCount++;
-        
-        if (pageCount > 3) break;
-      }
-
-      // Download the PDF
-      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      pdf.save(filename);
       
     } catch (error) {
       console.error('PDF generation error:', error);
