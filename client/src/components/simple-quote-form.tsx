@@ -136,7 +136,6 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
         teacherCoordinationFeeTotal: currentQuote.teacherCoordinationFeeTotal || "",
         airportTransferPerPerson: currentQuote.airportTransferPerPerson || "",
         adhocServices: currentQuote.adhocServices || "[]",
-        language: currentQuote.language || "English",
         costStudentAccommodationPerDay: currentQuote.costStudentAccommodationPerDay || "",
         costTeacherAccommodationPerDay: currentQuote.costTeacherAccommodationPerDay || "",
         costBreakfastPerDay: currentQuote.costBreakfastPerDay || "",

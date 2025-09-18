@@ -94,7 +94,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   studentAccommodationName: z.string().nullable().optional(),
   teacherAccommodationName: z.string().nullable().optional(),
   additionalComments: z.string().nullable().optional(),
-  language: z.enum(["English", "Spanish", "French", "German", "Italian", "Portuguese"]).default("English"),
+  language: z.string().default("English"),
   costStudentAccommodationPerDay: z.string().nullable().optional(),
   costTeacherAccommodationPerDay: z.string().nullable().optional(),
   costBreakfastPerDay: z.string().nullable().optional(),

@@ -1199,7 +1199,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-blue-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        {t('students')} ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent} - Average cost {t('perStudent').toLowerCase()})
+                        Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent} - Average cost per student)
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.student.totalForAllStudents || 0)}
@@ -1213,19 +1213,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         </div>
                         {costBreakdown.student.breakfastCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('breakfast')}:</span>
+                            <span>• Breakfast:</span>
                             <span>{formatCurrency(costBreakdown.student.breakfastCost)}</span>
                           </div>
                         )}
                         {costBreakdown.student.lunchCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('lunch')}:</span>
+                            <span>• Lunch:</span>
                             <span>{formatCurrency(costBreakdown.student.lunchCost)}</span>
                           </div>
                         )}
                         {costBreakdown.student.dinnerCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('dinner')}:</span>
+                            <span>• Dinner:</span>
                             <span>{formatCurrency(costBreakdown.student.dinnerCost)}</span>
                           </div>
                         )}
@@ -1251,7 +1251,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   <div className="bg-green-50 p-4 rounded mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-slate-700">
-                        {t('teachers')} ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher} - Average cost {t('perTeacher').toLowerCase()})
+                        Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher} - Average cost per teacher)
                       </span>
                       <span className="text-slate-900 font-bold">
                         {formatCurrency(costBreakdown?.teacher.totalForAllTeachers || 0)}
@@ -1265,19 +1265,19 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         </div>
                         {costBreakdown.teacher.breakfastCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('breakfast')}:</span>
+                            <span>• Breakfast:</span>
                             <span>{formatCurrency(costBreakdown.teacher.breakfastCost)}</span>
                           </div>
                         )}
                         {costBreakdown.teacher.lunchCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('lunch')}:</span>
+                            <span>• Lunch:</span>
                             <span>{formatCurrency(costBreakdown.teacher.lunchCost)}</span>
                           </div>
                         )}
                         {costBreakdown.teacher.dinnerCost > 0 && (
                           <div className="flex justify-between">
-                            <span>• {t('dinner')}:</span>
+                            <span>• Dinner:</span>
                             <span>{formatCurrency(costBreakdown.teacher.dinnerCost)}</span>
                           </div>
                         )}
@@ -1514,7 +1514,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                             {costBreakdown.internalCosts.studentAccommodation > 0 && (
                               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                                 <div>
-                                  <div className="font-medium">{t('students')} {t('accommodation')}</div>
+                                  <div className="font-medium">Student Accommodation</div>
                                   <div className="text-sm text-slate-500">
                                     {quote?.numberOfStudents || 0} students × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costStudentAccommodationPerDay || "0")).toFixed(2)}
                                   </div>
@@ -1525,7 +1525,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                             {costBreakdown.internalCosts.teacherAccommodation > 0 && (
                               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                                 <div>
-                                  <div className="font-medium">{t('teachers')} {t('accommodation')}</div>
+                                  <div className="font-medium">Teacher Accommodation</div>
                                   <div className="text-sm text-slate-500">
                                     {quote?.numberOfTeachers || 0} teachers × {quote ? parseDuration(quote.duration) : 0} days × €{(parseFloat(quote?.costTeacherAccommodationPerDay || "0")).toFixed(2)}
                                   </div>

@@ -26,9 +26,6 @@ export const translations = {
     coordinationFees: "Coordination Fees",
     additionalServices: "Additional Services",
     totalPerPerson: "Total per Person",
-    averageCost: "Average cost",
-    accommodation: "Accommodation",
-    meals: "Meals",
     
     // Investment Summary
     investmentSummary: "Investment Summary",
@@ -48,13 +45,6 @@ export const translations = {
     airportTransfers: "Airport Transfers",
     localTransport: "Local Transport",
     total: "Total",
-    // Additional elements
-    why: "Why",
-    forEducationalTravel: "for Educational Travel?",
-    studentsWillGain: "Students will gain:",
-    detailedCostBreakdown: "Detailed Cost Breakdown",
-    profitabilityAnalysis: "Profitability Analysis",
-    contactUs: "Contact us to book this trip:",
   },
   
   Spanish: {
@@ -82,9 +72,6 @@ export const translations = {
     coordinationFees: "Tasas de Coordinación",
     additionalServices: "Servicios Adicionales",
     totalPerPerson: "Total por Persona",
-    averageCost: "Costo promedio",
-    accommodation: "Alojamiento",
-    meals: "Comidas",
     
     // Investment Summary
     investmentSummary: "Resumen de Inversión",
@@ -131,9 +118,6 @@ export const translations = {
     coordinationFees: "Frais de Coordination",
     additionalServices: "Services Supplémentaires",
     totalPerPerson: "Total par Personne",
-    averageCost: "Coût moyen",
-    accommodation: "Hébergement",
-    meals: "Repas",
     
     // Investment Summary
     investmentSummary: "Résumé de l'Investissement",
@@ -180,9 +164,6 @@ export const translations = {
     coordinationFees: "Koordinationsgebühren",
     additionalServices: "Zusätzliche Leistungen",
     totalPerPerson: "Gesamt pro Person",
-    averageCost: "Durchschnittskosten",
-    accommodation: "Unterkunft",
-    meals: "Mahlzeiten",
     
     // Investment Summary
     investmentSummary: "Investitionszusammenfassung",
@@ -229,9 +210,6 @@ export const translations = {
     coordinationFees: "Commissioni di Coordinamento",
     additionalServices: "Servizi Aggiuntivi",
     totalPerPerson: "Totale per Persona",
-    averageCost: "Costo medio",
-    accommodation: "Alloggio",
-    meals: "Pasti",
     
     // Investment Summary
     investmentSummary: "Riepilogo Investimento",
@@ -278,9 +256,6 @@ export const translations = {
     coordinationFees: "Taxas de Coordenação",
     additionalServices: "Serviços Adicionais",
     totalPerPerson: "Total por Pessoa",
-    averageCost: "Custo médio",
-    accommodation: "Alojamento",
-    meals: "Refeições",
     
     // Investment Summary
     investmentSummary: "Resumo do Investimento",
