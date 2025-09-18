@@ -333,6 +333,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const page = await browser.newPage();
       
+      // Emulate screen media for better text rendering
+      await page.emulateMediaType('screen');
+      
       // Set content with proper CSS for page breaks
       await page.setContent(html, { waitUntil: 'networkidle0' });
       
@@ -373,6 +376,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           left: '15mm'
         },
         printBackground: true,
+        preferCSSPageSize: true,
       });
 
       await browser.close();

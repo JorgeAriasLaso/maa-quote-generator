@@ -108,7 +108,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   };
 
-  // Auto-download trigger function
+  // Auto-download trigger function - server-side PDF with selectable text
   const triggerAutoDownload = async () => {
     if (!quote || isExporting) return;
     
@@ -121,7 +121,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         return;
       }
 
-      // Temporarily hide the preview header and internal analysis sections for PDF
+      // Temporarily hide internal analysis sections for PDF
       const previewHeader = document.querySelector('.preview-header');
       const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
       
@@ -134,66 +134,74 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Set a fixed width for consistent PDF generation
-      const originalStyles = {
-        maxWidth: quoteElement.style.maxWidth,
-        width: quoteElement.style.width,
-        margin: quoteElement.style.margin,
-        padding: quoteElement.style.padding,
-        backgroundColor: quoteElement.style.backgroundColor,
-      };
-      
-      // Set standard PDF dimensions for 2-page layout
-      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
-      quoteElement.style.width = '794px';
-      quoteElement.style.margin = '0';
-      quoteElement.style.padding = '20px'; // Reduced padding to save space
-      quoteElement.style.backgroundColor = '#ffffff';
-      quoteElement.style.fontSize = '12px'; // Slightly larger for readability
-      quoteElement.style.lineHeight = '1.4'; // Tighter spacing for more content
-      
-      // Allow time for DOM to update
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
-      const canvas = await html2canvas(quoteElement, {
-        scale: 2.0, // Higher scale for crisp text rendering
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        imageTimeout: 10000,
-        width: 794,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
-          if (clonedElement) {
-            // Set consistent styling for 2-page layout
-            clonedElement.style.maxWidth = '794px';
-            clonedElement.style.width = '794px';
-            clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '20px'; // Reduced padding
-            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
+      // Get the full HTML document with styles
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Quote ${quote.quoteNumber}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
             
-            // Fix image sizing - medium logo as requested
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0) { // Logo - medium size
-                img.style.maxWidth = '160px'; // Medium size between small and large
-                img.style.height = 'auto';
-                img.style.maxHeight = '80px'; // Medium height
-                img.style.objectFit = 'contain';
-              } else {
-                img.style.width = '140px'; // Slightly larger for better quality
-                img.style.height = '105px'; 
-                img.style.objectFit = 'cover';
-              }
-            });
-          }
-        }
-      });
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+              background: white;
+              color: #1e293b;
+              line-height: 1.5;
+            }
+            .quote-document {
+              max-width: 794px;
+              margin: 0 auto;
+              padding: 20px;
+              background: white;
+            }
+            .logo { max-width: 160px; height: auto; max-height: 80px; object-fit: contain; }
+            .destination-image { width: 140px; height: 105px; object-fit: cover; border-radius: 8px; }
+            .font-semibold { font-weight: 600; }
+            .font-bold { font-weight: 700; }
+            .text-lg { font-size: 1.125rem; }
+            .text-xl { font-size: 1.25rem; }
+            .text-2xl { font-size: 1.5rem; }
+            .text-sm { font-size: 0.875rem; }
+            .text-xs { font-size: 0.75rem; }
+            .mb-2 { margin-bottom: 0.5rem; }
+            .mb-4 { margin-bottom: 1rem; }
+            .mb-6 { margin-bottom: 1.5rem; }
+            .p-4 { padding: 1rem; }
+            .grid { display: grid; }
+            .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+            .gap-2 { gap: 0.5rem; }
+            .gap-4 { gap: 1rem; }
+            .border { border: 1px solid #e2e8f0; }
+            .border-t { border-top: 1px solid #e2e8f0; }
+            .rounded-lg { border-radius: 0.5rem; }
+            .bg-slate-50 { background-color: #f8fafc; }
+            .bg-blue-50 { background-color: #eff6ff; }
+            .bg-green-50 { background-color: #f0fdf4; }
+            .text-blue-600 { color: #2563eb; }
+            .text-green-600 { color: #16a34a; }
+            .text-yellow-600 { color: #ca8a04; }
+            .text-slate-600 { color: #475569; }
+            .text-right { text-align: right; }
+            .font-mono { font-family: 'Courier New', monospace; }
+            
+            /* Page break styles */
+            .educational-value { page-break-before: always; }
+            h1, h2, h3 { page-break-after: avoid; }
+            .destination-image { page-break-inside: avoid; }
+            .cost-breakdown { page-break-inside: avoid; }
+          </style>
+        </head>
+        <body>
+          ${quoteElement.outerHTML}
+        </body>
+        </html>
+      `;
 
-      // Restore original styles
-      Object.assign(quoteElement.style, originalStyles);
+      // Restore display for internal sections
       if (previewHeader) {
         (previewHeader as HTMLElement).style.display = '';
       }
@@ -201,54 +209,31 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Create PDF as single continuous document (no page splitting)
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/jpeg', 0.92); // Higher quality for crisp text
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      // Scale to fit A4 width with margins
-      const pdfWidth = 210 - 30; // A4 width minus margins
-      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
-      
-      // Add pages as needed for the full content - optimized for exactly 2 pages
-      let currentY = 0;
-      const pageHeight = 297 - 20; // Smaller margins to fit more content
-      let pageCount = 1;
-      
-      while (currentY < pdfHeight) {
-        if (pageCount > 1) {
-          pdf.addPage();
-        }
-        
-        const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
-        const sourceY = currentY * (imgHeight / pdfHeight);
-        const sourceHeight = heightToAdd * (imgHeight / pdfHeight);
-        
-        // Create a temporary canvas for this page
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = imgWidth;
-        pageCanvas.height = sourceHeight;
-        const pageCtx = pageCanvas.getContext('2d');
-        
-        if (pageCtx) {
-          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92); // Higher quality for better text clarity
-          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
-        }
-        
-        currentY += heightToAdd;
-        pageCount++;
-        
-        // Safety limit to prevent infinite loop
-        if (pageCount > 3) break;
+      // Send HTML to server for PDF generation
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ html: htmlContent }),
+      });
+
+      if (!response.ok) {
+        throw new Error('PDF generation failed');
       }
 
-      // Generate filename
+      // Create blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
       
-      // Download the PDF
-      pdf.save(filename);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
       
     } catch (error) {
       console.error('PDF generation error:', error);
