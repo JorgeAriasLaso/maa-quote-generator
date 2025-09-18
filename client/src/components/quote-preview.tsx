@@ -114,13 +114,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     
     setIsExporting(true);
     try {
-      // Find the quote document element
-      const quoteElement = document.getElementById('quote-document');
-      if (!quoteElement) {
-        console.error('Quote document element not found');
-        return;
-      }
-
       // Hide internal analysis sections for printing
       const previewHeader = document.querySelector('.preview-header');
       const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
@@ -134,102 +127,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Create print window with selectable text PDF
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) {
-        throw new Error('Could not open print window');
-      }
-
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Quote ${quote.quoteNumber}</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-            
-            @page {
-              size: A4;
-              margin: 15mm;
-            }
-            
-            @media print {
-              * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
-              body { font-size: 12px; line-height: 1.4; }
-              .educational-value { page-break-before: always; }
-              h1, h2, h3 { page-break-after: avoid; }
-              .destination-image, .cost-breakdown { page-break-inside: avoid; }
-            }
-            
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-              background: white;
-              color: #1e293b;
-              line-height: 1.5;
-            }
-            .quote-document {
-              max-width: 100%;
-              margin: 0;
-              padding: 0;
-              background: white;
-            }
-            .logo { max-width: 160px; height: auto; max-height: 80px; object-fit: contain; }
-            .destination-image { width: 140px; height: 105px; object-fit: cover; border-radius: 8px; }
-            .font-semibold { font-weight: 600; }
-            .font-bold { font-weight: 700; }
-            .text-lg { font-size: 1.125rem; }
-            .text-xl { font-size: 1.25rem; }
-            .text-2xl { font-size: 1.5rem; }
-            .text-sm { font-size: 0.875rem; }
-            .text-xs { font-size: 0.75rem; }
-            .mb-2 { margin-bottom: 0.5rem; }
-            .mb-4 { margin-bottom: 1rem; }
-            .mb-6 { margin-bottom: 1.5rem; }
-            .p-4 { padding: 1rem; }
-            .grid { display: grid; }
-            .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-            .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-            .gap-2 { gap: 0.5rem; }
-            .gap-4 { gap: 1rem; }
-            .border { border: 1px solid #e2e8f0; }
-            .border-t { border-top: 1px solid #e2e8f0; }
-            .rounded-lg { border-radius: 0.5rem; }
-            .bg-slate-50 { background-color: #f8fafc; }
-            .bg-blue-50 { background-color: #eff6ff; }
-            .bg-green-50 { background-color: #f0fdf4; }
-            .text-blue-600 { color: #2563eb; }
-            .text-green-600 { color: #16a34a; }
-            .text-yellow-600 { color: #ca8a04; }
-            .text-slate-600 { color: #475569; }
-            .text-right { text-align: right; }
-            .font-mono { font-family: 'Courier New', monospace; }
-          </style>
-        </head>
-        <body>
-          ${quoteElement.outerHTML}
-          <script>
-            window.onload = function() {
-              setTimeout(function() {
-                window.print();
-                window.close();
-              }, 500);
-            }
-          </script>
-        </body>
-        </html>
-      `);
+      // Add print class to body for print-specific styling
+      document.body.classList.add('print-mode');
       
-      printWindow.document.close();
-
-      // Restore display for internal sections
-      if (previewHeader) {
-        (previewHeader as HTMLElement).style.display = '';
-      }
-      internalAnalysisSections.forEach((section) => {
-        (section as HTMLElement).style.display = '';
-      });
+      // Trigger browser print dialog
+      window.print();
+      
+      // Restore elements after print
+      setTimeout(() => {
+        document.body.classList.remove('print-mode');
+        if (previewHeader) {
+          (previewHeader as HTMLElement).style.display = '';
+        }
+        internalAnalysisSections.forEach((section) => {
+          (section as HTMLElement).style.display = '';
+        });
+      }, 1000);
       
     } catch (error) {
       console.error('PDF generation error:', error);
