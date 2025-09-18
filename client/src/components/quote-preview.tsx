@@ -108,37 +108,136 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   };
 
-  // Print PDF with selectable text
+  // Print PDF with selectable text using iframe approach
   const triggerAutoDownload = async () => {
     if (!quote || isExporting) return;
     
     setIsExporting(true);
     try {
-      // Hide internal analysis sections for printing
-      const previewHeader = document.querySelector('.preview-header');
-      const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
-      
-      if (previewHeader) {
-        (previewHeader as HTMLElement).style.display = 'none';
+      // Find the quote document element
+      const quoteElement = document.getElementById('quote-document');
+      if (!quoteElement) {
+        console.error('Quote document element not found');
+        return;
       }
-      
-      // Hide internal analysis sections
+
+      // Hide internal analysis sections for cloning
+      const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Add print class to body for print-specific styling
-      document.body.classList.add('print-mode');
+      // Create hidden iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.top = '-9999px';
+      iframe.style.left = '-9999px';
+      iframe.style.width = '210mm';
+      iframe.style.height = '297mm';
+      document.body.appendChild(iframe);
+
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) {
+        throw new Error('Could not access iframe document');
+      }
+
+      // Clone all head styles
+      const headClone = document.head.cloneNode(true) as HTMLElement;
       
-      // Trigger browser print dialog
-      window.print();
-      
-      // Restore elements after print
+      // Clone quote content
+      const quoteClone = quoteElement.cloneNode(true) as HTMLElement;
+
+      // Write iframe document
+      iframeDoc.open();
+      iframeDoc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          ${headClone.innerHTML}
+          <style>
+            @page {
+              size: A4;
+              margin: 12mm;
+            }
+            
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              box-shadow: none !important;
+            }
+            
+            html, body {
+              background: #fff !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              font-size: 12px !important;
+              line-height: 1.4 !important;
+            }
+            
+            #quote-document {
+              max-width: none !important;
+              width: 100% !important;
+              margin: 0 !important;
+              padding: 20px !important;
+            }
+            
+            .educational-value {
+              break-before: page;
+            }
+            
+            h1, h2, h3 {
+              break-after: avoid;
+            }
+            
+            .destination-image, .cost-breakdown {
+              break-inside: avoid;
+            }
+            
+            img {
+              max-width: 100% !important;
+              height: auto !important;
+            }
+            
+            .logo {
+              max-width: 160px !important;
+              max-height: 80px !important;
+            }
+          </style>
+        </head>
+        <body>
+          ${quoteClone.outerHTML}
+        </body>
+        </html>
+      `);
+      iframeDoc.close();
+
+      // Wait for fonts and images to load
+      await new Promise<void>((resolve) => {
+        const images = Array.from(iframeDoc.images);
+        const fontPromise = (iframeDoc as any).fonts?.ready || Promise.resolve();
+        
+        const imagePromises = images.map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        });
+
+        Promise.all([fontPromise, ...imagePromises]).then(() => {
+          setTimeout(resolve, 500); // Extra time for rendering
+        });
+      });
+
+      // Print iframe
+      if (iframe.contentWindow) {
+        iframe.contentWindow.print();
+      }
+
+      // Clean up
       setTimeout(() => {
-        document.body.classList.remove('print-mode');
-        if (previewHeader) {
-          (previewHeader as HTMLElement).style.display = '';
-        }
+        document.body.removeChild(iframe);
+        // Restore internal sections
         internalAnalysisSections.forEach((section) => {
           (section as HTMLElement).style.display = '';
         });
