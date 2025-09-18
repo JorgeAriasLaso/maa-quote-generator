@@ -209,36 +209,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         (section as HTMLElement).style.display = '';
       });
 
-      // Try server-side PDF generation first, fallback to client-side if it fails
-      try {
-        const response = await fetch('/api/generate-pdf', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ html: htmlContent }),
-        });
-
-        if (response.ok) {
-          // Server-side generation successful - selectable text
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-          
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-          return;
-        }
-      } catch (serverError) {
-        console.warn('Server PDF generation failed, falling back to client-side:', serverError);
-      }
-
-      // Fallback to client-side generation (existing working method)
       // Set a fixed width for consistent PDF generation
       const originalStyles = {
         maxWidth: quoteElement.style.maxWidth,
@@ -258,13 +228,28 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Generate with html2canvas (fallback)
+      // Generate with html2canvas with correct logo size
       const canvas = await html2canvas(quoteElement, {
         scale: 2.0,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            // Fix logo size
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0) { // Logo - original size
+                img.style.maxWidth = '160px';
+                img.style.height = 'auto';
+                img.style.maxHeight = '80px';
+                img.style.objectFit = 'contain';
+              }
+            });
+          }
+        }
       });
 
       // Restore original styles
@@ -290,7 +275,20 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         }
         
         const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
-        pdf.addImage(imgData, 'JPEG', 15, 15 + (currentY * -1), pdfWidth, pdfHeight);
+        const sourceY = currentY * (imgHeight / pdfHeight);
+        const sourceHeight = heightToAdd * (imgHeight / pdfHeight);
+        
+        // Create a temporary canvas for this page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = sourceHeight;
+        const pageCtx = pageCanvas.getContext('2d');
+        
+        if (pageCtx) {
+          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92);
+          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
+        }
         
         currentY += heightToAdd;
         pageCount++;
