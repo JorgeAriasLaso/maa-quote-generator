@@ -108,7 +108,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     }
   };
 
-  // Print PDF with selectable text using iframe approach
+  // Auto-download trigger function
   const triggerAutoDownload = async () => {
     if (!quote || isExporting) return;
     
@@ -121,127 +121,134 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         return;
       }
 
-      // Hide internal analysis sections for cloning
+      // Temporarily hide the preview header and internal analysis sections for PDF
+      const previewHeader = document.querySelector('.preview-header');
       const internalAnalysisSections = document.querySelectorAll('.internal-analysis-only');
+      
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = 'none';
+      }
+      
+      // Hide internal analysis sections
       internalAnalysisSections.forEach((section) => {
         (section as HTMLElement).style.display = 'none';
       });
 
-      // Create hidden iframe
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'fixed';
-      iframe.style.top = '-9999px';
-      iframe.style.left = '-9999px';
-      iframe.style.width = '210mm';
-      iframe.style.height = '297mm';
-      document.body.appendChild(iframe);
-
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!iframeDoc) {
-        throw new Error('Could not access iframe document');
-      }
-
-      // Clone all head styles
-      const headClone = document.head.cloneNode(true) as HTMLElement;
+      // Set a fixed width for consistent PDF generation
+      const originalStyles = {
+        maxWidth: quoteElement.style.maxWidth,
+        width: quoteElement.style.width,
+        margin: quoteElement.style.margin,
+        padding: quoteElement.style.padding,
+        backgroundColor: quoteElement.style.backgroundColor,
+      };
       
-      // Clone quote content
-      const quoteClone = quoteElement.cloneNode(true) as HTMLElement;
-
-      // Write iframe document
-      iframeDoc.open();
-      iframeDoc.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          ${headClone.innerHTML}
-          <style>
-            @page {
-              size: A4;
-              margin: 12mm;
-            }
+      // Set standard PDF dimensions for 2-page layout
+      quoteElement.style.maxWidth = '794px'; // A4 width at 96 DPI
+      quoteElement.style.width = '794px';
+      quoteElement.style.margin = '0';
+      quoteElement.style.padding = '20px'; // Reduced padding to save space
+      quoteElement.style.backgroundColor = '#ffffff';
+      quoteElement.style.fontSize = '12px'; // Slightly larger for readability
+      quoteElement.style.lineHeight = '1.4'; // Tighter spacing for more content
+      
+      // Allow time for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
+      const canvas = await html2canvas(quoteElement, {
+        scale: 2.0, // Higher scale for crisp text rendering
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 10000,
+        width: 794,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById('quote-document');
+          if (clonedElement) {
+            // Set consistent styling for 2-page layout
+            clonedElement.style.maxWidth = '794px';
+            clonedElement.style.width = '794px';
+            clonedElement.style.backgroundColor = '#ffffff';
+            clonedElement.style.padding = '20px'; // Reduced padding
+            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
             
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              box-shadow: none !important;
-            }
-            
-            html, body {
-              background: #fff !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              font-size: 12px !important;
-              line-height: 1.4 !important;
-            }
-            
-            #quote-document {
-              max-width: none !important;
-              width: 100% !important;
-              margin: 0 !important;
-              padding: 20px !important;
-            }
-            
-            .educational-value {
-              break-before: page;
-            }
-            
-            h1, h2, h3 {
-              break-after: avoid;
-            }
-            
-            .destination-image, .cost-breakdown {
-              break-inside: avoid;
-            }
-            
-            img {
-              max-width: 100% !important;
-              height: auto !important;
-            }
-            
-            .logo {
-              max-width: 160px !important;
-              max-height: 80px !important;
-            }
-          </style>
-        </head>
-        <body>
-          ${quoteClone.outerHTML}
-        </body>
-        </html>
-      `);
-      iframeDoc.close();
-
-      // Wait for fonts and images to load
-      await new Promise<void>((resolve) => {
-        const images = Array.from(iframeDoc.images);
-        const fontPromise = (iframeDoc as any).fonts?.ready || Promise.resolve();
-        
-        const imagePromises = images.map(img => {
-          if (img.complete) return Promise.resolve();
-          return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        });
-
-        Promise.all([fontPromise, ...imagePromises]).then(() => {
-          setTimeout(resolve, 500); // Extra time for rendering
-        });
+            // Fix image sizing - medium logo as requested
+            const images = clonedElement.querySelectorAll('img');
+            images.forEach((img, index) => {
+              if (index === 0) { // Logo - medium size
+                img.style.maxWidth = '160px'; // Medium size between small and large
+                img.style.height = 'auto';
+                img.style.maxHeight = '80px'; // Medium height
+                img.style.objectFit = 'contain';
+              } else {
+                img.style.width = '140px'; // Slightly larger for better quality
+                img.style.height = '105px'; 
+                img.style.objectFit = 'cover';
+              }
+            });
+          }
+        }
       });
 
-      // Print iframe
-      if (iframe.contentWindow) {
-        iframe.contentWindow.print();
+      // Restore original styles
+      Object.assign(quoteElement.style, originalStyles);
+      if (previewHeader) {
+        (previewHeader as HTMLElement).style.display = '';
+      }
+      internalAnalysisSections.forEach((section) => {
+        (section as HTMLElement).style.display = '';
+      });
+
+      // Create PDF as single continuous document (no page splitting)
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.92); // Higher quality for crisp text
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      
+      // Scale to fit A4 width with margins
+      const pdfWidth = 210 - 30; // A4 width minus margins
+      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
+      
+      // Add pages as needed for the full content - optimized for exactly 2 pages
+      let currentY = 0;
+      const pageHeight = 297 - 20; // Smaller margins to fit more content
+      let pageCount = 1;
+      
+      while (currentY < pdfHeight) {
+        if (pageCount > 1) {
+          pdf.addPage();
+        }
+        
+        const heightToAdd = Math.min(pageHeight, pdfHeight - currentY);
+        const sourceY = currentY * (imgHeight / pdfHeight);
+        const sourceHeight = heightToAdd * (imgHeight / pdfHeight);
+        
+        // Create a temporary canvas for this page
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = sourceHeight;
+        const pageCtx = pageCanvas.getContext('2d');
+        
+        if (pageCtx) {
+          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92); // Higher quality for better text clarity
+          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
+        }
+        
+        currentY += heightToAdd;
+        pageCount++;
+        
+        // Safety limit to prevent infinite loop
+        if (pageCount > 3) break;
       }
 
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-        // Restore internal sections
-        internalAnalysisSections.forEach((section) => {
-          (section as HTMLElement).style.display = '';
-        });
-      }, 1000);
+      // Generate filename
+      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
+      
+      // Download the PDF
+      pdf.save(filename);
       
     } catch (error) {
       console.error('PDF generation error:', error);

@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "chrome-aws-lambda";
 import { insertQuoteSchema, insertClientSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -324,14 +325,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Launch browser
       const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
       });
 
       const page = await browser.newPage();
-      
-      // Emulate screen media for better text rendering
-      await page.emulateMediaType('screen');
       
       // Set content with proper CSS for page breaks
       await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -373,7 +373,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           left: '15mm'
         },
         printBackground: true,
-        preferCSSPageSize: true,
       });
 
       await browser.close();
