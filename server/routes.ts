@@ -1,8 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import puppeteer from "puppeteer-core";
-import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer";
 import { insertQuoteSchema, insertClientSchema } from "@shared/schema";
 import { z } from "zod";
 

@@ -157,7 +157,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               padding: 20px;
               background: white;
             }
-            .logo { max-width: 160px; height: auto; max-height: 80px; object-fit: contain; }
+            .logo { max-width: 200px; height: auto; object-fit: contain; }
             .destination-image { width: 140px; height: 105px; object-fit: cover; border-radius: 8px; }
             .font-semibold { font-weight: 600; }
             .font-bold { font-weight: 700; }
