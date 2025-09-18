@@ -62,6 +62,9 @@ export const quotes = pgTable("quotes", {
   // Custom adhoc services (JSON array of {name: string, pricePerPerson: number})
   adhocServices: text("adhoc_services"),
   
+  // Quote language (defaults to English)
+  language: text("language").default("English").notNull(),
+  
   // Internal cost tracking for profitability analysis
   costStudentAccommodationPerDay: text("cost_student_accommodation_per_day"),
   costTeacherAccommodationPerDay: text("cost_teacher_accommodation_per_day"),
@@ -91,6 +94,7 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   studentAccommodationName: z.string().nullable().optional(),
   teacherAccommodationName: z.string().nullable().optional(),
   additionalComments: z.string().nullable().optional(),
+  language: z.string().default("English"),
   costStudentAccommodationPerDay: z.string().nullable().optional(),
   costTeacherAccommodationPerDay: z.string().nullable().optional(),
   costBreakfastPerDay: z.string().nullable().optional(),
