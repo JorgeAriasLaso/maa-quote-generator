@@ -52,6 +52,10 @@ import warsaw1 from "@assets/Warsaw 1_1758299209418.jpg";
 import warsaw2 from "@assets/Warsaw 2_1758299209418.jpg";
 import warsaw3 from "@assets/Warsaw 3_1758299209417.jpg";
 import warsaw4 from "@assets/Warsaw 4_1758299209417.jpg";
+import copenhagen1 from "@assets/Copenhagen 1_1758300561310.jpg";
+import copenhagen2 from "@assets/Copenhagen 2_1758300561310.jpg";
+import copenhagen3 from "@assets/Copenhagen 3_1758300561310.jpg";
+import copenhagen4 from "@assets/Copenhagen 4_1758300561309.jpg";
 import valladolid1 from "@assets/Valladolid 1_1755702788593.jpg";
 import valladolid2 from "@assets/Valladolid 2_1755702788592.jpg";
 import valladolid3 from "@assets/Valladolid 3_1755702788592.jpg";
@@ -371,7 +375,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       return "https://images.unsplash.com/photo-1541697141938-ac7b57ab6df0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     // Denmark
     } else if (city.includes('copenhagen')) {
-      return "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return copenhagen1;
     }
     return "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
   };
@@ -613,22 +617,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Scandinavian Design Capital",
           description: "Explore Danish design philosophy and learn about sustainable urban planning, hygge culture, and Nordic innovation principles.",
-          image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: copenhagen1
         },
         {
           title: "Green City Leadership",
           description: "Study Copenhagen's carbon-neutral initiatives, cycling culture, and environmental policies as a model for sustainable cities.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: copenhagen2
         },
         {
           title: "Social Democratic Model",
           description: "Learn about Danish society, welfare state principles, and work-life balance that makes Denmark one of the world's happiest countries.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: copenhagen3
         },
         {
           title: "Maritime & Viking Heritage",
           description: "Explore Denmark's maritime history, from Viking expeditions to modern shipping industry and Hans Christian Andersen's literary legacy.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: copenhagen4
         }
       ];
     }
