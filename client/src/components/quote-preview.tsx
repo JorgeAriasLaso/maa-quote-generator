@@ -64,6 +64,11 @@ interface QuotePreviewProps {
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
+
+  // Print functionality
+  const handlePrint = () => {
+    window.print();
+  };
   
 
   // Function to get learning outcomes based on trip type
@@ -979,7 +984,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-slate-600 hover:text-slate-900"
+                onClick={handlePrint}
+                title="Print Quote"
+              >
                 <Printer className="h-4 w-4" />
               </Button>
               <Button 
