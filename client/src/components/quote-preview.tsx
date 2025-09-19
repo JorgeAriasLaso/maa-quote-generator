@@ -65,9 +65,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
 
-  // Print functionality
+  // Print functionality - use PDF generation instead of window.print() for complete content
   const handlePrint = () => {
-    window.print();
+    handleExportPDF();
   };
   
 
@@ -989,9 +989,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 size="sm" 
                 className="text-slate-600 hover:text-slate-900"
                 onClick={handlePrint}
-                title="Print Quote"
+                disabled={isExporting}
+                title="Print Quote (PDF)"
               >
-                <Printer className="h-4 w-4" />
+                {isExporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Printer className="h-4 w-4" />
+                )}
               </Button>
               <Button 
                 variant="outline" 
