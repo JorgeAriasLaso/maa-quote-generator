@@ -64,11 +64,6 @@ interface QuotePreviewProps {
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
-
-  // Print functionality - use PDF generation instead of window.print() for complete content
-  const handlePrint = () => {
-    handleExportPDF();
-  };
   
 
   // Function to get learning outcomes based on trip type
@@ -984,19 +979,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-slate-600 hover:text-slate-900"
-                onClick={handlePrint}
-                disabled={isExporting}
-                title="Print Quote (PDF)"
-              >
-                {isExporting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Printer className="h-4 w-4" />
-                )}
+              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                <Printer className="h-4 w-4" />
               </Button>
               <Button 
                 variant="outline" 

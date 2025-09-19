@@ -288,10 +288,6 @@ export interface CostBreakdown {
 }
 
 function getCountryFromDestination(destination: string): string {
-  // Handle null, undefined, or non-string destinations
-  if (!destination || typeof destination !== 'string') {
-    return "Unknown";
-  }
   const destination_lower = destination.toLowerCase();
   
   if (destination_lower.includes('prague') || destination_lower.includes('czech')) return "Czech Republic";
@@ -308,11 +304,7 @@ function getCountryFromDestination(destination: string): string {
   return "Spain";
 }
 
-export function parseDuration(duration: string): number {
-  // Handle null, undefined, or non-string duration
-  if (!duration || typeof duration !== 'string') {
-    return 7; // Default to 7 days
-  }
+function parseDuration(duration: string): number {
   const match = duration.match(/(\d+)/);
   return match ? parseInt(match[1]) : 7;
 }

@@ -157,8 +157,7 @@ export default function Quotes() {
   });
 
   const handleViewQuote = (quote: Quote) => {
-    // Open print-friendly page in new window
-    window.open(`/quotes/${quote.id}/print`, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    setViewingQuote(quote);
   };
 
   const handleEditQuote = (quote: Quote) => {
