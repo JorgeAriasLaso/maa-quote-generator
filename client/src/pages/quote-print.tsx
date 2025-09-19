@@ -1,14 +1,10 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { type Quote } from "@shared/schema";
-import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
+import { calculateQuoteCost, formatCurrency, parseDuration, type AdhocService } from "@shared/costing";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
 
-// Helper function to parse duration for calculations
-function parseDuration(duration: string): number {
-  const match = duration.match(/(\d+)/);
-  return match ? parseInt(match[1]) : 7;
-}
+// parseDuration is now imported from shared/costing
 
 // Import all destination images
 import madrid1 from "@assets/5fa53648e38b2_1752761191307.jpeg";
@@ -53,7 +49,13 @@ export default function QuotePrint() {
   }
 
   // Calculate cost breakdown with proper error handling
-  const adhocServices: AdhocService[] = quote.adhocServices ? JSON.parse(quote.adhocServices) : [];
+  let adhocServices: AdhocService[] = [];
+  try {
+    adhocServices = quote.adhocServices ? JSON.parse(quote.adhocServices) : [];
+  } catch (error) {
+    console.error("Failed to parse adhoc services:", error);
+    adhocServices = [];
+  }
   
   // Ensure quote has valid destination before calculating costs
   if (!quote.destination || typeof quote.destination !== 'string') {
@@ -63,8 +65,28 @@ export default function QuotePrint() {
       </div>
     );
   }
+
+  // Map quote data to cost calculation parameters
+  const customPricing = {
+    studentAccommodationPerDay: parseFloat(quote.studentAccommodationPerDay || "0"),
+    teacherAccommodationPerDay: parseFloat(quote.teacherAccommodationPerDay || "0"),
+    breakfastPerDay: parseFloat(quote.breakfastPerDay || "0"),
+    lunchPerDay: parseFloat(quote.lunchPerDay || "0"),
+    dinnerPerDay: parseFloat(quote.dinnerPerDay || "0"),
+    transportCardTotal: parseFloat(quote.transportCardTotal || "0"),
+    studentCoordinationFeeTotal: parseFloat(quote.coordinationFeePerDay || "0") * parseDuration(quote.duration || "7"),
+    teacherCoordinationFeeTotal: parseFloat(quote.coordinationFeePerDay || "0") * parseDuration(quote.duration || "7"),
+    airportTransferPerPerson: parseFloat(quote.airportTransferPerPerson || "0")
+  };
   
-  const costBreakdown = calculateQuoteCost(quote, adhocServices);
+  const costBreakdown = calculateQuoteCost(
+    quote.destination,
+    quote.duration,
+    quote.numberOfStudents,
+    quote.numberOfTeachers,
+    adhocServices,
+    customPricing
+  );
 
   // Get destination image
   const getDestinationImage = (destination: string) => {
@@ -90,6 +112,16 @@ export default function QuotePrint() {
           { src: madrid4, alt: "El Retiro Park and green spaces" }
         ]
       };
+    } else if (city.includes('málaga') || city.includes('malaga')) {
+      return {
+        description: "Málaga offers students an authentic Southern Spanish experience in Andalusia's vibrant coastal capital, where Mediterranean culture meets rich Moorish heritage and modern innovation. Students explore the magnificent Alcazaba fortress and Roman theatre while discovering the birthplace of Pablo Picasso and the city's profound influence on Spanish art and culture. The Costa del Sol provides insights into Spain's tourism industry and sustainable coastal development, while the historic city center showcases traditional Andalusian architecture and the famous Semana Santa celebrations. Students experience authentic Spanish lifestyle through visits to local markets, traditional tapas culture, and flamenco performances, while learning about Spain's diverse regional identities and the importance of Andalusia in Spanish history and culture.",
+        images: [
+          { src: malaga1, alt: "Málaga's historic Alcazaba fortress and Mediterranean coast" },
+          { src: malaga2, alt: "Traditional Andalusian architecture and culture" },
+          { src: malaga3, alt: "Vibrant local markets and authentic Spanish lifestyle" },
+          { src: malaga4, alt: "Modern Málaga and Costa del Sol development" }
+        ]
+      };
     } else if (city.includes('dublin')) {
       return {
         description: "Dublin offers students an immersive experience in Ireland's vibrant capital, where literary heritage meets modern innovation and European business leadership. Students explore the historic Trinity College and its famous Old Library, home to the Book of Kells, while discovering Ireland's rich literary tradition through the Dublin Writers Museum and the footsteps of Joyce, Wilde, and Shaw. The city's thriving tech sector, known as the 'Silicon Docks,' provides insights into how Ireland became Europe's technology hub, hosting European headquarters for major global companies. Students experience authentic Irish culture through traditional music sessions in historic Temple Bar, while learning about Ireland's journey from agricultural nation to modern knowledge economy. The Georgian architecture and cobblestone streets tell the story of Dublin's colonial past and its transformation into a cosmopolitan European capital.",
@@ -100,12 +132,22 @@ export default function QuotePrint() {
           { src: dublin4, alt: "Trinity College Dublin with iconic bell tower" }
         ]
       };
+    } else if (city.includes('alicante')) {
+      return {
+        description: "Alicante offers students an immersive experience in Spain's Mediterranean jewel, where ancient history meets modern coastal development and European tourism excellence. Students explore the impressive Santa Bárbara Castle and discover the city's strategic importance in Mediterranean trade throughout history. The beautiful Costa Blanca beaches provide insights into sustainable tourism development and Spain's leadership in the European travel industry. Students experience authentic Valencian culture through traditional festivals, local gastronomy, and the famous Explanada de España, while learning about Spain's regional diversity and the importance of the Mediterranean economy in modern Europe.",
+        images: [
+          { src: alicante1, alt: "Alicante's stunning Santa Bárbara Castle and coastline" },
+          { src: alicante2, alt: "Traditional Mediterranean architecture and culture" },
+          { src: alicante3, alt: "Beautiful Costa Blanca beaches and tourism" },
+          { src: alicante4, alt: "Modern Alicante and Explanada de España" }
+        ]
+      };
     }
     
     return {
-      description: "This destination offers students an excellent opportunity for educational and cultural growth through immersive experiences and professional development.",
+      description: "This destination offers students an excellent opportunity for educational and cultural growth through immersive experiences and professional development in a unique European setting.",
       images: [
-        { src: madrid1, alt: "Destination highlights" }
+        { src: madrid1, alt: "Educational travel destination" }
       ]
     };
   };
@@ -234,25 +276,75 @@ export default function QuotePrint() {
               <div className="avoid-break">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-medium text-slate-700">
-                    Students ({quote.numberOfStudents} × €{costBreakdown?.student.totalPerStudent} - Average cost per student)
+                    Students ({quote.numberOfStudents} × €{costBreakdown.student.totalPerStudent} per student)
                   </span>
                   <span className="text-slate-900 font-bold">
-                    {formatCurrency(costBreakdown?.student.totalForAllStudents || 0)}
+                    {formatCurrency(costBreakdown.student.totalForAllStudents)}
                   </span>
+                </div>
+                
+                {/* Detailed student cost breakdown */}
+                <div className="ml-4 text-sm text-slate-600 space-y-1 mb-3">
+                  <div className="flex justify-between">
+                    <span>Accommodation ({parseDuration(quote.duration || "7")} days)</span>
+                    <span>{formatCurrency(costBreakdown.student.accommodation)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Meals</span>
+                    <span>{formatCurrency(costBreakdown.student.meals)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Local Transport</span>
+                    <span>{formatCurrency(costBreakdown.student.transportCard)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Airport Transfers</span>
+                    <span>{formatCurrency(costBreakdown.student.airportTransfer)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Coordination Services</span>
+                    <span>{formatCurrency(costBreakdown.student.coordinationFee)}</span>
+                  </div>
                 </div>
               </div>
 
               {/* Teachers breakdown */}
-              <div className="avoid-break">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium text-slate-700">
-                    Teachers ({quote.numberOfTeachers} × €{costBreakdown?.teacher.totalPerTeacher} - Average cost per teacher)
-                  </span>
-                  <span className="text-slate-900 font-bold">
-                    {formatCurrency(costBreakdown?.teacher.totalForAllTeachers || 0)}
-                  </span>
+              {quote.numberOfTeachers > 0 && (
+                <div className="avoid-break">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium text-slate-700">
+                      Teachers ({quote.numberOfTeachers} × €{costBreakdown.teacher.totalPerTeacher} per teacher)
+                    </span>
+                    <span className="text-slate-900 font-bold">
+                      {formatCurrency(costBreakdown.teacher.totalForAllTeachers)}
+                    </span>
+                  </div>
+                  
+                  {/* Detailed teacher cost breakdown */}
+                  <div className="ml-4 text-sm text-slate-600 space-y-1 mb-3">
+                    <div className="flex justify-between">
+                      <span>Accommodation ({parseDuration(quote.duration || "7")} days)</span>
+                      <span>{formatCurrency(costBreakdown.teacher.accommodation)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Meals</span>
+                      <span>{formatCurrency(costBreakdown.teacher.meals)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Local Transport</span>
+                      <span>{formatCurrency(costBreakdown.teacher.transportCard)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Airport Transfers</span>
+                      <span>{formatCurrency(costBreakdown.teacher.airportTransfer)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Coordination Services</span>
+                      <span>{formatCurrency(costBreakdown.teacher.coordinationFee)}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Additional Services */}
               {adhocServices.length > 0 && (
@@ -274,8 +366,16 @@ export default function QuotePrint() {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold text-slate-900">Total Investment</span>
                   <span className="text-2xl font-bold text-yellow-600">
-                    €{((costBreakdown?.student.totalForAllStudents || 0) + (costBreakdown?.teacher.totalForAllTeachers || 0) + adhocServices.reduce((total, service) => total + (service.pricePerPerson * (service.studentCount + service.teacherCount)), 0)).toLocaleString()}
+                    {formatCurrency(costBreakdown.total)}
                   </span>
+                </div>
+                
+                {/* Quote details for reference */}
+                <div className="mt-4 text-sm text-slate-500 space-y-1">
+                  {quote.fiscalName && <div>Client: {quote.fiscalName}</div>}
+                  {quote.email && <div>Email: {quote.email}</div>}
+                  {quote.city && quote.country && <div>Location: {quote.city}, {quote.country}</div>}
+                  {quote.tripType && <div>Trip Type: {quote.tripType}</div>}
                 </div>
               </div>
             </div>

@@ -308,7 +308,7 @@ function getCountryFromDestination(destination: string): string {
   return "Spain";
 }
 
-function parseDuration(duration: string): number {
+export function parseDuration(duration: string): number {
   // Handle null, undefined, or non-string duration
   if (!duration || typeof duration !== 'string') {
     return 7; // Default to 7 days
