@@ -48,6 +48,10 @@ import dublin1 from "@assets/Dublin 1_1757872030313.webp";
 import dublin2 from "@assets/Dublin 2_1757872030313.webp";
 import dublin3 from "@assets/Dublin 3_1757872030312.gif";
 import dublin4 from "@assets/Dublin 4_1757872030312.jpg";
+import warsaw1 from "@assets/Warsaw 1_1758299209418.jpg";
+import warsaw2 from "@assets/Warsaw 2_1758299209418.jpg";
+import warsaw3 from "@assets/Warsaw 3_1758299209417.jpg";
+import warsaw4 from "@assets/Warsaw 4_1758299209417.jpg";
 import valladolid1 from "@assets/Valladolid 1_1755702788593.jpg";
 import valladolid2 from "@assets/Valladolid 2_1755702788592.jpg";
 import valladolid3 from "@assets/Valladolid 3_1755702788592.jpg";
@@ -361,7 +365,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     } else if (city.includes('poznan') || city.includes('poznań')) {
       return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('warsaw')) {
-      return "https://images.unsplash.com/photo-1576976658624-7eb635d39ce4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
+      return warsaw1;
     // Hungary
     } else if (city.includes('budapest')) {
       return "https://images.unsplash.com/photo-1541697141938-ac7b57ab6df0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
@@ -572,22 +576,22 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
         {
           title: "Modern European Capital",
           description: "Explore Warsaw's role as Poland's political and economic center, learning about EU politics and post-communist transformation.",
-          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: warsaw1
         },
         {
           title: "Reconstruction & Resilience",
           description: "Learn about Warsaw's remarkable post-WWII reconstruction and the human spirit's ability to rebuild and preserve cultural heritage.",
-          image: "https://images.unsplash.com/photo-1544980919-e17526d4ed0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: warsaw2
         },
         {
           title: "Financial & Tech Center",
           description: "Visit Poland's financial district and emerging tech companies, understanding Eastern Europe's economic modernization.",
-          image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: warsaw3
         },
         {
           title: "Cultural & Musical Heritage",
           description: "Explore Chopin's birthplace and Warsaw's rich musical tradition, inspiring artistic appreciation and cultural understanding.",
-          image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250"
+          image: warsaw4
         }
       ];
     }
