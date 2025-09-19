@@ -1630,8 +1630,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Contact Information - FORCE PAGE BREAK HERE */}
-            <div className="mb-12 page-break-before" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
+            {/* Contact Information - Add space to push to 3rd page */}
+            <div style={{ marginTop: '200px' }}>
               <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
                 <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
                 <p className="mb-6 text-gray-800">
