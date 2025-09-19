@@ -1630,8 +1630,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Contact Information - Moved to Bottom */}
-            <Card className="mt-4 bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
+            {/* Contact Information - Moved to Bottom - Force to new page */}
+            <Card className="mt-16 bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center" style={{ breakBefore: 'page', pageBreakBefore: 'always', marginTop: '80px' }}>
               <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
               <p className="mb-6 text-gray-800">
                 Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
