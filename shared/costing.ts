@@ -288,6 +288,10 @@ export interface CostBreakdown {
 }
 
 function getCountryFromDestination(destination: string): string {
+  // Handle null, undefined, or non-string destinations
+  if (!destination || typeof destination !== 'string') {
+    return "Unknown";
+  }
   const destination_lower = destination.toLowerCase();
   
   if (destination_lower.includes('prague') || destination_lower.includes('czech')) return "Czech Republic";

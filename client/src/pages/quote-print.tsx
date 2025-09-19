@@ -52,8 +52,18 @@ export default function QuotePrint() {
     );
   }
 
-  // Calculate cost breakdown
+  // Calculate cost breakdown with proper error handling
   const adhocServices: AdhocService[] = quote.adhocServices ? JSON.parse(quote.adhocServices) : [];
+  
+  // Ensure quote has valid destination before calculating costs
+  if (!quote.destination || typeof quote.destination !== 'string') {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-lg text-red-600">Invalid quote data - missing destination</div>
+      </div>
+    );
+  }
+  
   const costBreakdown = calculateQuoteCost(quote, adhocServices);
 
   // Get destination image
