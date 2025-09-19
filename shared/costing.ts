@@ -309,6 +309,10 @@ function getCountryFromDestination(destination: string): string {
 }
 
 function parseDuration(duration: string): number {
+  // Handle null, undefined, or non-string duration
+  if (!duration || typeof duration !== 'string') {
+    return 7; // Default to 7 days
+  }
   const match = duration.match(/(\d+)/);
   return match ? parseInt(match[1]) : 7;
 }
