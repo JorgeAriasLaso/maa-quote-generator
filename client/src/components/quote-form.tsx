@@ -730,6 +730,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                           <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
                           <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
                           <SelectItem value="School Exchange">School Exchange</SelectItem>
+                          <SelectItem value="Additional Services">Additional Services</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
