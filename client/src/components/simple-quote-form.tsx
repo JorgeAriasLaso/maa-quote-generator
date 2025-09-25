@@ -63,6 +63,9 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
     costLocalCoordinator: "",
     costAirportTransfer: "",
     internalNotes: "",
+    customTitle: "",
+    customContent: "",
+    customImages: "[]",
   });
 
   const [selectedDestination, setSelectedDestination] = useState<string>("");
@@ -380,6 +383,44 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                   value={formData.customTripType || ""}
                   onChange={(e) => updateFormData("customTripType", e.target.value)}
                 />
+              )}
+              
+              {formData.tripType === "Additional Services" && (
+                <div className="space-y-4 p-4 border rounded-lg bg-slate-50">
+                  <h4 className="text-sm font-medium text-slate-700">Custom Quote Configuration</h4>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Custom Title *</label>
+                    <Input
+                      placeholder="Enter a custom title for this quote"
+                      value={formData.customTitle || ""}
+                      onChange={(e) => updateFormData("customTitle", e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Custom Content *</label>
+                    <textarea
+                      className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Enter detailed description for this service..."
+                      value={formData.customContent || ""}
+                      onChange={(e) => updateFormData("customContent", e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Custom Images (URLs)</label>
+                    <Input
+                      placeholder="Enter image URLs separated by commas"
+                      value={formData.customImages ? JSON.parse(formData.customImages).join(', ') : ""}
+                      onChange={(e) => {
+                        const urls = e.target.value.split(',').map(url => url.trim()).filter(url => url);
+                        updateFormData("customImages", JSON.stringify(urls));
+                      }}
+                    />
+                    <p className="text-xs text-slate-500">Enter image URLs separated by commas. Max 4 images recommended.</p>
+                  </div>
+                </div>
               )}
             </div>
 

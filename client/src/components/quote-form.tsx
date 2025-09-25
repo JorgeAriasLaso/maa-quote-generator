@@ -244,6 +244,9 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
       costTeacherCoordination: "",
       costLocalCoordinator: "",
       costAirportTransfer: "",
+      customTitle: "",
+      customContent: "",
+      customImages: "",
     },
   });
 
@@ -756,6 +759,65 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       </FormItem>
                     )}
                   />
+                )}
+                
+                {tripType === "Additional Services" && (
+                  <div className="space-y-4 p-4 border rounded-lg bg-slate-50">
+                    <h4 className="text-sm font-medium text-slate-700">Custom Quote Configuration</h4>
+                    
+                    <FormField
+                      control={form.control}
+                      name="customTitle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Title *</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Enter a custom title for this quote"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="customContent"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Content *</FormLabel>
+                          <FormControl>
+                            <textarea
+                              className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              placeholder="Enter detailed description for this service..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="customImages"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Images (URLs)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Enter image URLs separated by commas"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                          <p className="text-xs text-slate-500">Enter image URLs separated by commas. Max 4 images recommended.</p>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 )}
               </div>
               
