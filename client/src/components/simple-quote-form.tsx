@@ -248,7 +248,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           costStudentCoordination: parseFloat(formData.costStudentCoordination || "60"),
           costTeacherCoordination: parseFloat(formData.costTeacherCoordination || "0"),
           costLocalCoordinator: parseFloat(formData.costLocalCoordinator || "150"),
-          costAirportTransfer: parseFloat(formData.costAirportTransfer || "0"),
+          costAirportTransfer: formData.costAirportTransfer || "0",
         }
       );
       
@@ -257,6 +257,8 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
       console.error("Error calculating cost breakdown:", error);
     }
   }, [formData, adhocServices, onCostBreakdownChange]);
+
+  const showCoreFields = formData.tripType !== "Additional Services";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,10 +284,11 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Trip Details</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Destination */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Destination</label>
-              <Popover open={isDestinationOpen} onOpenChange={setIsDestinationOpen}>
+            {/* Destination - Hide for Additional Services */}
+            {showCoreFields && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Destination</label>
+                <Popover open={isDestinationOpen} onOpenChange={setIsDestinationOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -359,7 +362,8 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                   }}
                 />
               )}
-            </div>
+              </div>
+            )}
 
             {/* Trip Type */}
             <div className="space-y-2">
@@ -619,8 +623,9 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             </p>
           </div>
           
-          {/* 1. Student Accommodation Cluster */}
-          <div className="space-y-4 border border-blue-200 bg-blue-50 p-4 rounded-lg">
+          {/* 1. Student Accommodation Cluster - Hide for Additional Services */}
+          {showCoreFields && (
+            <div className="space-y-4 border border-blue-200 bg-blue-50 p-4 rounded-lg">
             <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
               <span className="bg-blue-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">1</span>
               Student Accommodation
@@ -662,16 +667,18 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
             </div>
           </div>
+          )}
 
-          {/* 2. Teacher Accommodation Cluster */}
-          <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-green-800 mb-3 flex items-center">
-              <span className="bg-green-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">2</span>
-              Teacher Accommodation
-            </h4>
-            
-            <div className="space-y-3">
-              <div className="space-y-2">
+          {/* 2. Teacher Accommodation Cluster - Hide for Additional Services */}
+          {showCoreFields && (
+            <div className="space-y-4 border border-green-200 bg-green-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-3 flex items-center">
+                <span className="bg-green-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">2</span>
+                Teacher Accommodation
+              </h4>
+              
+              <div className="space-y-3">
+                <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700">Accommodation Name</label>
                 <Input
                   value={formData.teacherAccommodationName}
@@ -706,6 +713,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
             </div>
           </div>
+          )}
 
           {/* 3. Meals Cluster */}
           <div className="space-y-4 border border-orange-200 bg-orange-50 p-4 rounded-lg">
@@ -852,8 +860,9 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
             </div>
           </div>
 
-          {/* 5. Coordination Fees Cluster */}
-          <div className="space-y-4 border border-indigo-200 bg-indigo-50 p-4 rounded-lg">
+          {/* 5. Coordination Fees Cluster - Hide for Additional Services */}
+          {showCoreFields && (
+            <div className="space-y-4 border border-indigo-200 bg-indigo-50 p-4 rounded-lg">
             <h4 className="font-semibold text-indigo-800 mb-3 flex items-center">
               <span className="bg-indigo-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">5</span>
               Coordination Fees
@@ -911,6 +920,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
             </div>
           </div>
+          )}
         </Card>
 
         {/* Internal Cost Analysis */}

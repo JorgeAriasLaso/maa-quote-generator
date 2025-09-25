@@ -375,6 +375,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   const destination = form.watch("destination");
   const tripType = form.watch("tripType");
   const duration = form.watch("duration");
+  const showCoreFields = tripType !== "Additional Services";
   const numberOfStudents = form.watch("numberOfStudents");
   const numberOfTeachers = form.watch("numberOfTeachers");
   // Watch values for pricing calculations
@@ -680,67 +681,71 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
             
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="destination"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Destination</FormLabel>
-                      <Select onValueChange={handleDestinationChange} value={selectedDestination}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.entries(destinationsByCountry).map(([country, cities]) => (
-                            <div key={country}>
-                              <div className="px-2 py-1.5 text-sm font-semibold text-slate-600 bg-slate-50">
-                                {country}
-                              </div>
-                              {cities.map((city) => (
-                                <SelectItem key={`${city}, ${country}`} value={`${city}, ${country}`} className="pl-6">
-                                  {city}
-                                </SelectItem>
+                <>
+                  {showCoreFields && (
+                    <FormField
+                      control={form.control}
+                      name="destination"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Destination</FormLabel>
+                          <Select onValueChange={handleDestinationChange} value={selectedDestination}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {Object.entries(destinationsByCountry).map(([country, cities]) => (
+                                <div key={country}>
+                                  <div className="px-2 py-1.5 text-sm font-semibold text-slate-600 bg-slate-50">
+                                    {country}
+                                  </div>
+                                  {cities.map((city) => (
+                                    <SelectItem key={`${city}, ${country}`} value={`${city}, ${country}`} className="pl-6">
+                                      {city}
+                                    </SelectItem>
+                                  ))}
+                                </div>
                               ))}
-                            </div>
-                          ))}
-                          <div className="border-t border-slate-200 mt-1 pt-1">
-                            <SelectItem value="Other" className="font-medium">
-                              Other
-                            </SelectItem>
-                          </div>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+                              <div className="border-t border-slate-200 mt-1 pt-1">
+                                <SelectItem value="Other" className="font-medium">
+                                  Other
+                                </SelectItem>
+                              </div>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="tripType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Trip Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
-                          <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
-                          <SelectItem value="School Exchange">School Exchange</SelectItem>
-                          <SelectItem value="Additional Services">Additional Services</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  
+                  <FormField
+                    control={form.control}
+                    name="tripType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Trip Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Work Experience Mobility">Work Experience Mobility</SelectItem>
+                            <SelectItem value="Job Shadowing">Job Shadowing</SelectItem>
+                            <SelectItem value="School Exchange">School Exchange</SelectItem>
+                            <SelectItem value="Additional Services">Additional Services</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
                 
                 {tripType === "Other" && (
                   <FormField
@@ -821,7 +826,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                 )}
               </div>
               
-              {selectedDestination === "Other" && (
+              {showCoreFields && selectedDestination === "Other" && (
                 <FormField
                   control={form.control}
                   name="destination"
@@ -1101,11 +1106,12 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
           </div>
 
           {/* Custom Pricing Inputs */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">
-              <Calculator className="inline h-5 w-5 mr-2" />
-              Custom Pricing (Optional)
-            </h3>
+          {showCoreFields && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">
+                <Calculator className="inline h-5 w-5 mr-2" />
+                Custom Pricing (Optional)
+              </h3>
             
             <div className="bg-blue-50 border border-blue-200 p-3 rounded-md mb-6">
               <p className="text-sm text-slate-700">
@@ -1567,7 +1573,8 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Additional Services */}
           <AdhocServicesSection form={form} numberOfStudents={numberOfStudents} numberOfTeachers={numberOfTeachers} />
