@@ -80,6 +80,11 @@ export const quotes = pgTable("quotes", {
   // Internal notes (not shown to clients)
   internalNotes: text("internal_notes"),
   
+  // Additional Services quote type custom fields
+  customTitle: text("custom_title"), // For Additional Services quotes
+  customContent: text("custom_content"), // For Additional Services quotes
+  customImages: text("custom_images"), // JSON string of image URLs for Additional Services quotes
+  
   quoteNumber: text("quote_number").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -106,6 +111,9 @@ export const insertQuoteSchema = createInsertSchema(quotes).omit({
   costLocalCoordinator: z.string().nullable().optional(),
   costAirportTransfer: z.string().nullable().optional(),
   internalNotes: z.string().nullable().optional(),
+  customTitle: z.string().nullable().optional(),
+  customContent: z.string().nullable().optional(),
+  customImages: z.string().nullable().optional(),
 });
 
 // Relations
