@@ -391,7 +391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: `
           @page {
             size: A4;
-            margin: 15mm;
+            margin: 12mm;
           }
           
           .educational-value {
@@ -415,20 +415,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           /* Additional Services: Full-width, single-column layout */
           .is-additional-services .pdf-images-as { 
-            width: 18cm; 
-            max-width: 100%; 
-            margin: 0 auto; 
+            width: 18cm !important; 
+            max-width: 100% !important; 
+            margin: 0 auto !important;
+            display: block !important;
+            /* Remove any grid/flex constraints */
+            grid-template-columns: none !important;
+            columns: none !important;
+            column-count: 1 !important;
           }
           .is-additional-services .pdf-image {
-            display: block;
-            width: 18cm;
-            max-width: 100%;
-            height: auto;
-            margin: 6mm 0;
+            display: block !important;
+            width: 18cm !important;
+            max-width: 100% !important;
+            height: auto !important;
+            margin: 6mm 0 !important;
             page-break-inside: avoid;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            /* Override any conflicting small-image rules */
+            max-height: none !important;
+            object-fit: contain !important;
           }
+          
+          /* Remove conflicting caps for Additional Services */
+          .is-additional-services img { 
+            max-width: none !important; 
+            width: 18cm !important;
+            height: auto !important;
+          }
+          .is-additional-services .thumbnail,
+          .is-additional-services .image-grid img,
+          .is-additional-services .w-full img { 
+            width: 18cm !important; 
+            max-width: 100% !important; 
+            height: auto !important;
+          }
+          
+          /* Ensure parent containers don't constrain */
+          .is-additional-services .space-y-4,
+          .is-additional-services .mt-8 {
+            width: 18cm !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+          }
+          
           /* Ensure no leftover titles for Additional Services */
           .is-additional-services .pdf-images-as h2,
           .is-additional-services .pdf-images-as .section-title { 
@@ -453,10 +484,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const pdf = await page.pdf({
         format: 'A4',
         margin: {
-          top: '15mm',
-          right: '15mm',
-          bottom: '15mm',
-          left: '15mm'
+          top: '12mm',
+          right: '12mm',
+          bottom: '12mm',
+          left: '12mm'
         },
         printBackground: true,
       });
