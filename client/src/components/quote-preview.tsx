@@ -1045,7 +1045,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 <h2 className="text-xl font-semibold text-slate-800 mb-2">
                   {quote.tripType === "Other" && quote.customTripType ? quote.customTripType : quote.tripType} • Quote created: {new Date(quote.createdAt).toLocaleDateString()}
                 </h2>
-                <h3 className="text-lg text-primary font-medium">{quote.destination}</h3>
+                <h3 className="text-lg text-primary font-medium">
+                  {quote.tripType === "Additional Services" && quote.customTitle ? quote.customTitle : quote.destination}
+                </h3>
               </div>
               
               <div className="flex justify-center gap-8">
@@ -1105,63 +1107,111 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               </div>
             </div>
 
-            {/* Destination Highlights */}
+            {/* Destination Highlights or Custom Content */}
             <div className="mb-12">
-              <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
-                Why {quote.destination} for Educational Travel?
-              </h3>
-              
-              {/* Unified layout - apply Madrid's working format to all cities */}
-              <div className="space-y-4">
-                {/* Text content first - convert all formats to single text block */}
-                <div className="text-slate-700 text-sm leading-relaxed space-y-3">
-                  {highlights && highlights.description ? (
-                    // Madrid format - single description
-                    <div dangerouslySetInnerHTML={{ __html: highlights.description.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
-                  ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
-                    // Other cities - convert array to continuous text
-                    highlights.map((highlight, index) => (
-                      <p key={index}>
-                        <strong>{highlight.title}:</strong> {highlight.description}
-                      </p>
-                    ))
-                  ) : (
-                    <div className="text-center text-slate-500">No destination highlights available</div>
-                  )}
-                </div>
-                
-                {/* Images placed after text to avoid page break cuts - protected block */}
-                <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                  {highlights && highlights.description && highlights.images ? (
-                    // Madrid format - use custom images
-                    highlights.images.slice(0, 4).map((image, index) => (
-                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
-                        <img 
-                          src={image.src} 
-                          alt={image.alt} 
-                          className="w-full h-28 object-cover rounded-lg shadow-sm"
-                          style={{ minHeight: '100px', maxHeight: '120px' }}
-                        />
-                      </div>
-                    ))
-                  ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
-                    // Other cities - use highlight images
-                    highlights.slice(0, 4).map((highlight, index) => (
-                      <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
-                        <img 
-                          src={highlight.image} 
-                          alt={highlight.title} 
-                          className="w-full h-28 object-cover rounded-lg shadow-sm"
-                          style={{ minHeight: '100px', maxHeight: '120px' }}
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    // Placeholder if no images available
-                    <div className="text-center text-slate-400 text-sm py-8">Images will be added when uploaded</div>
-                  )}
-                </div>
-              </div>
+              {quote.tripType === "Additional Services" ? (
+                // Additional Services - Show Custom Content
+                <>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
+                    Service Details
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* Custom Content */}
+                    <div className="text-slate-700 text-sm leading-relaxed space-y-3">
+                      {quote.customContent ? (
+                        <div dangerouslySetInnerHTML={{ __html: quote.customContent.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
+                      ) : (
+                        <div className="text-center text-slate-500">No service details available</div>
+                      )}
+                    </div>
+                    
+                    {/* Custom Images */}
+                    <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                      {(() => {
+                        try {
+                          const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
+                          return customImages.length > 0 ? (
+                            customImages.slice(0, 4).map((imageSrc: string, index: number) => (
+                              <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
+                                <img 
+                                  src={imageSrc} 
+                                  alt={`Service image ${index + 1}`} 
+                                  className="w-full h-28 object-cover rounded-lg shadow-sm"
+                                  style={{ minHeight: '100px', maxHeight: '120px' }}
+                                />
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center text-slate-400 text-sm py-8">Service images will be displayed here</div>
+                          );
+                        } catch (e) {
+                          return <div className="text-center text-slate-400 text-sm py-8">Service images will be displayed here</div>;
+                        }
+                      })()}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // Regular Destination-based quotes
+                <>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
+                    Why {quote.destination} for Educational Travel?
+                  </h3>
+                  
+                  {/* Unified layout - apply Madrid's working format to all cities */}
+                  <div className="space-y-4">
+                    {/* Text content first - convert all formats to single text block */}
+                    <div className="text-slate-700 text-sm leading-relaxed space-y-3">
+                      {highlights && highlights.description ? (
+                        // Madrid format - single description
+                        <div dangerouslySetInnerHTML={{ __html: highlights.description.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
+                      ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                        // Other cities - convert array to continuous text
+                        highlights.map((highlight, index) => (
+                          <p key={index}>
+                            <strong>{highlight.title}:</strong> {highlight.description}
+                          </p>
+                        ))
+                      ) : (
+                        <div className="text-center text-slate-500">No destination highlights available</div>
+                      )}
+                    </div>
+                    
+                    {/* Images placed after text to avoid page break cuts - protected block */}
+                    <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                      {highlights && highlights.description && highlights.images ? (
+                        // Madrid format - use custom images
+                        highlights.images.slice(0, 4).map((image, index) => (
+                          <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
+                            <img 
+                              src={image.src} 
+                              alt={image.alt} 
+                              className="w-full h-28 object-cover rounded-lg shadow-sm"
+                              style={{ minHeight: '100px', maxHeight: '120px' }}
+                            />
+                          </div>
+                        ))
+                      ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                        // Other cities - use highlight images
+                        highlights.slice(0, 4).map((highlight, index) => (
+                          <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
+                            <img 
+                              src={highlight.image} 
+                              alt={highlight.title} 
+                              className="w-full h-28 object-cover rounded-lg shadow-sm"
+                              style={{ minHeight: '100px', maxHeight: '120px' }}
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        // Placeholder if no images available
+                        <div className="text-center text-slate-400 text-sm py-8">Images will be added when uploaded</div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Learning Outcomes - FORCE PAGE BREAK HERE */}
