@@ -454,7 +454,8 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
         costStudentCoordination: costStudentCoordination ? parseFloat(costStudentCoordination) : undefined,
         costTeacherCoordination: costTeacherCoordination ? parseFloat(costTeacherCoordination) : undefined,
         costLocalCoordinator: costLocalCoordinator ? parseFloat(costLocalCoordinator) : undefined,
-      }
+      },
+      tripType
     ) : null;
 
   // Pass cost breakdown to parent component for live preview

@@ -345,22 +345,26 @@ export function calculateQuoteCost(
     costTeacherCoordination?: number;
     costLocalCoordinator?: number;
     costAirportTransfer?: string;
-  }
+  },
+  tripType?: string
 ): CostBreakdown {
   const country = getCountryFromDestination(destination);
   const defaultPricing = DESTINATION_PRICING[country] || DESTINATION_PRICING["Spain"];
   const defaultAirportTransferRate = AIRPORT_TRANSFER_PRICING[country] || AIRPORT_TRANSFER_PRICING["Spain"];
   const days = parseDuration(duration);
   
+  // For Additional Services quotes, exclude accommodation and coordination costs
+  const isAdditionalServices = tripType === "Additional Services";
+  
   // Use custom pricing if provided, otherwise use zero
-  const studentAccommodationRate = customPricing?.studentAccommodationPerDay ?? 0;
-  const teacherAccommodationRate = customPricing?.teacherAccommodationPerDay ?? 0;
+  const studentAccommodationRate = isAdditionalServices ? 0 : (customPricing?.studentAccommodationPerDay ?? 0);
+  const teacherAccommodationRate = isAdditionalServices ? 0 : (customPricing?.teacherAccommodationPerDay ?? 0);
   const breakfastRate = customPricing?.breakfastPerDay ?? 0;
   const lunchRate = customPricing?.lunchPerDay ?? 0;
   const dinnerRate = customPricing?.dinnerPerDay ?? 0;
   const transportCardTotal = customPricing?.transportCardTotal ?? 0;
-  const studentCoordinationTotal = customPricing?.studentCoordinationFeeTotal ?? 0;
-  const teacherCoordinationTotal = customPricing?.teacherCoordinationFeeTotal ?? 0;
+  const studentCoordinationTotal = isAdditionalServices ? 0 : (customPricing?.studentCoordinationFeeTotal ?? 0);
+  const teacherCoordinationTotal = isAdditionalServices ? 0 : (customPricing?.teacherCoordinationFeeTotal ?? 0);
   const airportTransferRate = customPricing?.airportTransferPerPerson ?? 0;
   
   // Calculate student costs

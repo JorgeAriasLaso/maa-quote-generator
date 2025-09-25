@@ -103,7 +103,8 @@ export default function Home() {
           costTeacherCoordination: parseFloat(data.costTeacherCoordination || "0"),
           costLocalCoordinator: parseFloat(data.costLocalCoordinator || "150"),
           costAirportTransfer: parseFloat(data.costAirportTransfer || "0"),
-        }
+        },
+        data.tripType
       );
 
       const finalData = {

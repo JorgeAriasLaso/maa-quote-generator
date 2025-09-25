@@ -53,7 +53,8 @@ function calculateQuoteProfitability(quote: Quote) {
     quote.numberOfTeachers,
     adhocServices,
     customPricing,
-    internalCosts
+    internalCosts,
+    quote.tripType
   );
 
   const totalTravellers = quote.numberOfStudents + quote.numberOfTeachers;

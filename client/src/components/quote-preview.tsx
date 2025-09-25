@@ -319,7 +319,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       costTeacherCoordination: parseFloat(quote.costTeacherCoordination || "0"),
       costLocalCoordinator: parseFloat(quote.costLocalCoordinator || "150"),
       costAirportTransfer: quote.costAirportTransfer || "0",
-    }
+    },
+    quote.tripType
   ) : null);
 
 

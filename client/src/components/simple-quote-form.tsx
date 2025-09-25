@@ -249,7 +249,8 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           costTeacherCoordination: parseFloat(formData.costTeacherCoordination || "0"),
           costLocalCoordinator: parseFloat(formData.costLocalCoordinator || "150"),
           costAirportTransfer: formData.costAirportTransfer || "0",
-        }
+        },
+        formData.tripType
       );
       
       onCostBreakdownChange?.(costBreakdown);
