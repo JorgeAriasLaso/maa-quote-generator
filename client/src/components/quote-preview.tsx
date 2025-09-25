@@ -1139,13 +1139,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                   <img 
                                     src={imageSrc} 
                                     alt={`Service image ${index + 1}`} 
-                                    className="w-full object-contain rounded-lg shadow-sm"
-                                    style={{ 
-                                      maxWidth: '100%', 
-                                      height: 'auto',
-                                      margin: '0 auto',
-                                      display: 'block'
-                                    }}
+                                    className="pdf-image"
                                   />
                                 </div>
                               ))}

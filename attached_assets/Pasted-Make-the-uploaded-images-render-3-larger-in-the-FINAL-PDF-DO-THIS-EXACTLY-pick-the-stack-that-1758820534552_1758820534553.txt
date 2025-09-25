@@ -1,0 +1,50 @@
+Make the uploaded images render ~3× larger in the FINAL PDF.
+
+DO THIS EXACTLY (pick the stack that applies):
+
+STEP 1 — HTML → PDF stacks (Puppeteer / wkhtmltopdf / WeasyPrint)
+- In the PDF HTML/template where images are inserted (the “Images” section), find any <img ...> with styles like max-width:100% or fixed small widths.
+- Replace with:
+  <img src="{{ path }}" class="pdf-image">
+- Add CSS used ONLY for PDF render:
+  .pdf-image {
+    display: block;
+    width: 18cm;         /* ~3× typical small image; adjust if needed */
+    max-width: 100%;     /* keep inside page margins */
+    height: auto;        /* preserve aspect ratio */
+    margin: 8px 0;
+    page-break-inside: avoid;
+  }
+- Ensure the content container isn’t restricting width (remove any .images { width: 200px } etc.).
+- Check page margins; if they’re huge, reduce to something like 2cm so images can be wider.
+
+STEP 2 — Python ReportLab stacks
+- Wherever images are drawn (canvas.drawImage or story Flowables), compute width from the available page width:
+  from reportlab.lib.pagesizes import A4
+  from reportlab.lib.utils import ImageReader
+
+  PAGE_W, PAGE_H = A4
+  LEFT, RIGHT = 36, 36   # 0.5" margins; adjust to your app
+  avail_w = PAGE_W - LEFT - RIGHT
+
+  img = ImageReader(path)
+  iw, ih = img.getSize()
+  target_w = min(avail_w, iw * 3)   # ~3× current, but cap at page width
+  target_h = target_w * (ih / iw)
+  # Use target_w/target_h in drawImage or Image() flowable
+- Do not hardcode tiny widths (e.g., 180px). Use the calculated target_w.
+
+STEP 3 — Node/Express + template engines (EJS/Pug/etc.)
+- Same as HTML → PDF: ensure the template uses <img class="pdf-image"> and include the CSS above in the PDF HTML.
+
+STEP 4 — Preview thumbnails (optional)
+- If the small size is only in the on-screen preview, increase the preview styles:
+  #image-previews img { max-width: 480px; max-height: 360px; }  /* was 160×120 */
+
+ACCEPTANCE CHECKS:
+- In the PDF, each uploaded image is ~3× larger than before (fills most of the content width without overflowing margins).
+- Aspect ratio is preserved (no stretching).
+- If the original image is small, it may look pixelated when enlarged — that’s expected.
+- No CSS remains that forces small widths (e.g., width: 160px / 33%).
+
+Show a short diff of the files changed (template/CSS or ReportLab code).

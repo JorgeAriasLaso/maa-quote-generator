@@ -410,6 +410,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .cost-breakdown {
             page-break-inside: avoid;
           }
+          
+          /* PDF-specific styles for uploaded images - ~3× larger */
+          .pdf-image {
+            display: block;
+            width: 18cm;
+            max-width: 100%;
+            height: auto;
+            margin: 8px 0;
+            page-break-inside: avoid;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
         `
       });
 

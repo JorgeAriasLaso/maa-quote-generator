@@ -477,7 +477,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                           key={index}
                           src={imageSrc} 
                           alt={`Preview ${index + 1}`}
-                          style={{maxWidth:'160px',maxHeight:'120px'}}
+                          style={{maxWidth:'480px',maxHeight:'360px'}}
                           className="rounded border"
                         />
                       ))}
