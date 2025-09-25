@@ -1,0 +1,89 @@
+The UI still shows “Custom Images (URLs)” and asks for comma-separated links. Replace it with a REAL file upload and wire it to the PDF. Do this EXACTLY.
+
+STEP 0 — Detect stack:
+- If there is any *.py file with Flask (`from flask import`) → treat as Flask/Python.
+- Else if there is package.json and Express/Puppeteer/WkHTML/WeasyPrint → treat as Node/Express.
+
+STEP 1 — Frontend (HTML):
+- Locate the block containing the text: “Custom Images (URLs)” OR a label near a textarea/input for image URLs.
+- DELETE that entire block.
+- Ensure the main <form> for quote generation has: enctype="multipart/form-data".
+- ADD this upload field where that block was:
+
+<div class="form-group" id="images-field">
+  <label for="images">Upload image(s)</label>
+  <input type="file" id="images" name="images" accept="image/*" multiple>
+  <div id="image-previews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;"></div>
+</div>
+<script>
+(function(){
+  const input = document.getElementById('images');
+  const preview = document.getElementById('image-previews');
+  if (input && preview) {
+    input.addEventListener('change', () => {
+      preview.innerHTML = '';
+      Array.from(input.files || []).forEach(f => {
+        const img = document.createElement('img');
+        img.style.maxWidth = '160px';
+        img.style.maxHeight = '120px';
+        const r = new FileReader();
+        r.onload = e => img.src = e.target.result;
+        r.readAsDataURL(f);
+        preview.appendChild(img);
+      });
+    });
+  }
+})();
+</script>
+
+STEP 2 — Backend (choose ONE path and implement fully):
+
+A) FLASK / PYTHON
+- In the POST handler that generates the PDF:
+  - Read uploads: files = request.files.getlist('images')
+  - Create folder if missing: UPLOAD_FOLDER = 'static/uploads'; os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+  - Save each valid image (jpg/jpeg/png, <=5MB) into UPLOAD_FOLDER with a safe filename.
+  - Build a list `image_paths` using web paths (e.g., f"/static/uploads/{saved_filename}").
+  - Pass `image_paths` to the HTML/templating used for PDF.
+- In the PDF HTML/template, render (only if any):
+  {% if image_paths and image_paths|length > 0 %}
+    <h2>Images</h2>
+    {% for p in image_paths %}
+      <img src="{{ p }}" style="max-width:100%; page-break-inside:avoid; margin:8px 0;">
+    {% endfor %}
+  {% endif %}
+
+B) NODE / EXPRESS
+- Install multer if not present. Only if missing:
+  npm i multer
+- Add:
+  const multer = require('multer');
+  const upload = multer({ dest: 'public/uploads/' });
+  app.use('/uploads', express.static('public/uploads'));
+- In the POST route that generates the PDF, attach:
+  upload.array('images', 6)
+- Validate MIME (image/png, image/jpeg) and size (<=5MB); reject invalids with a friendly 400.
+- Build an array `imagePaths = req.files.map(f => '/uploads/'+f.filename)` and pass to the template that becomes the PDF HTML.
+- In the template HTML used for the PDF:
+  <% if (imagePaths && imagePaths.length) { %>
+    <h2>Images</h2>
+    <% imagePaths.forEach(p => { %>
+      <img src="<%= p %>" style="max-width:100%; page-break-inside:avoid; margin:8px 0;">
+    <% }) %>
+  <% } %>
+
+STEP 3 — Remove all URL remnants:
+- Delete any variables/fields like `imageUrls`, `customImageUrls`, or “Enter image URLs separated by commas”.
+- Ensure there is NO remaining UI text “Custom Images (URLs)”.
+
+STEP 4 — Acceptance checks (show results):
+- The form contains <input type="file" name="images" accept="image/*" multiple>.
+- The form has enctype="multipart/form-data".
+- I can select 1–3 local images, see previews, generate a PDF, and the images appear under an “Images” section, each on its own line, scaled to page width.
+- With no images selected, the “Images” section is omitted entirely.
+- A full-text search of the repo for “Custom Images (URLs)” returns ZERO matches.
+
+Finally, reply with a SHORT bullet list of:
+- Files edited and the exact lines added/removed (show concise diffs).
+- How to test: which page/route to open and steps to upload images and generate the PDF.
+Do NOT analyze beyond that.

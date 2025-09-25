@@ -22,6 +22,8 @@ interface SimpleQuoteFormProps {
 
 export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQuote, selectedClient }: SimpleQuoteFormProps) {
   // Form state - all controlled by useState instead of React Hook Form
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  
   const [formData, setFormData] = useState<any>({
     destination: "",
     tripType: "",
@@ -261,6 +263,51 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
 
   const showCoreFields = formData.tripType !== "Additional Services";
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    // Validate files
+    for (const file of Array.from(files)) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert(`File ${file.name} is not an image.`);
+        return;
+      }
+    }
+
+    if (uploadedImages.length + files.length > 6) {
+      alert("Maximum 6 images allowed.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      Array.from(files).forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await fetch('/api/upload-images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      const newImages = [...uploadedImages, ...result.filePaths];
+      setUploadedImages(newImages);
+      updateFormData("customImages", JSON.stringify(newImages));
+    } catch (error) {
+      alert("Failed to upload images. Please try again.");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -280,7 +327,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
 
   return (
     <div className="max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-8">
         <Card className="p-6">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Trip Details</h2>
           
@@ -413,17 +460,28 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Custom Images (URLs)</label>
-                    <Input
-                      placeholder="Enter image URLs separated by commas"
-                      value={formData.customImages ? JSON.parse(formData.customImages).join(', ') : ""}
-                      onChange={(e) => {
-                        const urls = e.target.value.split(',').map(url => url.trim()).filter(url => url);
-                        updateFormData("customImages", JSON.stringify(urls));
-                      }}
+                  <div className="form-group" id="images-field">
+                    <label htmlFor="images" className="text-sm font-medium text-slate-700">Upload image(s)</label>
+                    <input 
+                      type="file" 
+                      id="images" 
+                      name="images" 
+                      accept="image/*" 
+                      multiple 
+                      onChange={handleImageUpload}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
                     />
-                    <p className="text-xs text-slate-500">Enter image URLs separated by commas. Max 4 images recommended.</p>
+                    <div id="image-previews" style={{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'6px'}}>
+                      {uploadedImages.map((imageSrc, index) => (
+                        <img 
+                          key={index}
+                          src={imageSrc} 
+                          alt={`Preview ${index + 1}`}
+                          style={{maxWidth:'160px',maxHeight:'120px'}}
+                          className="rounded border"
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
