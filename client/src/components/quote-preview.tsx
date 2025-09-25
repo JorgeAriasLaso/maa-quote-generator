@@ -1117,22 +1117,20 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </h3>
                   
                   <div className="space-y-4">
-                    {/* Custom Content */}
-                    <div className="text-slate-700 text-sm leading-relaxed space-y-3">
-                      {quote.customContent ? (
+                    {/* Custom Content - only show if content exists */}
+                    {quote.customContent && (
+                      <div className="text-slate-700 text-sm leading-relaxed space-y-3">
                         <div dangerouslySetInnerHTML={{ __html: quote.customContent.replace(/\n\n/g, '</p><p>').replace(/^/, '<p>').replace(/$/, '</p>') }} />
-                      ) : (
-                        <div className="text-center text-slate-500">No service details available</div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                     
-                    {/* Custom Images */}
-                    <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                      {(() => {
-                        try {
-                          const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
-                          return customImages.length > 0 ? (
-                            customImages.slice(0, 4).map((imageSrc: string, index: number) => (
+                    {/* Custom Images - only show if images exist */}
+                    {(() => {
+                      try {
+                        const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
+                        return customImages.length > 0 ? (
+                          <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                            {customImages.slice(0, 4).map((imageSrc: string, index: number) => (
                               <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
                                 <img 
                                   src={imageSrc} 
@@ -1141,15 +1139,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                   style={{ minHeight: '100px', maxHeight: '120px' }}
                                 />
                               </div>
-                            ))
-                          ) : (
-                            <div className="text-center text-slate-400 text-sm py-8">Service images will be displayed here</div>
-                          );
-                        } catch (e) {
-                          return <div className="text-center text-slate-400 text-sm py-8">Service images will be displayed here</div>;
-                        }
-                      })()}
-                    </div>
+                            ))}
+                          </div>
+                        ) : null;
+                      } catch (e) {
+                        return null;
+                      }
+                    })()}
                   </div>
                 </>
               ) : (
@@ -1214,31 +1210,33 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
               )}
             </div>
 
-            {/* Learning Outcomes - FORCE PAGE BREAK HERE */}
-            <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
-              <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
-                Educational Value & Learning Outcomes
-              </h3>
-              
-              <Card className="bg-blue-50 p-6">
-                {(() => {
-                  const learningOutcomes = getLearningOutcomes(quote?.tripType || '', quote?.customTripType);
-                  return (
-                    <>
-                      <h4 className="font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
-                        {learningOutcomes.outcomes.map((outcome, index) => (
-                          <li key={index} className="flex items-start">
-                            <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
-                            <span>{outcome}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  );
-                })()}
-              </Card>
-            </div>
+            {/* Learning Outcomes - FORCE PAGE BREAK HERE - Hide for Additional Services */}
+            {quote.tripType !== "Additional Services" && (
+              <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
+                <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
+                  Educational Value & Learning Outcomes
+                </h3>
+                
+                <Card className="bg-blue-50 p-6">
+                  {(() => {
+                    const learningOutcomes = getLearningOutcomes(quote?.tripType || '', quote?.customTripType);
+                    return (
+                      <>
+                        <h4 className="font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
+                          {learningOutcomes.outcomes.map((outcome, index) => (
+                            <li key={index} className="flex items-start">
+                              <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
+                              <span>{outcome}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    );
+                  })()}
+                </Card>
+              </div>
+            )}
 
             {/* Pricing Summary - Add extra spacing to prevent page split */}
             <div className="mb-12 mt-16" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
