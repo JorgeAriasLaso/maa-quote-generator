@@ -1607,7 +1607,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <div className="font-semibold">€{costBreakdown.internalCosts.teacherAccommodation.toFixed(2)}</div>
                               </div>
                             )}
-                            {costBreakdown.internalCosts.meals > 0 && (
+                            {quote.tripType !== "Additional Services" && costBreakdown.internalCosts.meals > 0 && (
                               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                                 <div>
                                   <div className="font-medium">Meals</div>
@@ -1618,7 +1618,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <div className="font-semibold">€{costBreakdown.internalCosts.meals.toFixed(2)}</div>
                               </div>
                             )}
-                            {costBreakdown.internalCosts.localTransportation > 0 && (
+                            {quote.tripType !== "Additional Services" && costBreakdown.internalCosts.localTransportation > 0 && (
                               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                                 <div>
                                   <div className="font-medium">Local Transportation</div>
@@ -1647,7 +1647,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                                 <div className="font-semibold">€{costBreakdown.internalCosts.localCoordinator.toFixed(2)}</div>
                               </div>
                             )}
-                            {costBreakdown.internalCosts.airportTransfer > 0 && (
+                            {quote.tripType !== "Additional Services" && costBreakdown.internalCosts.airportTransfer > 0 && (
                               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                                 <div>
                                   <div className="font-medium">Airport Transfers</div>

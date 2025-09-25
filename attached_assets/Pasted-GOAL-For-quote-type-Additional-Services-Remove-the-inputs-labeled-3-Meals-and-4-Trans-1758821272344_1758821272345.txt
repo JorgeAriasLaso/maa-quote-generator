@@ -1,0 +1,48 @@
+GOAL
+For quote_type == "Additional Services":
+- Remove the inputs labeled “3. Meals” and “4. Transportation & Transfers” from the form UI.
+- Do not require or process these fields server-side.
+- Omit these sections entirely from the PDF output.
+- For ALL other quote types, keep current behavior unchanged.
+
+IMPLEMENTATION
+
+1) Pass quote type to backend + template
+- Ensure `quote_type` is read from the request and passed to the template.
+- Compute boolean: `is_additional_services = (quote_type == "Additional Services")`.
+
+2) Form UI (conditional render/hide)
+- Wrap the current inputs for “3. Meals” and “4. Transportation & Transfers” in a conditional:
+  - If using server-side templates (Jinja/EJS/Pug):
+    Render those two inputs ONLY when `!is_additional_services`.
+  - If client-side show/hide is easier, add a runtime check:
+    When the quote type field == "Additional Services", hide the DOM blocks for those two inputs (display:none) and clear any values.
+
+3) Validation + backend
+- Update server-side validation so “Meals” and “Transportation & Transfers” are NOT required when `is_additional_services` is true.
+- If values are posted anyway for this type, ignore them (do not save, do not use in totals).
+- Ensure any calculations or summaries don’t assume these fields exist for this type.
+
+4) PDF rendering
+- In the PDF template, wrap “Meals” and “Transportation & Transfers” sections with:
+  - Render them ONLY when `!is_additional_services`.
+- For `is_additional_services`, do NOT show headings, rows, placeholders, or empty space for these sections.
+
+5) Keep prior image/layout changes
+- Preserve the existing scoped image changes for Additional Services (full-width, single column, no “Images” heading).
+- Do not alter image behavior for other quote types.
+
+6) Acceptance checks (show results)
+- With quote_type = "Additional Services":
+  - The form shows NO inputs labeled “3. Meals” and “4. Transportation & Transfers”.
+  - Submitting works without those fields; no required-field errors.
+  - The generated PDF contains NO sections/labels/rows for Meals or Transportation & Transfers.
+- With another quote_type (e.g., “Standard Quote”):
+  - The form still shows those two inputs as before.
+  - The PDF still includes those sections as before.
+- Provide a concise diff: which files changed and the conditional blocks added or validation updated.
+
+DO NOT
+- Do not remove these inputs globally.
+- Do not rename or refactor unrelated fields.
+- Do not add new dependencies.

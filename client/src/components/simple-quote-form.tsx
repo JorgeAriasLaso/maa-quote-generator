@@ -774,7 +774,8 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
           </div>
           )}
 
-          {/* 3. Meals Cluster */}
+          {/* 3. Meals Cluster - Hide for Additional Services */}
+          {showCoreFields && (
           <div className="space-y-4 border border-orange-200 bg-orange-50 p-4 rounded-lg">
             <h4 className="font-semibold text-orange-800 mb-3 flex items-center">
               <span className="bg-orange-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">3</span>
@@ -858,8 +859,10 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
             </div>
           </div>
+          )}
 
-          {/* 4. Transportation & Transfers Cluster */}
+          {/* 4. Transportation & Transfers Cluster - Hide for Additional Services */}
+          {showCoreFields && (
           <div className="space-y-4 border border-purple-200 bg-purple-50 p-4 rounded-lg">
             <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
               <span className="bg-purple-100 w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">4</span>
@@ -918,6 +921,7 @@ export function SimpleQuoteForm({ onSubmit, isLoading, onCostBreakdownChange, cu
               </div>
             </div>
           </div>
+          )}
 
           {/* 5. Coordination Fees Cluster - Hide for Additional Services */}
           {showCoreFields && (
