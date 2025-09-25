@@ -5,8 +5,44 @@ import puppeteer from "puppeteer-core";
 import chromium from "chrome-aws-lambda";
 import { insertQuoteSchema, insertClientSchema } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import express from "express";
+
+// Configure multer for file uploads
+const uploadStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: uploadStorage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+    files: 6 // Max 6 files
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve uploaded files statically
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
   // Get all quotes
   app.get("/api/quotes", async (req, res) => {
     try {
@@ -93,6 +129,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete quote" });
+    }
+  });
+
+  // Upload images
+  app.post("/api/upload-images", upload.array('images', 6), (req, res) => {
+    try {
+      if (!req.files || !Array.isArray(req.files)) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      const filePaths = req.files.map(file => `/uploads/${file.filename}`);
+      res.json({ filePaths });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to upload images" });
     }
   });
 

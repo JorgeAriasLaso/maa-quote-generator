@@ -1,0 +1,38 @@
+TASK: Replace the current “image URL” input in my quote-to-PDF app with a real image UPLOAD feature.
+
+IMPLEMENT EXACTLY:
+1) Add a file upload control in the quote form:
+   - Label: “Upload image(s)”
+   - Accept: JPG, PNG
+   - Allow multiple files (up to 6), max 5 MB each
+2) When I submit the form:
+   - Save uploads to an /uploads/ folder OR embed inline as base64 (choose whichever works best with the current PDF generator).
+   - No external hosting or pasting URLs required.
+3) Insert the uploaded image(s) into the generated PDF:
+   - Fit each image within the page margins while preserving aspect ratio.
+   - If multiple images, lay them out one per line under an “Images” section.
+4) Show the uploaded images in a small preview on the form before generating the PDF.
+5) Validation:
+   - Reject files over 5 MB or non-image types with a friendly message.
+   - If no image is uploaded, skip the section (don’t show empty placeholders).
+
+IMPORTANT CONSTRAINTS:
+- Do NOT require image URLs anywhere.
+- Do NOT add user accounts or a database; use Replit’s filesystem or inline base64.
+- Keep all current quote features unchanged.
+- Do NOT over-explain or analyze. Make the change and provide a brief summary of files edited.
+- Do NOT refactor unrelated code or add dependencies unless strictly needed for file upload/PDF embedding.
+
+ACCEPTANCE TEST:
+- I can click “Upload image(s)”, pick JPG/PNG from my computer, see a preview, generate the PDF, and the images appear in the PDF without providing any URLs.
+- If I upload 2–3 images, each shows on its own line under an “Images” section, sized to page width with margins.
+- If I upload nothing, the “Images” section is omitted entirely.
+
+IF THE CURRENT STACK NEEDS A SPECIFIC APPROACH:
+- HTML→PDF (wkhtmltopdf/WeasyPrint): embed the images as data:image/*;base64 in the HTML or reference the saved /uploads/<filename>.
+- Node/Puppeteer: ensure the HTML references the saved /uploads files and that the server serves that static path.
+- Python/Flask: accept multipart/form-data, save to /uploads, pass filepaths/base64 into the PDF template.
+
+DELIVERABLE:
+- Working app with upload + PDF embedding.
+- Short bullet summary of changes: which files edited/added and where the key code lives.

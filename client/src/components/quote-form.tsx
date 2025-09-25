@@ -183,6 +183,63 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
   const [customDestination, setCustomDestination] = useState("");
   const [schoolComboboxOpen, setSchoolComboboxOpen] = useState(false);
   const [currentSelectedClient, setCurrentSelectedClient] = useState<Client | null>(selectedClient || null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadError, setUploadError] = useState<string>("");
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setUploadError("");
+
+    // Validate files
+    for (const file of Array.from(files)) {
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError(`File ${file.name} is too large. Maximum size is 5MB.`);
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        setUploadError(`File ${file.name} is not an image.`);
+        return;
+      }
+    }
+
+    if (uploadedImages.length + files.length > 6) {
+      setUploadError("Maximum 6 images allowed.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      Array.from(files).forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await fetch('/api/upload-images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      setUploadedImages(prev => [...prev, ...result.filePaths]);
+      
+      // Update form with uploaded image paths
+      const allImages = [...uploadedImages, ...result.filePaths];
+      form.setValue("customImages", JSON.stringify(allImages));
+    } catch (error) {
+      setUploadError("Failed to upload images. Please try again.");
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = uploadedImages.filter((_, i) => i !== index);
+    setUploadedImages(newImages);
+    form.setValue("customImages", JSON.stringify(newImages));
+  };
 
   // Fetch clients for autocomplete
   const { data: clients } = useQuery<Client[]>({
@@ -806,23 +863,61 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       )}
                     />
                     
-                    <FormField
-                      control={form.control}
-                      name="customImages"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Custom Images (URLs)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="Enter image URLs separated by commas"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                          <p className="text-xs text-slate-500">Enter image URLs separated by commas. Max 4 images recommended.</p>
-                        </FormItem>
+                    <div className="space-y-4">
+                      <FormLabel>Upload Images</FormLabel>
+                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-6">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png"
+                          multiple
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                        <label
+                          htmlFor="image-upload"
+                          className="cursor-pointer flex flex-col items-center justify-center"
+                        >
+                          <div className="text-slate-600 text-center">
+                            <p className="text-lg font-medium">Click to upload images</p>
+                            <p className="text-sm text-slate-500 mt-1">
+                              JPG, PNG up to 5MB each (max 6 images)
+                            </p>
+                          </div>
+                        </label>
+                        
+                        {/* Image previews */}
+                        {uploadedImages.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-sm font-medium text-slate-700 mb-2">
+                              Uploaded Images ({uploadedImages.length}/6):
+                            </p>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                              {uploadedImages.map((image, index) => (
+                                <div key={index} className="relative">
+                                  <img
+                                    src={image}
+                                    alt={`Upload ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded border"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeImage(index)}
+                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {uploadError && (
+                        <p className="text-red-600 text-sm">{uploadError}</p>
                       )}
-                    />
+                    </div>
                   </div>
                 )}
               </div>
