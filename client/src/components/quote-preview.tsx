@@ -1124,22 +1124,32 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                       </div>
                     )}
                     
-                    {/* Custom Images - only show if images exist */}
+                    {/* Images Section - only show if images exist */}
                     {(() => {
                       try {
                         const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
                         return customImages.length > 0 ? (
-                          <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                            {customImages.slice(0, 4).map((imageSrc: string, index: number) => (
-                              <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
-                                <img 
-                                  src={imageSrc} 
-                                  alt={`Service image ${index + 1}`} 
-                                  className="w-full h-28 object-cover rounded-lg shadow-sm"
-                                  style={{ minHeight: '100px', maxHeight: '120px' }}
-                                />
-                              </div>
-                            ))}
+                          <div className="mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-yellow-200 pb-2">
+                              Images
+                            </h3>
+                            <div className="space-y-4">
+                              {customImages.slice(0, 6).map((imageSrc: string, index: number) => (
+                                <div key={index} className="w-full">
+                                  <img 
+                                    src={imageSrc} 
+                                    alt={`Service image ${index + 1}`} 
+                                    className="w-full object-contain rounded-lg shadow-sm"
+                                    style={{ 
+                                      maxWidth: '100%', 
+                                      height: 'auto',
+                                      margin: '0 auto',
+                                      display: 'block'
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         ) : null;
                       } catch (e) {

@@ -544,7 +544,7 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
             clientId: currentSelectedClient?.id || selectedClient?.id || null,
           };
           onSubmit(submitData);
-        })} className="space-y-6">
+        })} encType="multipart/form-data" className="space-y-6">
           {/* School Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-slate-900 border-b border-slate-200 pb-2">School Information</h3>
@@ -868,18 +868,19 @@ export function QuoteForm({ onSubmit, isLoading, onCostBreakdownChange, currentQ
                       <div className="border-2 border-dashed border-slate-300 rounded-lg p-6">
                         <input
                           type="file"
-                          accept="image/jpeg,image/jpg,image/png"
+                          id="images"
+                          name="images"
+                          accept="image/*"
                           multiple
                           onChange={handleImageUpload}
                           className="hidden"
-                          id="image-upload"
                         />
                         <label
-                          htmlFor="image-upload"
+                          htmlFor="images"
                           className="cursor-pointer flex flex-col items-center justify-center"
                         >
                           <div className="text-slate-600 text-center">
-                            <p className="text-lg font-medium">Click to upload images</p>
+                            <p className="text-lg font-medium">Upload image(s)</p>
                             <p className="text-sm text-slate-500 mt-1">
                               JPG, PNG up to 5MB each (max 6 images)
                             </p>
