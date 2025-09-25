@@ -166,7 +166,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
       const canvas = await html2canvas(quoteElement, {
-        scale: 2.0, // Higher scale for crisp text rendering
+        scale: 3, // Higher scale for large images
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -711,7 +711,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
       const canvas = await html2canvas(quoteElement, {
-        scale: 2.0, // Higher scale for crisp text rendering
+        scale: 3, // Higher scale for large images
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -1131,13 +1131,21 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         return customImages.length > 0 ? (
                           quote.tripType === "Additional Services" ? (
                             // Additional Services: Full-width, single-column, no heading
-                            <div className="pdf-images-as mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                            <div id="as-images" className="pdf-images-as">
                               {customImages.slice(0, 6).map((imageSrc: string, index: number) => (
                                 <img 
                                   key={index}
                                   src={imageSrc} 
                                   alt={`Service image ${index + 1}`} 
-                                  className="pdf-image"
+                                  className="pdf-image-as"
+                                  style={{
+                                    width: '18cm',
+                                    maxWidth: '100%',
+                                    height: 'auto',
+                                    display: 'block',
+                                    margin: '6mm 0',
+                                    pageBreakInside: 'avoid'
+                                  }}
                                 />
                               ))}
                             </div>

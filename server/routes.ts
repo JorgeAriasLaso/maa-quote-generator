@@ -414,7 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           /* PDF-specific styles for uploaded images - scoped by quote type */
           
           /* Additional Services: Full-width, single-column layout */
-          .is-additional-services .pdf-images-as { 
+          .is-additional-services #as-images { 
             width: 18cm !important; 
             max-width: 100% !important; 
             margin: 0 auto !important;
@@ -424,39 +424,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
             columns: none !important;
             column-count: 1 !important;
           }
-          .is-additional-services .pdf-image {
-            display: block !important;
+          
+          .is-additional-services .pdf-image-as {
             width: 18cm !important;
             max-width: 100% !important;
             height: auto !important;
+            display: block !important;
             margin: 6mm 0 !important;
-            page-break-inside: avoid;
+            page-break-inside: avoid !important;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            /* Override any conflicting small-image rules */
-            max-height: none !important;
             object-fit: contain !important;
+            max-height: none !important;
           }
           
-          /* Remove conflicting caps for Additional Services */
+          /* Nuke conflicting rules for Additional Services */
           .is-additional-services img { 
-            max-width: none !important; 
+            max-width: none !important;
             width: 18cm !important;
             height: auto !important;
           }
           .is-additional-services .thumbnail,
           .is-additional-services .image-grid img,
-          .is-additional-services .w-full img { 
+          .is-additional-services .w-full img,
+          .is-additional-services .col-3 img,
+          .is-additional-services .w-1\/4 img,
+          .is-additional-services .max-w-xs { 
             width: 18cm !important; 
             max-width: 100% !important; 
             height: auto !important;
           }
           
-          /* Ensure parent containers don't constrain */
-          .is-additional-services .space-y-4,
-          .is-additional-services .mt-8 {
+          /* PDF content width for Additional Services */
+          .is-additional-services .pdf-content {
             width: 18cm !important;
-            max-width: 100% !important;
             margin: 0 auto !important;
           }
           
