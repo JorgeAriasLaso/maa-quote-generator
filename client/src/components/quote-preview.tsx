@@ -1025,7 +1025,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
 
         {/* Quote Document */}
         <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div id="quote-document" className="max-w-4xl mx-auto bg-white print:max-w-none print:w-full">
+          <div id="quote-document" className={`max-w-4xl mx-auto bg-white print:max-w-none print:w-full ${quote.tripType === "Additional Services" ? "is-additional-services" : ""}`}>
             {/* Header */}
             <div className="text-center mb-8">
               <img 
@@ -1124,27 +1124,42 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                       </div>
                     )}
                     
-                    {/* Images Section - only show if images exist */}
+                    {/* Images Section - conditional layout based on quote type */}
                     {(() => {
                       try {
                         const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
                         return customImages.length > 0 ? (
-                          <div className="mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-yellow-200 pb-2">
-                              Images
-                            </h3>
-                            <div className="space-y-4">
+                          quote.tripType === "Additional Services" ? (
+                            // Additional Services: Full-width, single-column, no heading
+                            <div className="pdf-images-as mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                               {customImages.slice(0, 6).map((imageSrc: string, index: number) => (
-                                <div key={index} className="w-full">
-                                  <img 
-                                    src={imageSrc} 
-                                    alt={`Service image ${index + 1}`} 
-                                    className="pdf-image"
-                                  />
-                                </div>
+                                <img 
+                                  key={index}
+                                  src={imageSrc} 
+                                  alt={`Service image ${index + 1}`} 
+                                  className="pdf-image"
+                                />
                               ))}
                             </div>
-                          </div>
+                          ) : (
+                            // Other quote types: Keep existing layout
+                            <div className="mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                              <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-yellow-200 pb-2">
+                                Images
+                              </h3>
+                              <div className="space-y-4">
+                                {customImages.slice(0, 6).map((imageSrc: string, index: number) => (
+                                  <div key={index} className="w-full">
+                                    <img 
+                                      src={imageSrc} 
+                                      alt={`Service image ${index + 1}`} 
+                                      className="pdf-image"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
                         ) : null;
                       } catch (e) {
                         return null;

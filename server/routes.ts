@@ -411,7 +411,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
             page-break-inside: avoid;
           }
           
-          /* PDF-specific styles for uploaded images - ~3× larger */
+          /* PDF-specific styles for uploaded images - scoped by quote type */
+          
+          /* Additional Services: Full-width, single-column layout */
+          .is-additional-services .pdf-images-as { 
+            width: 18cm; 
+            max-width: 100%; 
+            margin: 0 auto; 
+          }
+          .is-additional-services .pdf-image {
+            display: block;
+            width: 18cm;
+            max-width: 100%;
+            height: auto;
+            margin: 6mm 0;
+            page-break-inside: avoid;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
+          /* Ensure no leftover titles for Additional Services */
+          .is-additional-services .pdf-images-as h2,
+          .is-additional-services .pdf-images-as .section-title { 
+            display: none !important; 
+          }
+          
+          /* Other quote types: Keep existing behavior */
           .pdf-image {
             display: block;
             width: 18cm;

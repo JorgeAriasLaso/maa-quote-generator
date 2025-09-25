@@ -1,0 +1,80 @@
+SCOPE REQUIREMENT:
+Apply the full-width, single-column image layout and remove the “Images” heading ONLY when the quote type is exactly "Additional Services". All other quote types must keep their current image behavior/layout.
+
+DO EXACTLY:
+
+1) Ensure the quote type reaches the PDF template:
+   - From the form/request, read the current quote type (e.g., field name "quote_type").
+   - Pass it to the template as `quote_type` (string).
+   - Also pass a boolean `is_additional_services = (quote_type == "Additional Services")`.
+
+2) Add a body-level scope class for this type in the PDF HTML template:
+   - In the root HTML of the PDF template, set:
+     <body class="{{ 'is-additional-services' if is_additional_services else '' }}">
+   - (EJS/Pug equivalent if Node.)
+
+3) Template logic for images:
+   - If is_additional_services == true:
+       * Use the single-column, full-width markup (no grid/columns) and NO heading:
+         <div class="pdf-images-as">
+           {% for p in image_paths %}
+             <img src="{{ p }}" class="pdf-image">
+           {% endfor %}
+         </div>
+       * Remove any “Images” heading within this branch.
+   - Else (for all other types):
+       * Keep the existing images block EXACTLY as it is now (grid/columns/labels unchanged).
+
+   (Provide both implementations if supporting both Jinja/EJS.)
+   Jinja example:
+     {% if is_additional_services %}
+       <div class="pdf-images-as">
+         {% for p in image_paths %}
+           <img src="{{ p }}" class="pdf-image">
+         {% endfor %}
+       </div>
+     {% else %}
+       {{ existing_images_block_unchanged }}
+     {% endif %}
+
+   EJS example:
+     <% if (is_additional_services) { %>
+       <div class="pdf-images-as">
+         <% imagePaths.forEach(p => { %>
+           <img src="<%= p %>" class="pdf-image">
+         <% }) %>
+       </div>
+     <% } else { %>
+       <!-- keep existing images block exactly as it is -->
+       <%- include('partials/image-grid-existing', { imagePaths }) %>
+     <% } %>
+
+4) PDF-only CSS scoped to this quote type:
+   - Add/append to the PDF stylesheet (or a <style> block used for PDF):
+     .is-additional-services .pdf-images-as { width: 18cm; max-width: 100%; margin: 0 auto; }
+     .is-additional-services .pdf-image {
+       display: block;
+       width: 18cm;         /* large, near full content width */
+       max-width: 100%;
+       height: auto;        /* preserve aspect ratio */
+       margin: 6mm 0;
+       page-break-inside: avoid;
+     }
+     /* Ensure no leftover titles for this type */
+     .is-additional-services .pdf-images-as h2,
+     .is-additional-services .pdf-images-as .section-title { display: none !important; }
+
+   - Do NOT change styles for other quote types. Avoid global img rules.
+
+5) Do NOT remove or alter the existing grid/columns code for other types.
+   - Only bypass it when is_additional_services == true.
+   - Do not rename variables used by other templates.
+
+6) Acceptance checks (show results):
+   - When quote_type = "Additional Services":
+     * PDF shows images one per line, full width, no “Images” heading.
+     * No grid/4-up thumbnails are present.
+   - When quote_type is anything else (e.g., “Standard Quote”):
+     * The PDF image section behaves exactly as before (same grid/labels/sizes).
+   - Provide a short diff: which files were edited, the conditional blocks added, and the CSS appended.
+   - Confirm the body has class="is-additional-services" only for this type.
