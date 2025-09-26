@@ -413,19 +413,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           /* PDF-specific styles for uploaded images - scoped by quote type */
           
-          /* Additional Services: Full-width, single-column layout */
+          /* Additional Services: 4 images side-by-side layout */
           .is-additional-services .pdf-images-as { 
-            width: 18cm; 
-            max-width: 100%; 
-            margin: 0 auto; 
+            width: 180mm;                 /* fits across A4 */
+            margin: 0 auto 8mm auto;
+            display: flex;
+            flex-wrap: nowrap;            /* force one row */
+            gap: 4mm;                     /* space between images */
+            align-items: stretch;
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
           .is-additional-services .pdf-image {
+            flex: 1 1 0;
+            max-width: none;
+            width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
+            height: 45mm;                 /* adjust to make bigger/smaller */
+            object-fit: cover;            /* crop neatly */
             display: block;
-            width: 18cm;
-            max-width: 100%;
-            height: auto;
-            margin: 6mm 0;
-            page-break-inside: avoid;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
           }
@@ -451,7 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate PDF
       const pdf = await page.pdf({
-        format: 'A4',
+        format: 'a4',
         margin: {
           top: '15mm',
           right: '15mm',
