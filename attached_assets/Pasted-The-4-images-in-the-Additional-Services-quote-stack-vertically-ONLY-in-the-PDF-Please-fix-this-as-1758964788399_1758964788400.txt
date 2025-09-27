@@ -1,0 +1,66 @@
+The 4 images in the “Additional Services” quote stack vertically ONLY in the PDF. Please fix this as a print-time issue WITHOUT changing any other part of this quote.
+
+A) PDF generation (if using Puppeteer/Playwright):
+- Ensure we generate with:
+  await page.emulateMediaType('print');
+  const pdf = await page.pdf({
+    format: 'A4',
+    printBackground: true,
+    preferCSSPageSize: true,
+    scale: 1
+  });
+- Keep the rest of the code the same.
+
+B) Swap ONLY the images block inside the Additional Services quote to a print-safe table layout (do not touch headings, pricing, or any other structure):
+
+<!-- BEGIN Additional Services images block -->
+<div class="additional-services-images">
+  <div class="as-image-row">
+    <div class="as-cell"><img src="/public/img/additional1.jpg" alt="Additional service photo 1"></div>
+    <div class="as-cell"><img src="/public/img/additional2.jpg" alt="Additional service photo 2"></div>
+    <div class="as-cell"><img src="/public/img/additional3.jpg" alt="Additional service photo 3"></div>
+    <div class="as-cell"><img src="/public/img/additional4.jpg" alt="Additional service photo 4"></div>
+  </div>
+</div>
+<!-- END Additional Services images block -->
+
+(Keep the same data binding/loop you already use; the above is the exact structure to render.)
+
+C) Append these CSS rules (scoped to Additional Services only) to public/styles.css. They are designed to be robust in PDF engines:
+
+/* --- Additional Services images: print-safe horizontal row --- */
+.additional-services-images { break-inside: avoid; page-break-inside: avoid; margin: 0 auto 8mm auto; }
+.as-image-row {
+  display: table;                 /* robust across wkhtmltopdf/Chromium */
+  width: 180mm;                   /* fits within A4 margins */
+  table-layout: fixed;
+  border-collapse: collapse;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.as-image-row .as-cell {
+  display: table-cell;
+  width: 25%;
+  padding-right: 4mm;             /* gap */
+  vertical-align: top;
+}
+.as-image-row .as-cell:last-child { padding-right: 0; }
+.as-image-row img {
+  width: 100%;
+  height: 45mm;                   /* increase if bigger photos desired */
+  object-fit: cover;
+  display: block;
+}
+
+/* Strengthen for print to avoid any global resets that force stacking */
+@media print {
+  .as-image-row { display: table !important; width: 180mm !important; }
+  .as-image-row .as-cell { display: table-cell !important; width: 25% !important; padding-right: 4mm !important; }
+  .as-image-row .as-cell:last-child { padding-right: 0 !important; }
+  .as-image-row img { width: 100% !important; height: 45mm !important; object-fit: cover !important; }
+}
+
+/* If there is any global @media print img { width:100% } or .content img rules, they must NOT override the table-cell layout above. The !important declarations here should win. */
+
+D) Do NOT change any other layout or content of the Additional Services quote. Only replace the images block and add the scoped CSS above.
+
+After this change, the 4 images in Additional Services must appear in a single horizontal row in the generated PDF, just like in the working destination quotes.

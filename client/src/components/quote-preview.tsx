@@ -1163,15 +1163,17 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         return customImages.length > 0 ? (
                           quote.tripType === "Additional Services" ? (
                             // Additional Services: Full-width, single-column, no heading
-                            <div className="image-strip mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                              {customImages.slice(0, 6).map((imageSrc: string, index: number) => (
-                                <img 
-                                  key={index}
-                                  src={imageSrc} 
-                                  alt={`Service image ${index + 1}`} 
-                                  className="pdf-image"
-                                />
-                              ))}
+                            <div className="additional-services-images mt-8">
+                              <div className="as-image-row">
+                                {customImages.slice(0, 4).map((imageSrc: string, index: number) => (
+                                  <div key={index} className="as-cell">
+                                    <img 
+                                      src={imageSrc} 
+                                      alt={`Additional service photo ${index + 1}`}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           ) : (
                             // Other quote types: Keep existing layout

@@ -1,38 +1,30 @@
-/* --- Additional Services images: force single horizontal row --- */
-.image-strip {
-  /* this class already exists in working quotes; leave as-is if already present */
+/* --- Additional Services images: print-safe horizontal row --- */
+.additional-services-images { break-inside: avoid; page-break-inside: avoid; margin: 0 auto 8mm auto; }
+.as-image-row {
+  display: table;                 /* robust across wkhtmltopdf/Chromium */
+  width: 180mm;                   /* fits within A4 margins */
+  table-layout: fixed;
+  border-collapse: collapse;
+  break-inside: avoid; page-break-inside: avoid;
 }
-
-/* Scope a safety override ONLY for Additional Services */
-.quote-section.destination-additional-services .image-strip,
-.additional-services .image-strip {
-  width: 180mm !important;
-  margin: 0 auto 8mm auto;
-  display: flex !important;
-  flex-wrap: nowrap !important;      /* prevent vertical stacking */
-  gap: 4mm;
-  align-items: stretch;
-  break-inside: avoid;
-  page-break-inside: avoid;
+.as-image-row .as-cell {
+  display: table-cell;
+  width: 25%;
+  padding-right: 4mm;             /* gap */
+  vertical-align: top;
 }
-
-.quote-section.destination-additional-services .image-strip img,
-.additional-services .image-strip img {
-  flex: 1 1 0;
-  max-width: none;
-  width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
-  height: 45mm;                        /* adjust if you want them bigger */
+.as-image-row .as-cell:last-child { padding-right: 0; }
+.as-image-row img {
+  width: 100%;
+  height: 45mm;                   /* increase if bigger photos desired */
   object-fit: cover;
   display: block;
 }
 
+/* Strengthen for print to avoid any global resets that force stacking */
 @media print {
-  .quote-section.destination-additional-services .image-strip,
-  .additional-services .image-strip {
-    width: 180mm !important;
-  }
-  .quote-section.destination-additional-services .image-strip img,
-  .additional-services .image-strip img {
-    width: calc((180mm - 3 * 4mm) / 4) !important;
-  }
+  .as-image-row { display: table !important; width: 180mm !important; }
+  .as-image-row .as-cell { display: table-cell !important; width: 25% !important; padding-right: 4mm !important; }
+  .as-image-row .as-cell:last-child { padding-right: 0 !important; }
+  .as-image-row img { width: 100% !important; height: 45mm !important; object-fit: cover !important; }
 }

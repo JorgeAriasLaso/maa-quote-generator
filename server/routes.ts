@@ -383,6 +383,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const page = await browser.newPage();
       
+      // Emulate print media for proper PDF rendering
+      await page.emulateMediaType('print');
+      
       // Set content with proper CSS for page breaks
       await page.setContent(html, { waitUntil: 'networkidle0' });
       
@@ -456,7 +459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate PDF
       const pdf = await page.pdf({
-        format: 'a4',
+        format: 'A4',
         margin: {
           top: '15mm',
           right: '15mm',
@@ -464,6 +467,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           left: '15mm'
         },
         printBackground: true,
+        preferCSSPageSize: true,
+        scale: 1
       });
 
       await browser.close();
