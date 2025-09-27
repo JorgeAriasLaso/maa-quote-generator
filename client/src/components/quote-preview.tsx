@@ -1285,6 +1285,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   Educational Value & Learning Outcomes
                 </h3>
                 
+                {(() => {
+                  const d = (quote.destination || '').toLowerCase();
+                  const isCopenhagen = d.includes('copenhagen');
+                  const isWarsaw = d.includes('warsaw');
+                  const eduTopSpace = (isCopenhagen || isWarsaw) ? 'mt-2' : 'mt-6';
+                  return <div className={eduTopSpace}></div>;
+                })()}
                 <section className="education-outcomes">
                   <Card className="bg-blue-50 p-6">
                   {(() => {
