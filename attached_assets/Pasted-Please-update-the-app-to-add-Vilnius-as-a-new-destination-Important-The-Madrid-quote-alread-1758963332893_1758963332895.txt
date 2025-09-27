@@ -1,0 +1,32 @@
+Please update the app to add "Vilnius" as a new destination.
+
+Important: The "Madrid" quote already works perfectly, including the 4 pictures displayed horizontally in one row. 
+=> Please follow the exact same structure and logic as the Madrid implementation, only replacing the text and images for Vilnius. 
+Do not change the picture display method; just replicate Madrid’s approach.
+
+1) Add "Vilnius" to the dropdown menu with the other cities.
+
+2) When the user selects "Vilnius", show this standard quote block by default:
+
+<section id="quote-vilnius" class="quote-section destination-vilnius">
+  <h2>Vilnius — Educational Experience</h2>
+  <p>
+    <strong>Vilnius offers an exceptional educational experience as Lithuania’s vibrant capital and one of Europe’s most dynamic cultural crossroads.</strong>
+    Students will explore a city where centuries of history meet modern European innovation, discovering its unique mix of Gothic, Renaissance, Baroque, and modern architecture. As a growing hub for technology, finance, and entrepreneurship, Vilnius provides students with opportunities to connect with local professionals and understand the evolving European economy in a Baltic context. The city’s Old Town, a UNESCO World Heritage Site, showcases rich history with landmarks like Vilnius Cathedral, Gediminas Tower, and the Gates of Dawn. Educational visits can include leading universities, tech start-ups, and cultural institutions, giving students a balanced view of tradition and modernity. Surrounded by green spaces and known for its welcoming atmosphere, Vilnius offers students the chance to experience authentic Lithuanian culture, explore local traditions, and engage in meaningful international learning, making it an ideal destination for comprehensive educational travel.
+  </p>
+
+  <div class="image-strip">
+    <img src="/public/img/vilnius1.jpg" alt="Vilnius Cathedral and Cathedral Square">
+    <img src="/public/img/vilnius2.jpg" alt="Gediminas Tower overlooking the city">
+    <img src="/public/img/vilnius3.jpg" alt="Vilnius Old Town UNESCO streets">
+    <img src="/public/img/vilnius4.jpg" alt="Modern Vilnius business district">
+  </div>
+</section>
+
+3) I will upload the 4 picture files into /public/img/ at the same time with filenames:
+   - vilnius1.jpg
+   - vilnius2.jpg
+   - vilnius3.jpg
+   - vilnius4.jpg
+
+4) Make sure the 4 Vilnius pictures display exactly the same way Madrid’s pictures do (in one horizontal row in the PDF). Reuse the Madrid logic.

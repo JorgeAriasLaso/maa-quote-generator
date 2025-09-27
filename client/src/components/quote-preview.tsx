@@ -60,6 +60,10 @@ import valladolid1 from "@assets/Valladolid 1_1755702788593.jpg";
 import valladolid2 from "@assets/Valladolid 2_1755702788592.jpg";
 import valladolid3 from "@assets/Valladolid 3_1755702788592.jpg";
 import valladolid4 from "@assets/Valladolid 4_1755702788591.avif";
+import vilnius1 from "@assets/vilnius1.jpg";
+import vilnius2 from "@assets/vilnius2.jpg";
+import vilnius3 from "@assets/vilnius3.jpg";
+import vilnius4 from "@assets/vilnius4.jpg";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
@@ -448,6 +452,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           { src: porto2, alt: "Livraria Lello bookstore" },
           { src: porto3, alt: "Dom Luís I Bridge" },
           { src: porto4, alt: "São Bento Station azulejos" }
+        ]
+      };
+    }
+    // LITHUANIA
+    else if (city.includes('vilnius')) {
+      return {
+        description: "Vilnius offers an exceptional educational experience as Lithuania's vibrant capital and one of Europe's most dynamic cultural crossroads. Students will explore a city where centuries of history meet modern European innovation, discovering its unique mix of Gothic, Renaissance, Baroque, and modern architecture. As a growing hub for technology, finance, and entrepreneurship, Vilnius provides students with opportunities to connect with local professionals and understand the evolving European economy in a Baltic context. The city's Old Town, a UNESCO World Heritage Site, showcases rich history with landmarks like Gediminas Tower and Vilnius Cathedral, while the modern business district demonstrates Lithuania's rapid technological advancement and EU integration, making Vilnius an ideal destination for comprehensive educational travel.",
+        images: [
+          { src: vilnius1, alt: "Vilnius Cathedral and Cathedral Square" },
+          { src: vilnius2, alt: "Gediminas Tower overlooking the city" },
+          { src: vilnius3, alt: "Vilnius Old Town UNESCO streets" },
+          { src: vilnius4, alt: "Modern Vilnius business district" }
         ]
       };
     }
