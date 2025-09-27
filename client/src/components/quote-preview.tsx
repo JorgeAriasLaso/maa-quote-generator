@@ -1162,18 +1162,18 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                         const customImages = quote.customImages ? JSON.parse(quote.customImages) : [];
                         return customImages.length > 0 ? (
                           quote.tripType === "Additional Services" ? (
-                            // Additional Services: Full-width, single-column, no heading
-                            <div className="additional-services-images mt-8">
-                              <div className="as-image-row">
-                                {customImages.slice(0, 4).map((imageSrc: string, index: number) => (
-                                  <div key={index} className="as-cell">
-                                    <img 
-                                      src={imageSrc} 
-                                      alt={`Additional service photo ${index + 1}`}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
+                            // Additional Services: Full-width, single-column, no heading - Use Madrid's exact layout
+                            <div className="flex flex-wrap gap-2 justify-center image-strip mt-8" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                              {customImages.slice(0, 4).map((imageSrc: string, index: number) => (
+                                <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
+                                  <img 
+                                    src={imageSrc} 
+                                    alt={`Additional service photo ${index + 1}`}
+                                    className="w-full h-28 object-cover rounded-lg shadow-sm pdf-image"
+                                    style={{ minHeight: '100px', maxHeight: '120px' }}
+                                  />
+                                </div>
+                              ))}
                             </div>
                           ) : (
                             // Other quote types: Keep existing layout

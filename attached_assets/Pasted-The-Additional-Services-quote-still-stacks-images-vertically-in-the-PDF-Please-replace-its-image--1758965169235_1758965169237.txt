@@ -1,0 +1,43 @@
+The “Additional Services” quote still stacks images vertically in the PDF. Please replace its image display and PDF generation with the exact same implementation used for the *Madrid* quote. Only the images + PDF pipeline should change; keep all other text/sections/prices as-is.
+
+DO EXACTLY:
+
+1) Reuse Madrid’s image block
+   - Find the file(s)/component(s) used by Madrid to render its 4 images horizontally (e.g., ImageStrip component/partial or the exact HTML with class .image-strip).
+   - In the Additional Services template/component (e.g., AdditionalServicesQuote / template_additional_services.html), **delete the current images markup** and **insert the exact same Madrid image markup/partial**.
+   - Keep the same wrapper classes (e.g., .image-strip) and the same per-image markup. Only swap the image sources to the Additional Services photos (keep the existing data binding). Nothing else in this template should change.
+
+2) Reuse Madrid’s CSS
+   - Ensure the same CSS selectors Madrid uses for horizontal layout are present (e.g., .image-strip and its img rules).
+   - Remove or override any Additional Services-specific CSS that forces stacking, such as:
+       .additional-services img { display:block; width:100%; }
+       .additional-services .images { display:block; }
+     If such rules exist, delete them or override with Madrid’s working rules.
+   - Add this scoped safety override to guard against narrow parents:
+       @media print {
+         .additional-services .image-strip { width: 180mm !important; display: flex !important; flex-wrap: nowrap !important; gap: 4mm; }
+         .additional-services .image-strip img { flex: 1 1 0; width: auto !important; height: 45mm !important; object-fit: cover; }
+       }
+
+3) Reuse Madrid’s PDF generation pipeline
+   - Identify how Madrid’s PDF is generated (Puppeteer/Playwright or client print). Use **the exact same code path and options** for Additional Services.
+   - If Puppeteer/Playwright, apply the same flags and calls:
+       await page.emulateMediaType('print');
+       const pdf = await page.pdf({ format: 'A4', printBackground: true, preferCSSPageSize: true, scale: 1 });
+   - If the current Additional Services flow uses html2canvas/jsPDF or any screenshot/raster path, **remove it** and route Additional Services through the same Madrid PDF endpoint/function.
+   - Ensure both Madrid and Additional Services now share the same PDF code.
+
+4) Remove conflicting print rules
+   - Search the codebase for any @media print rules that target Additional Services or generic img that could force stacking:
+       @media print { img { width:100% } }  /* or similar */
+     Replace with the same print rules used by Madrid or scope them so .image-strip keeps its flex row.
+
+5) Verify
+   - In the app, open Additional Services → confirm images render in one row like Madrid.
+   - Export to PDF → images must remain in one horizontal row; text structure unchanged.
+   - No outline/raster pipeline should be used.
+
+IMPORTANT:
+- Do not change headings, lists, or pricing structure of Additional Services.
+- Only clone Madrid’s **images markup/CSS** and **PDF generation pipeline** into Additional Services.
+- Keep the same component import/usage pattern as Madrid (e.g., reuse the same ImageStrip component if that’s what Madrid uses).

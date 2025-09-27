@@ -416,26 +416,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           /* PDF-specific styles for uploaded images - scoped by quote type */
           
-          /* Additional Services: 4 images side-by-side layout */
+          /* Additional Services: Use same layout as Madrid - 4 images side-by-side layout */
           .is-additional-services .image-strip { 
-            width: 180mm;                 /* fits across A4 */
+            width: 180mm !important;      /* fits across A4 */
             margin: 0 auto 8mm auto;
-            display: flex;
-            flex-wrap: nowrap;            /* force one row */
+            display: flex !important;
+            flex-wrap: nowrap !important; /* force one row */
             gap: 4mm;                     /* space between images */
             align-items: stretch;
             break-inside: avoid;
             page-break-inside: avoid;
+            justify-content: center;
+          }
+          .is-additional-services .image-strip > div {
+            flex: 1 1 0;
+            max-width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
+            width: calc((180mm - 3 * 4mm) / 4);
           }
           .is-additional-services .pdf-image {
-            flex: 1 1 0;
-            max-width: none;
-            width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
-            height: 45mm;                 /* adjust to make bigger/smaller */
+            width: 100% !important;
+            height: 45mm !important;      /* adjust to make bigger/smaller */
             object-fit: cover;            /* crop neatly */
             display: block;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 45mm;
+            max-height: 45mm;
           }
           /* Ensure no leftover titles for Additional Services */
           .is-additional-services .image-strip h2,
