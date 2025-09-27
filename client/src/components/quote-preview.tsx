@@ -72,7 +72,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
 import { applySmartPageBreaks } from '../utils/print-utils.js';
-import { paginateOutcomesByCount } from '../utils/outcomes-paginate.js';
+import { splitPanelAcrossPages } from '../utils/panel-splitter.js';
 
 interface QuotePreviewProps {
   quote: Quote | null;
@@ -177,13 +177,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Mark typical containers as keep to prevent page breaks cutting through them
       document.querySelectorAll('.quote-card, .service-box, .image-strip, .quote-section, .destination-katowice, .destination-vilnius, .destination-madrid, .additional-services-images, .cost-breakdown, .educational-value, .mb-12, .space-y-4').forEach(el => el.classList.add('keep'));
       
-      // Paginate education outcomes to prevent page breaks
-      paginateOutcomesByCount({
-        wrapperSel: '.education-outcomes',
-        itemSel: '.outcome-item',
-        perCard: 6,
-        titleSel: '.section-title',
-        insertContinued: true
+      // Split education outcomes panel to prevent page breaks
+      splitPanelAcrossPages({
+        selector: '.education-outcomes',
+        pageHeightMm: 297,
+        marginTopMm: 12,
+        marginBottomMm: 12
       });
       
       // Apply smart page breaks before capturing
@@ -1279,10 +1278,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 </>
               )}
             </div>
-
             {/* Learning Outcomes - FORCE PAGE BREAK HERE - Hide for Additional Services */}
             {quote.tripType !== "Additional Services" && (
-              <div className={`${quote.destination.toLowerCase().includes('copenhagen') || quote.destination.toLowerCase().includes('warsaw') ? 'mb-6' : 'mb-12'} page-break-before`} id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
+              <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
                 <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                   Educational Value & Learning Outcomes
                 </h3>
@@ -1293,10 +1291,10 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     const learningOutcomes = getLearningOutcomes(quote?.tripType || '', quote?.customTripType);
                     return (
                       <>
-                        <h4 className="section-title font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
+                        <h4 className="font-semibold text-blue-900 mb-4">{learningOutcomes.title}</h4>
                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
                           {learningOutcomes.outcomes.map((outcome, index) => (
-                            <li key={index} className="outcome-item flex items-start">
+                            <li key={index} className="flex items-start">
                               <CheckCircle className="text-blue-600 mr-3 mt-0.5 h-4 w-4" />
                               <span>{outcome}</span>
                             </li>
