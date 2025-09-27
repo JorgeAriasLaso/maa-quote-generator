@@ -27,3 +27,15 @@
 
 /* Also protect images/strips */
 .keep * { break-inside: avoid; page-break-inside: avoid; }
+
+@media print {
+  .page-break { break-before: page; page-break-before: always; height: 0; }
+}
+.flow-panel {
+  background: #E6F2FF;           /* same light blue as current box */
+  border-radius: 8px;
+  padding: 10mm;
+  margin: 0 0 6mm 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}

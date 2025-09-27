@@ -1,0 +1,131 @@
+Goal: In the “Education Value & Learning outcomes” section (the light-blue box), stop page breaks from cutting the shaded box across pages in the image-based PDF flow.
+
+Do EXACTLY the following minimal changes (do not alter content or other layouts):
+
+A) Add print helpers to public/styles.css (append at bottom)
+@media print {
+  .page-break { break-before: page; page-break-before: always; height: 0; }
+}
+.flow-panel {
+  background: #E6F2FF;           /* same light blue as current box */
+  border-radius: 8px;
+  padding: 10mm;
+  margin: 0 0 6mm 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+B) Create a small pre-processor to auto-split tall panels before PDF capture.
+Create file: public/js/panel-splitter.js with:
+
+export function splitPanelAcrossPages({
+  selector = '.education-outcomes',   // the current light-blue panel wrapper
+  pageHeightMm = 297,                 // A4 height
+  marginTopMm = 12,
+  marginBottomMm = 12
+} = {}) {
+  // Use CSS pixels; html2canvas works in CSS px (devicePixelRatio handled by its scale option)
+  const PX_PER_MM = 96 / 25.4;
+  const usablePx = (pageHeightMm - (marginTopMm + marginBottomMm)) * PX_PER_MM;
+
+  const panels = Array.from(document.querySelectorAll(selector));
+  if (!panels.length) return;
+
+  // Ensure layout is settled
+  window.scrollTo(0, 0);
+
+  panels.forEach((panel) => {
+    // Group content by top-level blocks; if there are bare text nodes, wrap them in <p>
+    const blocks = [];
+    Array.from(panel.childNodes).forEach((node) => {
+      if (node.nodeType === 3 && node.textContent.trim()) {
+        const p = document.createElement('p');
+        p.textContent = node.textContent;
+        blocks.push(p);
+      } else if (node.nodeType === 1) {
+        blocks.push(node);
+      }
+    });
+
+    if (!blocks.length) return;
+
+    // Build chunked panels
+    const frag = document.createDocumentFragment();
+    let chunk = makeChunk(panel);
+    frag.appendChild(chunk);
+
+    // Start-of-page and current page bottom window
+    let pageTopPx = panel.getBoundingClientRect().top + window.scrollY;
+    let pageBottomPx = pageTopPx + usablePx;
+
+    // Move original children into chunks, starting fresh DOM for accurate measurement
+    blocks.forEach((blk, i) => {
+      chunk.appendChild(blk);
+      // Measure after adding this block
+      const rect = chunk.getBoundingClientRect();
+      const chunkBottom = rect.bottom + window.scrollY;
+
+      const wouldCross = chunkBottom > pageBottomPx;
+      if (wouldCross) {
+        // Remove the block we just added and start a new chunk on a new page
+        chunk.removeChild(blk);
+
+        const br = document.createElement('div');
+        br.className = 'page-break';
+        frag.appendChild(br);
+
+        chunk = makeChunk(panel);
+        frag.appendChild(chunk);
+        chunk.appendChild(blk);
+
+        // Advance page window
+        pageTopPx = rect.top + window.scrollY; // approximate new page start
+        pageBottomPx = pageTopPx + usablePx;
+      }
+    });
+
+    // Replace original panel with the chunked version
+    panel.replaceWith(frag);
+  });
+
+  function makeChunk(sourcePanel) {
+    const chunk = document.createElement('div');
+    // Keep a recognizable class for debugging; style via .flow-panel in CSS
+    chunk.className = 'flow-panel';
+    // Optional: copy border radius/padding if they differ (we already define in CSS)
+    // Keep ARIA/role if needed
+    if (sourcePanel.getAttribute('role')) {
+      chunk.setAttribute('role', sourcePanel.getAttribute('role'));
+    }
+    return chunk;
+  }
+}
+
+C) Call the splitter right BEFORE the image-based PDF generation runs.
+- Locate the JS that triggers html2canvas/html2pdf/jsPDF (e.g., public/js/generate-pdf.js).
+- Import and call:
+
+// At top
+import { splitPanelAcrossPages } from './panel-splitter.js';
+
+// Right before starting html2canvas/html2pdf/jsPDF:
+splitPanelAcrossPages({
+  selector: '.education-outcomes', // adjust to the actual class/id of the light-blue box wrapper
+  pageHeightMm: 297,
+  marginTopMm: 12,
+  marginBottomMm: 12
+});
+
+// Then proceed with the existing image-based PDF generation as-is.
+
+D) Tag the correct container:
+- Ensure the light-blue box has a stable wrapper class, e.g. <section class="education-outcomes">…</section>.
+- If it currently uses a different class or id, either add class="education-outcomes" to that wrapper, or change the selector in the function call to match your actual element.
+
+E) Do NOT change content, headings, or other layout. Only:
+- Add .flow-panel CSS,
+- Add panel-splitter.js,
+- Call splitPanelAcrossPages() before PDF generation.
+
+Result:
+- The large shaded panel will be automatically split into multiple same-style sub-panels, with page breaks inserted BETWEEN those sub-panels. Visually, the blue background will no longer be cut mid-box across pages in the exported PDF.

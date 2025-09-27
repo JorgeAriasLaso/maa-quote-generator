@@ -72,6 +72,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
 import { applySmartPageBreaks } from '../utils/print-utils.js';
+import { splitPanelAcrossPages } from '../utils/panel-splitter.js';
 
 interface QuotePreviewProps {
   quote: Quote | null;
@@ -175,6 +176,14 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Mark typical containers as keep to prevent page breaks cutting through them
       document.querySelectorAll('.quote-card, .service-box, .image-strip, .quote-section, .destination-katowice, .destination-vilnius, .destination-madrid, .additional-services-images, .cost-breakdown, .educational-value, .mb-12, .space-y-4').forEach(el => el.classList.add('keep'));
+      
+      // Split education outcomes panel to prevent page breaks
+      splitPanelAcrossPages({
+        selector: '.education-outcomes',
+        pageHeightMm: 297,
+        marginTopMm: 12,
+        marginBottomMm: 12
+      });
       
       // Apply smart page breaks before capturing
       applySmartPageBreaks({ pageHeightMm: 297, topBottomMarginMm: 24 });
@@ -1277,7 +1286,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   Educational Value & Learning Outcomes
                 </h3>
                 
-                <Card className="bg-blue-50 p-6">
+                <section className="education-outcomes">
+                  <Card className="bg-blue-50 p-6">
                   {(() => {
                     const learningOutcomes = getLearningOutcomes(quote?.tripType || '', quote?.customTripType);
                     return (
@@ -1295,6 +1305,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                     );
                   })()}
                 </Card>
+                </section>
               </div>
             )}
 
