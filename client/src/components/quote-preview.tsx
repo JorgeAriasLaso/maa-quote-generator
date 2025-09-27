@@ -1282,7 +1282,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
 
             {/* Learning Outcomes - FORCE PAGE BREAK HERE - Hide for Additional Services */}
             {quote.tripType !== "Additional Services" && (
-              <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
+              <div className={`${quote.destination.toLowerCase().includes('copenhagen') || quote.destination.toLowerCase().includes('warsaw') ? 'mb-6' : 'mb-12'} page-break-before`} id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
                 <h3 className="text-xl font-semibold text-slate-900 mb-6 border-b-2 border-primary pb-2">
                   Educational Value & Learning Outcomes
                 </h3>
