@@ -1156,7 +1156,13 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
             </div>
 
             {/* Destination Highlights or Custom Content */}
-            <div className="mb-12">
+            {(() => {
+              const d = (quote.destination || '').toLowerCase();
+              const isCopenhagen = d.includes('copenhagen');
+              const isWarsaw = d.includes('warsaw');
+              const picMargin = (isCopenhagen || isWarsaw) ? 'mb-6' : 'mb-12';
+              return (
+                <div className={picMargin}>
               {quote.tripType === "Additional Services" ? (
                 // Additional Services - Show Custom Content
                 <>
@@ -1277,7 +1283,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                   </div>
                 </>
               )}
-            </div>
+                </div>
+              );
+            })()}
             {/* Learning Outcomes - FORCE PAGE BREAK HERE - Hide for Additional Services */}
             {quote.tripType !== "Additional Services" && (
               <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
