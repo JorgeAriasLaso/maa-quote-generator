@@ -28,14 +28,25 @@
 /* Also protect images/strips */
 .keep * { break-inside: avoid; page-break-inside: avoid; }
 
-@media print {
-  .page-break { break-before: page; page-break-before: always; height: 0; }
-}
-.flow-panel {
-  background: #E6F2FF;           /* same light blue as current box */
+/* Page break marker we'll insert between cards */
+.page-break { break-before: page; page-break-before: always; height: 0; }
+
+/* The blue card style (same look as current box) */
+.outcome-card {
+  background: #E6F2FF; 
   border-radius: 8px;
   padding: 10mm;
   margin: 0 0 6mm 0;
-  break-inside: avoid;
+  box-sizing: border-box;
+  break-inside: avoid; 
   page-break-inside: avoid;
+}
+.outcome-card .continued {
+  margin-top: 2mm;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .outcome-card { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 }
