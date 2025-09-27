@@ -1278,7 +1278,6 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
                 </>
               )}
             </div>
-
             {/* Learning Outcomes - FORCE PAGE BREAK HERE - Hide for Additional Services */}
             {quote.tripType !== "Additional Services" && (
               <div className="mb-12 page-break-before" id="educational-value-section" style={{ pageBreakBefore: 'always', breakBefore: 'always' }}>
