@@ -19,4 +19,11 @@
     min-height: 45mm !important;
     max-height: 45mm !important;
   }
+  
+  /* Print helpers for smart page breaks */
+  .keep { break-inside: avoid; page-break-inside: avoid; }
+  .page-break { break-before: page; page-break-before: always; height: 0; }
 }
+
+/* Also protect images/strips */
+.keep * { break-inside: avoid; page-break-inside: avoid; }

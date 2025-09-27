@@ -71,6 +71,7 @@ import katowice4 from "@assets/katowice4.jpg";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
+import { applySmartPageBreaks } from '../utils/print-utils.js';
 
 interface QuotePreviewProps {
   quote: Quote | null;
@@ -171,6 +172,12 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Mark typical containers as keep to prevent page breaks cutting through them
+      document.querySelectorAll('.quote-card, .service-box, .image-strip, .quote-section, .destination-katowice, .destination-vilnius, .destination-madrid, .additional-services-images, .cost-breakdown, .educational-value, .mb-12, .space-y-4').forEach(el => el.classList.add('keep'));
+      
+      // Apply smart page breaks before capturing
+      applySmartPageBreaks({ pageHeightMm: 297, topBottomMarginMm: 24 });
       
       // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
       const canvas = await html2canvas(quoteElement, {

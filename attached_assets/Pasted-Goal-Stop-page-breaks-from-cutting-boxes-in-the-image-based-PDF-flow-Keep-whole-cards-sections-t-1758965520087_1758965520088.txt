@@ -1,0 +1,81 @@
+Goal: Stop page breaks from cutting boxes in the “image-based” PDF flow. Keep whole cards/sections together.
+
+Do the following minimal changes:
+
+1) CSS — add print helpers (append to public/styles.css)
+@media print {
+  .keep { break-inside: avoid; page-break-inside: avoid; }
+  .page-break { break-before: page; page-break-before: always; height: 0; }
+}
+/* Also protect images/strips */
+.keep * { break-inside: avoid; page-break-inside: avoid; }
+
+2) JS — create a small utility that inserts manual page breaks BEFORE a box that would be cut.
+Create file: public/js/print-utils.js with:
+
+export function applySmartPageBreaks({
+  pageHeightMm = 297,    // A4
+  topBottomMarginMm = 24 // total (e.g., 12mm top + 12mm bottom)
+} = {}) {
+  const pxPerMm = window.devicePixelRatio ? (96 / 25.4) * window.devicePixelRatio : (96 / 25.4);
+  const contentHeightPx = Math.floor((pageHeightMm - topBottomMarginMm) * pxPerMm);
+
+  const keepers = Array.from(document.querySelectorAll('.keep'));
+  if (!keepers.length) return;
+
+  // Ensure we measure from the top
+  window.scrollTo(0, 0);
+
+  let pageTopPx = 0;
+  let pageBottomPx = contentHeightPx;
+
+  for (const el of keepers) {
+    const rect = el.getBoundingClientRect();
+    const elTop = rect.top + window.scrollY;
+    const elBottom = rect.bottom + window.scrollY;
+
+    // If this element would cross the current page bottom, force a page break before it
+    if (elBottom > pageBottomPx) {
+      const br = document.createElement('div');
+      br.className = 'page-break';
+      el.parentNode.insertBefore(br, el);
+
+      // Advance the page window to start after the break
+      pageTopPx = elTop;
+      pageBottomPx = pageTopPx + contentHeightPx;
+    }
+  }
+}
+
+3) Tag the blocks that must stay together.
+- Add the class "keep" to each card/box/section that should not be split (destination quote cards, Additional Services boxes, image-strip wrappers, etc.).
+- If templates are hard to edit, do it in JS right before PDF generation:
+   // Example: mark typical containers as keep
+   document.querySelectorAll('.quote-card, .service-box, .image-strip, .quote-section').forEach(el => el.classList.add('keep'));
+
+4) Call the smart breaker RIGHT BEFORE the image-based PDF generation runs.
+- Locate the file that triggers html2canvas/jsPDF or html2pdf.js (e.g., public/js/generate-pdf.js).
+- Import and call the function BEFORE you capture the DOM:
+
+   // At top of the file
+   import { applySmartPageBreaks } from './print-utils.js';
+
+   // Right before html2canvas/html2pdf/jsPDF starts:
+   applySmartPageBreaks({ pageHeightMm: 297, topBottomMarginMm: 24 });
+
+   // Then proceed with the existing image-based PDF generation as-is.
+
+5) If using html2pdf.js, set its built-in pagebreak options too (keeps are honored):
+   const opt = {
+     margin: [12, 12, 12, 12],
+     image: { type: 'jpeg', quality: 0.95 },
+     html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1200 },
+     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+     pagebreak: { mode: ['css', 'legacy'], avoid: '.keep', before: '.page-break' }
+   };
+   // html2pdf().set(opt).from(element).save();
+
+6) DO NOT change the city quotes or Additional Services content/structure.
+- We’re only adding: the .keep class, the CSS above, and the applySmartPageBreaks() pre-pass.
+
+After this change: boxes tagged with .keep will either fully fit on a page or be pushed to the next page to avoid being cut by image-based pagination.
