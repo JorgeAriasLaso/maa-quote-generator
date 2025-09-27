@@ -1,0 +1,28 @@
+Please update the app to add "Katowice" as a new destination.
+
+1) Add "Katowice" to the dropdown menu.
+
+2) When the user selects "Katowice", show this standard quote block by default:
+
+<section id="quote-katowice" class="quote-section destination-katowice">
+  <h2>Katowice — Educational Experience</h2>
+  <p>
+    <strong>Katowice offers an exceptional educational experience as Poland’s thriving industrial and cultural hub in the heart of Upper Silesia.</strong>
+    Students will discover a city that has transformed from a historic center of mining and heavy industry into a modern hub for innovation, business, and education. As part of the dynamic Silesian Metropolis, Katowice provides opportunities to learn about regional development, entrepreneurship, and the evolving European economy. The city features world-class institutions such as the Silesian Museum, the International Congress Centre, and the Polish National Radio Symphony Orchestra, highlighting its strong cultural revival. Educational visits can include leading universities, technology parks, and local companies, offering insights into both traditional industries and emerging sectors. Landmarks like Spodek Arena and Nikiszowiec historical district illustrate the blend of modern architecture with rich heritage. With its welcoming atmosphere, vibrant student community, and strategic location near Kraków and the Czech border, Katowice provides a unique and comprehensive educational travel experience for students.
+  </p>
+
+  <div class="image-strip">
+    <img src="/public/img/katowice1.jpg" alt="Katowice city center and Spodek Arena">
+    <img src="/public/img/katowice2.jpg" alt="Nikiszowiec historical district">
+    <img src="/public/img/katowice3.jpg" alt="Silesian Museum and cultural complex">
+    <img src="/public/img/katowice4.jpg" alt="Modern Katowice business district">
+  </div>
+</section>
+
+3) I will upload the 4 image files into /public/img/ at the same time with filenames:
+   - katowice1.jpg
+   - katowice2.jpg
+   - katowice3.jpg
+   - katowice4.jpg
+
+4) The 4 Katowice pictures must display horizontally in one row in the PDF, using the same .image-strip CSS already implemented.

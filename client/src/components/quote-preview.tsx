@@ -64,6 +64,10 @@ import vilnius1 from "@assets/vilnius1.jpg";
 import vilnius2 from "@assets/vilnius2.jpg";
 import vilnius3 from "@assets/vilnius3.jpg";
 import vilnius4 from "@assets/vilnius4.jpg";
+import katowice1 from "@assets/katowice1.jpg";
+import katowice2 from "@assets/katowice2.jpg";
+import katowice3 from "@assets/katowice3.jpg";
+import katowice4 from "@assets/katowice4.jpg";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useState, useEffect } from 'react';
@@ -371,6 +375,8 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     // Poland
     } else if (city.includes('krakow') || city.includes('kraków')) {
       return krakow1;
+    } else if (city.includes('katowice')) {
+      return katowice1;
     } else if (city.includes('poznan') || city.includes('poznań')) {
       return "https://images.unsplash.com/photo-1587330979470-3bd2893099f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400";
     } else if (city.includes('warsaw')) {
@@ -567,6 +573,16 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
           { src: krakow2, alt: "Iconic sculpture in Kraków's medieval market square" },
           { src: krakow3, alt: "Wawel Castle towers and Gothic architecture" },
           { src: krakow4, alt: "Aerial view of Wawel Royal Castle complex" }
+        ]
+      };
+    } else if (city.includes('katowice')) {
+      return {
+        description: "Katowice offers an exceptional educational experience as Poland's thriving industrial and cultural hub in the heart of Upper Silesia. Students will discover a city that has transformed from a historic center of mining and heavy industry into a modern hub for innovation, business, and education. As part of the dynamic Silesian Metropolis, Katowice provides opportunities to learn about regional development, entrepreneurship, and the evolving European economy. The city features world-class institutions such as the Silesian Museum, the International Congress Centre, and the Polish National Radio Symphony Orchestra, demonstrating how industrial heritage can be preserved while embracing contemporary culture and innovation, making Katowice an ideal destination for comprehensive educational travel.",
+        images: [
+          { src: katowice1, alt: "Katowice city center and Spodek Arena" },
+          { src: katowice2, alt: "Nikiszowiec historical district" },
+          { src: katowice3, alt: "Silesian Museum and cultural complex" },
+          { src: katowice4, alt: "Modern Katowice business district" }
         ]
       };
     } else if (city.includes('poznan')) {
