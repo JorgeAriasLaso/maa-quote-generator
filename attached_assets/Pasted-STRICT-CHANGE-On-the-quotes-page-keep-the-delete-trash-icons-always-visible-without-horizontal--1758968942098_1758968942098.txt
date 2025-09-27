@@ -1,0 +1,54 @@
+STRICT CHANGE: On the /quotes page, keep the delete (trash) icons always visible without horizontal scrolling. 
+Do NOT change data, columns, or other pages. Only make the Actions column sticky on the right.
+
+1) In the component that renders the quotes table/list (the file that mounts on /quotes):
+   - Ensure the table is wrapped like this (add if missing):
+     <div className="overflow-x-auto relative">
+       {/* table here */}
+     </div>
+
+   - On the <table>, keep w-full and add table-auto if missing:
+     <table className="w-full table-auto relative">
+
+   - Make the **last header cell** the sticky Actions header:
+     <th className="actions-col sticky right-0 z-20 bg-white w-16 text-right">Actions</th>
+
+   - Make the **last data cell** sticky for every row:
+     <td className="actions-col sticky right-0 z-10 bg-white w-16 text-right">
+       {/* existing delete button/icon exactly as it is now */}
+     </td>
+
+   Notes:
+   • Keep the existing delete button code intact—just wrap it with the sticky cell class.
+   • If your table is built from arrays, apply those classes to the last column renderer only.
+
+2) Reduce overflow pressure so the table can wrap instead of forcing the bottom scrollbar:
+   - On all non-actions cells, allow wrapping:
+     <td className="whitespace-normal break-words">
+       {/* existing cell content */}
+     </td>
+   - Do NOT change content; only add whitespace-normal break-words where cells currently use whitespace-nowrap.
+
+3) If there is a fixed table header, keep it sticky too (optional, only if already present):
+   <thead>
+     <tr>
+       {/* other headers */}
+       <th className="actions-col sticky right-0 z-20 bg-white w-16 text-right">Actions</th>
+     </tr>
+   </thead>
+
+4) Do NOT introduce a bottom scrollbar hack. Do NOT hide columns. Do NOT move or rename columns. 
+   Only make the last column sticky on the right and allow wrapping in other cells.
+
+5) If your project does not use Tailwind utility classes for a table, add this minimal CSS (scoped) instead:
+   /* add to a global stylesheet loaded on /quotes */
+   .quotes-table { position: relative; border-collapse: separate; border-spacing: 0; width: 100%; }
+   .quotes-table th, .quotes-table td { word-break: break-word; white-space: normal; }
+   .quotes-table .actions-col { position: sticky; right: 0; background: #fff; min-width: 64px; z-index: 20; text-align: right; }
+
+   Then add className="quotes-table" on the <table> and className="actions-col" on the last th/td, as above.
+
+RESULT:
+• The Actions (trash) column stays visible on the right at all times.
+• No need to drag the bottom scrollbar to reach the delete icons.
+• All other columns and data remain unchanged.

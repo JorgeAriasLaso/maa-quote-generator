@@ -279,8 +279,8 @@ export default function Quotes() {
         ) : filteredQuotes && filteredQuotes.length > 0 ? (
           <Card>
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto relative">
+                <table className="w-full table-auto relative">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th className="text-left p-3 font-medium text-slate-700 text-sm">Quote Number</th>
@@ -293,7 +293,7 @@ export default function Quotes() {
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Profit</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Per Person</th>
                       <th className="text-right p-3 font-medium text-slate-700 text-sm">Net Margin%</th>
-                      <th className="text-right p-3 font-medium text-slate-700 text-sm">Actions</th>
+                      <th className="actions-col sticky right-0 z-20 bg-white w-16 text-right p-3 font-medium text-slate-700 text-sm">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -301,7 +301,7 @@ export default function Quotes() {
                       const { total, netProfit, averageProfitPerTraveller } = calculateQuoteProfitability(quote);
                       return (
                         <tr key={quote.id} className="border-b border-slate-100 hover:bg-slate-50">
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="font-medium text-primary text-sm flex items-center gap-2">
                               {quote.quoteNumber}
                               {quote.internalNotes && quote.internalNotes.trim() && (
@@ -312,50 +312,50 @@ export default function Quotes() {
                               {format(new Date(quote.createdAt), "MMM d, yyyy")}
                             </div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="font-medium text-slate-900 text-sm">{quote.fiscalName}</div>
                             <div className="text-xs text-slate-500">{quote.email}</div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="font-medium text-slate-900 text-sm">{quote.destination}</div>
                             <div className="text-xs text-slate-500">
                               {quote.numberOfStudents}S / {quote.numberOfTeachers}T • {quote.duration}
                             </div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="text-sm text-slate-900 font-medium">{quote.tripType}</div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="text-sm text-slate-900">
                               {quote.studentAccommodationName || 'Not specified'}
                             </div>
                           </td>
-                          <td className="p-3">
+                          <td className="p-3 whitespace-normal break-words">
                             <div className="text-sm text-slate-900">
                               {quote.teacherAccommodationName || 'Not specified'}
                             </div>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="p-3 text-right whitespace-normal break-words">
                             <div className="font-semibold text-slate-900 text-sm">
                               €{Math.round(total).toLocaleString()}
                             </div>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="p-3 text-right whitespace-normal break-words">
                             <div className={`font-medium text-sm ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                               €{Math.round(netProfit).toLocaleString()}
                             </div>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="p-3 text-right whitespace-normal break-words">
                             <div className={`font-medium text-sm ${averageProfitPerTraveller >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                               €{Math.round(averageProfitPerTraveller).toLocaleString()}
                             </div>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="p-3 text-right whitespace-normal break-words">
                             <div className={`font-medium text-sm ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                               {total > 0 ? `${((netProfit / total) * 100).toFixed(1)}%` : '0.0%'}
                             </div>
                           </td>
-                          <td className="p-3 text-right">
+                          <td className="actions-col sticky right-0 z-10 bg-white w-16 text-right p-3">
                             <div className="flex gap-1 justify-end">
                               <Button
                                 variant="outline"
