@@ -414,7 +414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           /* PDF-specific styles for uploaded images - scoped by quote type */
           
           /* Additional Services: 4 images side-by-side layout */
-          .is-additional-services .pdf-images-as { 
+          .is-additional-services .image-strip { 
             width: 180mm;                 /* fits across A4 */
             margin: 0 auto 8mm auto;
             display: flex;
@@ -435,8 +435,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
           }
           /* Ensure no leftover titles for Additional Services */
-          .is-additional-services .pdf-images-as h2,
-          .is-additional-services .pdf-images-as .section-title { 
+          .is-additional-services .image-strip h2,
+          .is-additional-services .image-strip .section-title { 
             display: none !important; 
           }
           

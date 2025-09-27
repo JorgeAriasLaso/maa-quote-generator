@@ -1,0 +1,58 @@
+In the “Additional Services” quote type, fix ONLY the pictures block so they display horizontally in one row, exactly like the working city quotes (Madrid/Vilnius). Do not change any other structure, text, or layout of this quote.
+
+1) Find the template/component that renders the Additional Services images (e.g., AdditionalServicesQuote, QuoteAdditionalServices, template_additional_services.html). Replace ONLY the images markup with the SAME structure used by the working quotes:
+   <!-- BEGIN: images block (keep the rest of the Additional Services template exactly as-is) -->
+   <div class="image-strip image-strip--additional">
+     <!-- render the 4 service photos here -->
+     <!-- example static placeholders; keep your own image loop/data binding -->
+     <img src="/public/img/additional1.jpg" alt="Additional service photo 1">
+     <img src="/public/img/additional2.jpg" alt="Additional service photo 2">
+     <img src="/public/img/additional3.jpg" alt="Additional service photo 3">
+     <img src="/public/img/additional4.jpg" alt="Additional service photo 4">
+   </div>
+   <!-- END: images block -->
+
+   Important: reuse the exact same HTML wrapper class used by the working quotes: .image-strip
+   Only the image block changes; headings, lists, pricing, etc. must stay exactly the same.
+
+2) In CSS (public/styles.css), append these scoped rules so the Additional Services images behave like the working quotes even if the parent container is narrow:
+   /* --- Additional Services images: force single horizontal row --- */
+   .image-strip {
+     /* this class already exists in working quotes; leave as-is if already present */
+   }
+
+   /* Scope a safety override ONLY for Additional Services */
+   .quote-section.destination-additional-services .image-strip,
+   .additional-services .image-strip {
+     width: 180mm !important;
+     margin: 0 auto 8mm auto;
+     display: flex !important;
+     flex-wrap: nowrap !important;      /* prevent vertical stacking */
+     gap: 4mm;
+     align-items: stretch;
+     break-inside: avoid;
+     page-break-inside: avoid;
+   }
+
+   .quote-section.destination-additional-services .image-strip img,
+   .additional-services .image-strip img {
+     flex: 1 1 0;
+     max-width: none;
+     width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
+     height: 45mm;                        /* adjust if you want them bigger */
+     object-fit: cover;
+     display: block;
+   }
+
+   @media print {
+     .quote-section.destination-additional-services .image-strip,
+     .additional-services .image-strip {
+       width: 180mm !important;
+     }
+     .quote-section.destination-additional-services .image-strip img,
+     .additional-services .image-strip img {
+       width: calc((180mm - 3 * 4mm) / 4) !important;
+     }
+   }
+
+3) Do NOT alter any other part of the Additional Services quote. Only swap the images block to use .image-strip (same as the working quotes), and apply the scoped CSS above. This must make the 4 photos appear in one horizontal row in the PDF, just like Madrid/Vilnius.

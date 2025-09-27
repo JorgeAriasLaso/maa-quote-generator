@@ -1,0 +1,38 @@
+/* --- Additional Services images: force single horizontal row --- */
+.image-strip {
+  /* this class already exists in working quotes; leave as-is if already present */
+}
+
+/* Scope a safety override ONLY for Additional Services */
+.quote-section.destination-additional-services .image-strip,
+.additional-services .image-strip {
+  width: 180mm !important;
+  margin: 0 auto 8mm auto;
+  display: flex !important;
+  flex-wrap: nowrap !important;      /* prevent vertical stacking */
+  gap: 4mm;
+  align-items: stretch;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.quote-section.destination-additional-services .image-strip img,
+.additional-services .image-strip img {
+  flex: 1 1 0;
+  max-width: none;
+  width: calc((180mm - 3 * 4mm) / 4); /* 4 images + 3 gaps */
+  height: 45mm;                        /* adjust if you want them bigger */
+  object-fit: cover;
+  display: block;
+}
+
+@media print {
+  .quote-section.destination-additional-services .image-strip,
+  .additional-services .image-strip {
+    width: 180mm !important;
+  }
+  .quote-section.destination-additional-services .image-strip img,
+  .additional-services .image-strip img {
+    width: calc((180mm - 3 * 4mm) / 4) !important;
+  }
+}
