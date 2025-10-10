@@ -1,13 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
 /** --- global middleware --- */
-app.use(cors({ origin: true })); // allow your frontend origin(s)
+app.use(cors({ origin: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
 
@@ -21,9 +22,9 @@ app.use((req, res, next) => {
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
+  // @ts-expect-error - spread for original .json signature
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
-    // @ts-expect-error - spread for original .json signature
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
@@ -34,9 +35,7 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         try {
           logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-        } catch {
-          /* ignore stringify errors */
-        }
+        } catch {}
       }
       if (logLine.length > 80) logLine = logLine.slice(0, 79) + "…";
       log(logLine);
@@ -46,7 +45,7 @@ app.use((req, res, next) => {
   next();
 });
 
-/** --- PDF endpoints (READABLE PDFs with real text & colors) --- */
+/** --- PDF endpoints --- */
 app.get("/pdf/test", (_req, res) => {
   res.type("text/plain").send("PDF test works!");
 });
@@ -58,24 +57,18 @@ app.post("/pdf", async (req: Request, res: Response) => {
     baseUrl?: string;
   };
 
-  if (!html) {
-    return res.status(400).json({ error: "Missing 'html' in request body" });
-  }
+  if (!html) return res.status(400).json({ error: "Missing 'html' in request body" });
 
-  // Build a full HTML document so styles render correctly in Chromium
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>${title}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Tailwind (so your quote styles render) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @page { size: A4; margin: 16mm; }
-    /* Keep colors & backgrounds in print */
     html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    /* Optional: nicer base font */
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
   </style>
   ${baseUrl ? `<base href="${baseUrl.replace(/\/?$/, "/")}" />` : ""}
@@ -88,32 +81,36 @@ app.post("/pdf", async (req: Request, res: Response) => {
   let browser: puppeteer.Browser | null = null;
 
   try {
+    // Configure chromium for serverless (Render)
+    const executablePath = await chromium.executablePath();
+
     browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      // 👇 This fixes "Could not find Chrome" on Render by using the installed binary
-      executablePath: puppeteer.executablePath(),
+      headless: chromium.headless,
+      executablePath,
+      args: [
+        ...chromium.args,
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+      ],
+      defaultViewport: { width: 1280, height: 800, deviceScaleFactor: 1 },
     });
 
     const page = await browser.newPage();
-
-    // Set a generous default timeout for slow image/font loads on cold starts
     page.setDefaultNavigationTimeout(60_000);
     page.setDefaultTimeout(60_000);
 
     await page.setContent(fullHtml, { waitUntil: "networkidle0" });
 
-    // Ensure webfonts are loaded before printing
     try {
       await page.evaluate(async () => {
         // @ts-ignore
         if (document?.fonts?.ready) await (document as any).fonts.ready;
       });
-    } catch { /* ignore */ }
+    } catch {}
 
     const pdfBuffer = await page.pdf({
       format: "A4",
-      printBackground: true,          // keep colors, images, backgrounds
+      printBackground: true,
       preferCSSPageSize: true,
       margin: { top: "16mm", right: "16mm", bottom: "16mm", left: "16mm" },
     });
@@ -125,7 +122,7 @@ app.post("/pdf", async (req: Request, res: Response) => {
     console.error("PDF generation failed:", err);
     res.status(500).json({ error: "PDF generation failed" });
   } finally {
-    try { await browser?.close(); } catch { /* ignore */ }
+    try { await browser?.close(); } catch {}
   }
 });
 
@@ -140,23 +137,15 @@ app.post("/pdf", async (req: Request, res: Response) => {
     throw err;
   });
 
-  // Only set up Vite in development; serve built assets otherwise
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve on the env PORT (Render uses this)
   const port = parseInt(process.env.PORT || "5000", 10);
   server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    }
+    { port, host: "0.0.0.0", reusePort: true },
+    () => { log(`serving on port ${port}`); }
   );
 })();
