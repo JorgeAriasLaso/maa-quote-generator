@@ -1,76 +1,57 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-import { pdfRouter } from "./pdf";
+// server/index.ts
+import express from "express";
+import puppeteer from "puppeteer";
+import cors from "cors";
 
 const app = express();
-app.use(express.json({ limit: "10mb" })); // allows bigger HTML payloads
-app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+app.use(cors());
+app.use(express.json({ limit: "10mb" }));
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
+app.get("/", (_req, res) => {
+  res.send("Server is running ✅");
 });
 
-(async () => {
-  const server = await registerRoutes(app);
-  app.use("/pdf", pdfRouter); // ← add this line
+app.get("/pdf/test", (_req, res) => {
+  res.setHeader("Content-Type", "application/pdf");
+  res.send("PDF test works!");
+});
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+app.post("/pdf", async (req, res) => {
+  try {
+    const { html, title = "quote", baseUrl = "" } = req.body;
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    if (!html) return res.status(400).json({ error: "Missing html" });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+    const fullHtml = `<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>${title}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>@page { size: A4; margin: 15mm; } body { font-family: sans-serif; }</style>
+      </head>
+      <body>${html}</body>
+    </html>`;
+
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
+    });
+    const page = await browser.newPage();
+    await page.setContent(fullHtml, { waitUntil: "networkidle0" });
+
+    const pdf = await page.pdf({ format: "A4", printBackground: true });
+    await browser.close();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${title}.pdf"`);
+    res.end(pdf);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "PDF generation failed" });
   }
+});
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
-})();
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
