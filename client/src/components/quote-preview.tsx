@@ -1014,55 +1014,37 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
 
   const highlights = getDestinationHighlights(quote.destination);
 
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="h-full flex flex-col">
-        {/* Preview Header */}
-        <div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-slate-900">Quote Preview</h3>
-            <div className="flex space-x-2">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <ZoomIn className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <Printer className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleExportGoogleSheets}
-                disabled={isExportingSheets}
-                className="text-green-600 border-green-600 hover:bg-green-50 disabled:opacity-50"
-              >
-                {isExportingSheets ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                )}
-                {isExportingSheets ? 'Exporting...' : 'Export Sheets'}
-              </Button>
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={handleExportPDF}
-                disabled={isExporting}
-                className="bg-primary text-white hover:bg-blue-700 disabled:opacity-50"
-              >
-                {isExporting ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4 mr-2" />
-                )}
-                {isExporting ? 'Generating...' : 'Export PDF'}
-              </Button>
-            </div>
-          </div>
-        </div>
+ {/* toolbar (NOT included in PDF) */}
+<div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      {/* Logo capped to a sane size */}
+      <img
+        src={logoPath}
+        alt="Company logo"
+        className="h-16 w-auto max-w-[160px] object-contain"
+      />
+      <h3 className="text-lg font-medium text-slate-900">Quote Preview</h3>
+    </div>
 
-        {/* Quote Document */}
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div id="quote-document" className={`max-w-4xl mx-auto bg-white print:max-w-none print:w-full ${quote.tripType === "Additional Services" ? "is-additional-services" : ""}`}>
+    <Button
+      variant="default"
+      size="sm"
+      onClick={() => document.dispatchEvent(new CustomEvent("download-pdf"))}
+      className="bg-primary text-white hover:bg-blue-700"
+    >
+      <Download className="h-4 w-4 mr-2" />
+      Download PDF
+    </Button>
+  </div>
+</div>
+
+
+      {/* ✅ Printable area starts */}
+<div id="quote-root">
+  <div className="flex-1 p-8 bg-white">
+    <div className={`max-w-4xl mx-auto bg-white ${quote.tripType === "Additional Services" ? "is-additional-services" : ""}`}>
+
             {/* Header */}
             <div className="text-center mb-8">
               <img 
