@@ -70,10 +70,7 @@ interface QuotePreviewProps {
 }
 
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
-  const [isExporting, setIsExporting] = useState(false);
-  const [isExportingSheets, setIsExportingSheets] = useState(false);
-  
-
+ 
   // Function to get learning outcomes based on trip type
   const getLearningOutcomes = (tripType: string, customTripType?: string) => {
     // Use custom trip type if trip type is "Other" and custom type is provided
