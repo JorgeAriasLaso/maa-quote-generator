@@ -1772,13 +1772,6 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
 </div>  {/* closes flex-1 */}
 </div>  {/* closes #quote-root */}
 </div>  {/* closes flex-col */}
-</div>  {/* closes outer card */}
+</div> 
 );
 }
-
-
-
-
-
-
-
