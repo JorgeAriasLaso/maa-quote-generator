@@ -1,16 +1,10 @@
 import { type Quote } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
-
-// Helper function to parse duration for calculations
-function parseDuration(duration: string): number {
-  const match = duration.match(/(\d+)/);
-  return match ? parseInt(match[1]) : 7;
-}
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, ZoomIn, Printer, Loader2, FileSpreadsheet } from "lucide-react";
-import { CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
+import { Download, CheckCircle, GraduationCap, Plane, Phone, Mail, Globe } from "lucide-react";
 import logoPath from "@assets/Main Brand Logo_1752655471601.png";
+
 import madrid1 from "@assets/5fa53648e38b2_1752761191307.jpeg";
 import madrid2 from "@assets/vistas-palacio-real_1752761191308.avif";
 import madrid3 from "@assets/895-adobestock110515761_1752761191309.jpeg";
@@ -68,11 +62,7 @@ import katowice1 from "@assets/katowice1.jpg";
 import katowice2 from "@assets/katowice2.jpg";
 import katowice3 from "@assets/katowice3.jpg";
 import katowice4 from "@assets/katowice4.jpg";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { useState, useEffect } from 'react';
-import { applySmartPageBreaks } from '../utils/print-utils.js';
-import { splitPanelAcrossPages } from '../utils/panel-splitter.js';
+
 
 interface QuotePreviewProps {
   quote: Quote | null;
