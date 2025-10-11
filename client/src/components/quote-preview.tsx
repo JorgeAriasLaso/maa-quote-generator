@@ -1013,6 +1013,10 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
   }
 
   const highlights = getDestinationHighlights(quote.destination);
+  return (
+  <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="h-full flex flex-col">
+
 
 {/* toolbar (NOT included in PDF) */}
 <div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
