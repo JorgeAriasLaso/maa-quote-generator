@@ -1047,12 +1047,13 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
 
             {/* Header */}
             <div className="text-center mb-8">
-              <img 
-                src={logoPath} 
-                alt="My Abroad Ally" 
-                className="h-32 w-auto object-contain mx-auto mb-3"
-                style={{ maxWidth: '200px', height: 'auto' }}
+             <img
+              src={logoPath}
+              alt="My Abroad Ally"
+              className="h-16 w-auto object-contain mx-auto mb-3"
+              style={{ maxWidth: '160px', height: 'auto' }}
               />
+
               <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
               <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
               <div className="w-20 h-1 bg-yellow-400 mx-auto"></div>
@@ -1761,10 +1762,13 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
                   <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
                 </div>
               </Card>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                   </div>
+
+        </div> {/* inner max-w */}
+      </div>   {/* flex-1 */}
+    </div>     {/* end #quote-root */}
+
+  </div> {/* end flex-col */}
+</div> {/* end card */}
   );
 }
