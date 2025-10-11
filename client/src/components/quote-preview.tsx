@@ -1018,6 +1018,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
 <div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
   <div className="flex items-center justify-between">
     <div className="flex items-center gap-3">
+      {/* Logo capped to a sane size */}
       <img
         src={logoPath}
         alt="Company logo"
@@ -1038,6 +1039,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
   </div>
 </div>
 
+
 {/* ✅ Printable area starts */}
 <div id="quote-root">
   <div className="flex-1 p-8 bg-white">
@@ -1050,11 +1052,11 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
       {/* Header */}
       <div className="text-center mb-8">
         <img
-          src={logoPath}
-          alt="My Abroad Ally"
-          className="h-16 w-auto object-contain mx-auto mb-3"
-          style={{ maxWidth: "160px", height: "auto" }}
-        />
+  src={logoPath}
+  alt="My Abroad Ally"
+  className="h-16 w-auto object-contain mx-auto mb-3 max-w-[160px]"
+/>
+
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
         <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
         <div className="w-20 h-1 bg-yellow-400 mx-auto"></div>
@@ -1750,7 +1752,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
             </div>
 
             {/* Contact Information - Add space to push to 3rd page */}
-            <div style={{ marginTop: '200px' }}>
+            <div style={{ marginTop: '24px' }}>
               <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
                 <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
                 <p className="mb-6 text-gray-800">
