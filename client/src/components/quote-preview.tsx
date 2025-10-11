@@ -73,6 +73,17 @@ interface QuotePreviewProps {
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingSheets, setIsExportingSheets] = useState(false);
+    // --- Helpers to prevent runtime crashes ---
+  const parseDuration = (d: unknown): number => {
+    if (typeof d === "number" && Number.isFinite(d)) return d;
+    const m = String(d ?? "").match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  };
+
+  // No-ops (keep if you don't have real implementations elsewhere)
+  const splitPanelAcrossPages = (_opts?: any) => {};
+  const applySmartPageBreaks = (_opts?: any) => {};
+
   const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pdf"));
   
   // Function to get learning outcomes based on trip type
@@ -1056,7 +1067,7 @@ const canvas = await html2canvas(quoteElement, {
       <h3 className="text-lg font-medium text-slate-900">Quote Preview</h3>
     </div>
 
-  <Button
+ <Button
   variant="default"
   size="sm"
   onClick={handleExportPDF}
