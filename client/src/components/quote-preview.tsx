@@ -1014,11 +1014,10 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
 
   const highlights = getDestinationHighlights(quote.destination);
 
- {/* toolbar (NOT included in PDF) */}
+{/* toolbar (NOT included in PDF) */}
 <div className="preview-header bg-slate-50 border-b border-slate-200 px-6 py-4">
   <div className="flex items-center justify-between">
     <div className="flex items-center gap-3">
-      {/* Logo capped to a sane size */}
       <img
         src={logoPath}
         alt="Company logo"
@@ -1039,25 +1038,27 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
   </div>
 </div>
 
-
-      {/* ✅ Printable area starts */}
+{/* ✅ Printable area starts */}
 <div id="quote-root">
   <div className="flex-1 p-8 bg-white">
-    <div className={`max-w-4xl mx-auto bg-white ${quote.tripType === "Additional Services" ? "is-additional-services" : ""}`}>
+    <div
+      className={`max-w-4xl mx-auto bg-white ${
+        quote.tripType === "Additional Services" ? "is-additional-services" : ""
+      }`}
+    >
 
-            {/* Header */}
-            <div className="text-center mb-8">
-             <img
-              src={logoPath}
-              alt="My Abroad Ally"
-              className="h-16 w-auto object-contain mx-auto mb-3"
-              style={{ maxWidth: '160px', height: 'auto' }}
-              />
-
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
-              <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
-              <div className="w-20 h-1 bg-yellow-400 mx-auto"></div>
-            </div>
+      {/* Header */}
+      <div className="text-center mb-8">
+        <img
+          src={logoPath}
+          alt="My Abroad Ally"
+          className="h-16 w-auto object-contain mx-auto mb-3"
+          style={{ maxWidth: "160px", height: "auto" }}
+        />
+        <h1 className="text-2xl font-bold text-slate-900 mb-1">Educational Travel Proposal</h1>
+        <p className="text-sm text-slate-600 mb-2">by My Abroad Ally</p>
+        <div className="w-20 h-1 bg-yellow-400 mx-auto"></div>
+      </div>
 
             {/* Trip Summary */}
             <div className="mb-8">
@@ -1768,7 +1769,8 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
       </div>   {/* flex-1 */}
     </div>     {/* end #quote-root */}
 
-  </div> {/* end flex-col */}
-</div> {/* end card */}
-  );
-}
+     </div> {/* end flex-col */}
+  </div>   {/* end card */}
+);         // <— close return
+}          // <— close component
+
