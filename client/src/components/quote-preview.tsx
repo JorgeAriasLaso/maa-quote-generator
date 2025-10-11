@@ -1764,7 +1764,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
                   <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
                   <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
                 </div>
-                           </Card>
+              </Card>
             </div>
 
           </div>
@@ -1774,5 +1774,6 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
   </div>
 );
 }
+
 
 
