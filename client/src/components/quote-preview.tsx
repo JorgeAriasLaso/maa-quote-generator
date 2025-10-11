@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { type Quote } from "@shared/schema";
 import { calculateQuoteCost, formatCurrency, type AdhocService } from "@shared/costing";
 import { Card } from "@/components/ui/card";
@@ -70,8 +71,9 @@ interface QuotePreviewProps {
 }
 
 export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: QuotePreviewProps) {
-const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pdf"));
-
+  const [isExporting, setIsExporting] = useState(false);
+  const [isExportingSheets, setIsExportingSheets] = useState(false);
+  const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pdf"));
   
   // Function to get learning outcomes based on trip type
   const getLearningOutcomes = (tripType: string, customTripType?: string) => {
