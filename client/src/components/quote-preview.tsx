@@ -179,42 +179,48 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Apply smart page breaks before capturing
       applySmartPageBreaks({ pageHeightMm: 297, topBottomMarginMm: 24 });
       
-      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
-      const canvas = await html2canvas(quoteElement, {
-        scale: 2.0, // Higher scale for crisp text rendering
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        imageTimeout: 10000,
-        width: 794,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-root');
-          if (clonedElement) {
-            // Set consistent styling for 2-page layout
-            clonedElement.style.maxWidth = '794px';
-            clonedElement.style.width = '794px';
-            clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '20px'; // Reduced padding
-            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
-            
-            // Fix image sizing - medium logo as requested
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0) { // Logo - medium size
-                img.style.maxWidth = '160px'; // Medium size between small and large
-                img.style.height = 'auto';
-                img.style.maxHeight = '80px'; // Medium height
-                img.style.objectFit = 'contain';
-              } else {
-                img.style.width = '140px'; // Slightly larger for better quality
-                img.style.height = '105px'; 
-                img.style.objectFit = 'cover';
-              }
-            });
-          }
-        }
-      });
+     // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
+const canvas = await html2canvas(quoteElement, {
+  scale: 2.0, // Higher scale for crisp text rendering
+  useCORS: true,
+  allowTaint: false, // ❗ changed from true → false
+  backgroundColor: '#ffffff',
+  logging: false,
+  imageTimeout: 10000,
+  width: 794,
+  onclone: (clonedDoc) => {
+    const clonedElement = clonedDoc.getElementById('quote-root');
+    if (!clonedElement) return;
+
+    // ✅ Ensure external images can be fetched safely
+    const images = clonedElement.querySelectorAll('img');
+    images.forEach((img, index) => {
+      const el = img as HTMLImageElement;
+      if (/^https?:\/\//i.test(el.src)) {
+        el.crossOrigin = 'anonymous'; // key fix for CORS
+      }
+
+      if (index === 0) { // Logo - medium size
+        el.style.maxWidth = '160px';
+        el.style.height = 'auto';
+        el.style.maxHeight = '80px';
+        el.style.objectFit = 'contain';
+      } else {
+        el.style.width = '140px';
+        el.style.height = '105px';
+        el.style.objectFit = 'cover';
+      }
+    });
+
+    // Keep consistent layout
+    clonedElement.style.maxWidth = '794px';
+    clonedElement.style.width = '794px';
+    clonedElement.style.backgroundColor = '#ffffff';
+    clonedElement.style.padding = '20px';
+    clonedElement.style.fontSize = '12px';
+  },
+});
+
 
       // Restore original styles
       Object.assign(quoteElement.style, originalStyles);
@@ -749,41 +755,47 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       await new Promise(resolve => setTimeout(resolve, 300));
       
       // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
-      const canvas = await html2canvas(quoteElement, {
-        scale: 2.0, // Higher scale for crisp text rendering
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        imageTimeout: 10000,
-        width: 794,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-root');
-          if (clonedElement) {
-            // Set consistent styling for 2-page layout
-            clonedElement.style.maxWidth = '794px';
-            clonedElement.style.width = '794px';
-            clonedElement.style.backgroundColor = '#ffffff';
-            clonedElement.style.padding = '20px'; // Reduced padding
-            clonedElement.style.fontSize = '12px'; // Slightly larger for readability
-            
-            // Fix image sizing - medium logo as requested
-            const images = clonedElement.querySelectorAll('img');
-            images.forEach((img, index) => {
-              if (index === 0) { // Logo - medium size
-                img.style.maxWidth = '160px'; // Medium size between small and large
-                img.style.height = 'auto';
-                img.style.maxHeight = '80px'; // Medium height
-                img.style.objectFit = 'contain';
-              } else {
-                img.style.width = '140px'; // Slightly larger for better quality
-                img.style.height = '105px'; 
-                img.style.objectFit = 'cover';
-              }
-            });
-          }
-        }
-      });
+    const canvas = await html2canvas(quoteElement, {
+  scale: 2.0, // Higher scale for crisp text rendering
+  useCORS: true,
+  allowTaint: false, // ✅ changed from true to false
+  backgroundColor: '#ffffff',
+  logging: false,
+  imageTimeout: 10000,
+  width: 794,
+  onclone: (clonedDoc) => {
+    const clonedElement = clonedDoc.getElementById('quote-root');
+    if (!clonedElement) return;
+
+    // ✅ Ensure external images can be fetched safely
+    const images = clonedElement.querySelectorAll('img');
+    images.forEach((img, index) => {
+      const el = img as HTMLImageElement;
+      if (/^https?:\/\//i.test(el.src)) {
+        el.crossOrigin = 'anonymous'; // key fix for CORS
+      }
+
+      if (index === 0) { // Logo - medium size
+        el.style.maxWidth = '160px';
+        el.style.height = 'auto';
+        el.style.maxHeight = '80px';
+        el.style.objectFit = 'contain';
+      } else {
+        el.style.width = '140px';
+        el.style.height = '105px';
+        el.style.objectFit = 'cover';
+      }
+    });
+
+    // Keep consistent layout
+    clonedElement.style.maxWidth = '794px';
+    clonedElement.style.width = '794px';
+    clonedElement.style.backgroundColor = '#ffffff';
+    clonedElement.style.padding = '20px';
+    clonedElement.style.fontSize = '12px';
+  },
+});
+
 
       // Restore original styles
       Object.assign(quoteElement.style, originalStyles);
@@ -1034,14 +1046,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
     </div>
 
     <Button
-      variant="default"
-      size="sm"
-      onClick={() => document.dispatchEvent(new CustomEvent("download-pdf"))}
-      className="bg-primary text-white hover:bg-blue-700"
-    >
-      <Download className="h-4 w-4 mr-2" />
-      Download PDF
-    </Button>
+  variant="default"
+  size="sm"
+  onClick={handleExportPDF}
+  disabled={isExporting}
+  className="bg-primary text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
+>
+  <Download className="h-4 w-4 mr-2" />
+  {isExporting ? "Preparing…" : "Download PDF"}
+</Button>
   </div>
 </div>
 
