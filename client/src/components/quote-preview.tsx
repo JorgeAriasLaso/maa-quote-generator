@@ -181,9 +181,9 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
 const canvas = await html2canvas(quoteElement, {
-  scale: 2.0, // Higher scale for crisp text rendering
+  scale: 2.0,
   useCORS: true,
-  allowTaint: false, // ❗ changed from true → false
+  allowTaint: false,
   backgroundColor: '#ffffff',
   logging: false,
   imageTimeout: 10000,
@@ -192,23 +192,28 @@ const canvas = await html2canvas(quoteElement, {
     const clonedElement = clonedDoc.getElementById('quote-root');
     if (!clonedElement) return;
 
-    // ✅ Ensure external images can be fetched safely
+    // 🔒 SAFE MODE: hide external images so CORS can’t taint the canvas
     const images = clonedElement.querySelectorAll('img');
     images.forEach((img, index) => {
       const el = img as HTMLImageElement;
-      if (/^https?:\/\//i.test(el.src)) {
-        el.crossOrigin = 'anonymous'; // key fix for CORS
+      const src = el.getAttribute('src') || '';
+      const isExternal = /^https?:\/\//i.test(src) && !src.includes(location.host);
+      if (isExternal) {
+        el.style.display = 'none'; // hide external images for PDF export
       }
 
-      if (index === 0) { // Logo - medium size
-        el.style.maxWidth = '160px';
-        el.style.height = 'auto';
-        el.style.maxHeight = '80px';
-        el.style.objectFit = 'contain';
-      } else {
-        el.style.width = '140px';
-        el.style.height = '105px';
-        el.style.objectFit = 'cover';
+      // Keep your sizing rules for visible images
+      if (el.style.display !== 'none') {
+        if (index === 0) {
+          el.style.maxWidth = '160px';
+          el.style.height = 'auto';
+          el.style.maxHeight = '80px';
+          el.style.objectFit = 'contain';
+        } else {
+          el.style.width = '140px';
+          el.style.height = '105px';
+          el.style.objectFit = 'cover';
+        }
       }
     });
 
@@ -755,10 +760,10 @@ const canvas = await html2canvas(quoteElement, {
       await new Promise(resolve => setTimeout(resolve, 300));
       
       // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
-    const canvas = await html2canvas(quoteElement, {
-  scale: 2.0, // Higher scale for crisp text rendering
+  const canvas = await html2canvas(quoteElement, {
+  scale: 2.0,
   useCORS: true,
-  allowTaint: false, // ✅ changed from true to false
+  allowTaint: false,
   backgroundColor: '#ffffff',
   logging: false,
   imageTimeout: 10000,
@@ -767,23 +772,28 @@ const canvas = await html2canvas(quoteElement, {
     const clonedElement = clonedDoc.getElementById('quote-root');
     if (!clonedElement) return;
 
-    // ✅ Ensure external images can be fetched safely
+    // 🔒 SAFE MODE: hide external images so CORS can’t taint the canvas
     const images = clonedElement.querySelectorAll('img');
     images.forEach((img, index) => {
       const el = img as HTMLImageElement;
-      if (/^https?:\/\//i.test(el.src)) {
-        el.crossOrigin = 'anonymous'; // key fix for CORS
+      const src = el.getAttribute('src') || '';
+      const isExternal = /^https?:\/\//i.test(src) && !src.includes(location.host);
+      if (isExternal) {
+        el.style.display = 'none'; // hide external images for PDF export
       }
 
-      if (index === 0) { // Logo - medium size
-        el.style.maxWidth = '160px';
-        el.style.height = 'auto';
-        el.style.maxHeight = '80px';
-        el.style.objectFit = 'contain';
-      } else {
-        el.style.width = '140px';
-        el.style.height = '105px';
-        el.style.objectFit = 'cover';
+      // Keep your sizing rules for visible images
+      if (el.style.display !== 'none') {
+        if (index === 0) {
+          el.style.maxWidth = '160px';
+          el.style.height = 'auto';
+          el.style.maxHeight = '80px';
+          el.style.objectFit = 'contain';
+        } else {
+          el.style.width = '140px';
+          el.style.height = '105px';
+          el.style.objectFit = 'cover';
+        }
       }
     });
 
@@ -795,6 +805,7 @@ const canvas = await html2canvas(quoteElement, {
     clonedElement.style.fontSize = '12px';
   },
 });
+
 
 
       // Restore original styles
@@ -1045,7 +1056,7 @@ const canvas = await html2canvas(quoteElement, {
       <h3 className="text-lg font-medium text-slate-900">Quote Preview</h3>
     </div>
 
-    <Button
+  <Button
   variant="default"
   size="sm"
   onClick={handleExportPDF}
