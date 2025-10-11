@@ -50,6 +50,7 @@ app.get("/pdf/test", (_req, res) => {
   res.type("text/plain").send("PDF test works!");
 });
 
+/** ✅ FINAL, SINGLE /pdf ROUTE (auto-detect CSS + crisp print) */
 app.post("/pdf", async (req: Request, res: Response) => {
   const { html, title = "quote", baseUrl = "" } = (req.body ?? {}) as {
     html?: string;
@@ -58,40 +59,96 @@ app.post("/pdf", async (req: Request, res: Response) => {
   };
 
   if (!html) return res.status(400).json({ error: "Missing 'html' in request body" });
+  if (!baseUrl) return res.status(400).json({ error: "Missing 'baseUrl' in request body" });
 
+  const withBase = (p: string) =>
+    p.startsWith("http") ? p : `${baseUrl.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
+
+  // 1) Discover current hashed CSS files from your homepage
+  let cssHrefs: string[] = [];
+  try {
+    const resp = await fetch(withBase("/"), { method: "GET" });
+    const homeHtml = await resp.text();
+    const linkRegex = /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
+    let m: RegExpExecArray | null;
+    while ((m = linkRegex.exec(homeHtml))) {
+      const href = m[1];
+      if (/^\/?assets\/.+\.css(\?.*)?$/i.test(href)) cssHrefs.push(withBase(href));
+    }
+  } catch (e) {
+    console.warn("Could not fetch homepage to discover CSS:", e);
+  }
+
+  if (cssHrefs.length === 0) {
+    console.warn("⚠️ No CSS stylesheets discovered; PDF may be unstyled.");
+  }
+  const cssLinks = cssHrefs.map((href) => `<link rel="stylesheet" href="${href}">`).join("\n");
+
+  // 2) Build full HTML (use real CSS, inject your HTML AS-IS; no extra wrapper)
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>${title}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <base href="${baseUrl.replace(/\/?$/, "/")}" />
+  ${cssLinks}
   <style>
-    @page { size: A4; margin: 16mm; }
-    html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    /* Page & print behavior */
+    @page { size: A4; margin: 10mm; }
+    html, body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      background: white;
+      margin: 0; padding: 0;
+    }
+    /* Keep everything inside printable area (A4 210mm - 2x10mm) */
+    body > * {
+      max-width: 190mm;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    /* Avoid cutoffs and huge gaps */
+    * { box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; }
+    h1,h2,h3,h4,h5,h6,p,ul,ol,li,div,section {
+      margin-top: 0.4rem !important;
+      margin-bottom: 0.4rem !important;
+      line-height: 1.3 !important;
+    }
+    img, video, canvas {
+      max-width: 100% !important; height: auto !important;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    /* Opt-in class to keep blocks together */
+    .avoid-break { page-break-inside: avoid; break-inside: avoid; }
   </style>
-  ${baseUrl ? `<base href="${baseUrl.replace(/\/?$/, "/")}" />` : ""}
 </head>
 <body>
-  <div id="quote-root">${html}</div>
+  ${html}
+  <script>
+    (function() {
+      const imgs = Array.from(document.images || []);
+      imgs.forEach(img => { try { img.loading = 'eager'; } catch(_){} });
+      window.__imagesReady = Promise.all(imgs.map(img => {
+        if (img.complete && img.naturalWidth) return Promise.resolve();
+        return new Promise(r => {
+          img.addEventListener('load', r, { once: true });
+          img.addEventListener('error', r, { once: true });
+        });
+      }));
+    })();
+  </script>
 </body>
 </html>`;
 
-  let browser: puppeteer.Browser | null = null;
-
+  // 3) Print with puppeteer-core + @sparticuz/chromium
+  let browser: import("puppeteer-core").Browser | null = null;
   try {
-    // Configure chromium for serverless (Render)
     const executablePath = await chromium.executablePath();
-
     browser = await puppeteer.launch({
       headless: chromium.headless,
       executablePath,
-      args: [
-        ...chromium.args,
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-      ],
+      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: { width: 1280, height: 800, deviceScaleFactor: 1 },
     });
 
@@ -103,8 +160,8 @@ app.post("/pdf", async (req: Request, res: Response) => {
 
     try {
       await page.evaluate(async () => {
-        // @ts-ignore
-        if (document?.fonts?.ready) await (document as any).fonts.ready;
+        if ((document as any)?.fonts?.ready) await (document as any).fonts.ready;
+        if ((window as any).__imagesReady) await (window as any).__imagesReady;
       });
     } catch {}
 
@@ -112,7 +169,8 @@ app.post("/pdf", async (req: Request, res: Response) => {
       format: "A4",
       printBackground: true,
       preferCSSPageSize: true,
-      margin: { top: "16mm", right: "16mm", bottom: "16mm", left: "16mm" },
+      margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
+      scale: 0.95, // safety margin to avoid right-edge cut
     });
 
     res.setHeader("Content-Type", "application/pdf");
