@@ -1764,11 +1764,8 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
     </div>
   </Card>
 </div>
-
 </div>
 </div>
-</div>
-
 </div>
 </div>
 );
