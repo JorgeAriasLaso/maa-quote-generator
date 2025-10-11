@@ -1752,28 +1752,29 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
             </div>
 
             {/* Contact Information - Add space to push to 3rd page */}
-            <div style={{ marginTop: '24px' }}>
-              <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
-                <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
-                <p className="mb-6 text-gray-800">
-                  Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
-                </p>
-                
-                <div className="space-y-2 text-sm font-medium">
-                  <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
-                  <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
-                  <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
-                </div>
-              </Card>
-            </div>
-
-          </div>
-        </div>
-      </div>
+           <div style={{ marginTop: '24px' }}>
+  <Card className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-black text-center">
+    <h3 className="text-lg font-semibold mb-4">Ready to Transform Your Students' Future?</h3>
+    <p className="mb-6 text-gray-800">
+      Contact My Abroad Ally to discuss this opportunity and customize the perfect educational experience for {quote.fiscalName}.
+    </p>
+    <div className="space-y-2 text-sm font-medium">
+      <p><Phone className="inline mr-2 h-4 w-4" />Contact us for personalized consultation</p>
+      <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
+      <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
     </div>
-  </div>
+  </Card>
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
 );
 }
+
 
 
 
