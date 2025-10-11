@@ -1764,15 +1764,15 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
                   <p><Mail className="inline mr-2 h-4 w-4" />maa@myabroadally.com</p>
                   <p><Globe className="inline mr-2 h-4 w-4" />www.myabroadally.com</p>
                 </div>
-              </Card>
-                   </div>
+                           </Card>
+            </div>
 
-        </div> {/* inner max-w */}
-      </div>   {/* flex-1 */}
-    </div>     {/* end #quote-root */}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+}
 
-     </div> {/* end flex-col */}
-  </div>   {/* end card */}
-);         // <— close return
-}          // <— close component
 
