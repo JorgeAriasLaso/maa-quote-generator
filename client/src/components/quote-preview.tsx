@@ -123,7 +123,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
     setIsExporting(true);
     try {
       // Find the quote document element
-      const quoteElement = document.getElementById('quote-document');
+      const quoteElement = document.getElementById('quote-root');
       if (!quoteElement) {
         console.error('Quote document element not found');
         return;
@@ -187,7 +187,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
         imageTimeout: 10000,
         width: 794,
         onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
+          const clonedElement = clonedDoc.getElementById('quote-root');
           if (clonedElement) {
             // Set consistent styling for 2-page layout
             clonedElement.style.maxWidth = '794px';
@@ -706,7 +706,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
     setIsExporting(true);
     try {
       // Find the quote document element
-      const quoteElement = document.getElementById('quote-document');
+      const quoteElement = document.getElementById('quote-root');
       if (!quoteElement) {
         console.error('Quote document element not found');
         return;
@@ -756,7 +756,7 @@ const handleDownload = () => document.dispatchEvent(new CustomEvent("download-pd
         imageTimeout: 10000,
         width: 794,
         onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('quote-document');
+          const clonedElement = clonedDoc.getElementById('quote-root');
           if (clonedElement) {
             // Set consistent styling for 2-page layout
             clonedElement.style.maxWidth = '794px';
