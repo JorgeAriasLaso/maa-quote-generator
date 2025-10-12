@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { QuotePreview } from "@/components/quote-preview";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useCallback } from "react";
 import type { Quote } from "@shared/schema";
 
 export default function QuoteDetail() {
@@ -19,45 +18,6 @@ export default function QuoteDetail() {
     },
     enabled: !!id,
   });
-
-  // ✅ Render backend origin so the server can load its own CSS/assets
-  const API = "https://maa-quote-generator.onrender.com";
-
-  const downloadQuotePdf = useCallback(async () => {
-    const root = document.getElementById("quote-root");
-    if (!root) {
-      alert("Sorry, can't find the quote on the page.");
-      return;
-    }
-
-    const payload = {
-      html: root.outerHTML, // exactly what's visible
-      title: `quote-${quote?.quoteNumber || id}`,
-      baseUrl: API,         // 👈 IMPORTANT: backend origin, not window.location
-    };
-
-    try {
-      const res = await fetch(`${API}/pdf`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/pdf" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`PDF failed (${res.status})`);
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${payload.title}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error(e);
-      alert("Sorry, the PDF could not be generated.");
-    }
-  }, [API, id, quote?.quoteNumber]);
 
   if (isLoading) {
     return (
@@ -98,12 +58,7 @@ export default function QuoteDetail() {
             Quote Details - {quote.quoteNumber}
           </h1>
         </div>
-
-        {/* Use your existing UI; just point it to the new handler */}
-        <Button onClick={downloadQuotePdf}>
-          Download PDF
-        </Button>
-      </div>
+        </div>
 
       {/* Everything that should appear in the PDF */}
       <div id="quote-root">
