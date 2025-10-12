@@ -4,6 +4,9 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+process.env.PUPPETEER_CACHE_DIR ||= '/tmp/puppeteer';
+process.env.PUPPETEER_DOWNLOAD_PATH ||= '/tmp/puppeteer';
+
 
 const app = express();
 
