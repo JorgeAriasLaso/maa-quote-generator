@@ -1662,7 +1662,7 @@ URL.revokeObjectURL(url);
 
             {/* Additional Comments */}
             {quote.additionalComments && quote.additionalComments.trim() && (
-              <Card className="p-6">
+              <Card className="p-6 pdf-break-before avoid-break">
                 <h3 className="text-lg font-semibold mb-4 text-slate-900 border-b border-slate-200 pb-2">
                   Additional Information
                 </h3>
