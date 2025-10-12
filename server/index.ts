@@ -4,9 +4,9 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-process.env.PUPPETEER_CACHE_DIR ||= '/tmp/puppeteer';
-process.env.PUPPETEER_DOWNLOAD_PATH ||= '/tmp/puppeteer';
 
+process.env.PUPPETEER_CACHE_DIR ||= "/tmp/puppeteer";
+process.env.PUPPETEER_DOWNLOAD_PATH ||= "/tmp/puppeteer";
 
 const app = express();
 
@@ -59,20 +59,26 @@ app.post("/pdf", async (req: Request, res: Response) => {
     html?: string;
     title?: string;
     baseUrl?: string;
-    const inferredBase = baseUrl || req.get("origin") || `${req.protocol}://${req.get("host")}`;
   };
 
   if (!html) return res.status(400).json({ error: "Missing 'html' in request body" });
- 
+
+  // Fallback origin if client didn't send baseUrl
+  const inferredBase =
+    baseUrl || req.get("origin") || `${req.protocol}://${req.get("host")}`;
+
   const withBase = (p: string) =>
-  p.startsWith("http") ? p : `${inferredBase.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
+    p.startsWith("http")
+      ? p
+      : `${inferredBase.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
 
   // 1) Discover current hashed CSS files from your homepage
   let cssHrefs: string[] = [];
   try {
     const resp = await fetch(withBase("/"), { method: "GET" });
     const homeHtml = await resp.text();
-    const linkRegex = /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
+    const linkRegex =
+      /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
     let m: RegExpExecArray | null;
     while ((m = linkRegex.exec(homeHtml))) {
       const href = m[1];
@@ -151,7 +157,7 @@ app.post("/pdf", async (req: Request, res: Response) => {
     browser = await puppeteer.launch({
       headless: chromium.headless,
       executablePath,
-      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
       defaultViewport: { width: 1280, height: 800, deviceScaleFactor: 1 },
     });
 
@@ -207,6 +213,8 @@ app.post("/pdf", async (req: Request, res: Response) => {
   const port = parseInt(process.env.PORT || "5000", 10);
   server.listen(
     { port, host: "0.0.0.0", reusePort: true },
-    () => { log(`serving on port ${port}`); }
+    () => {
+      log(`serving on port ${port}`);
+    }
   );
 })();
