@@ -59,13 +59,13 @@ app.post("/pdf", async (req: Request, res: Response) => {
     html?: string;
     title?: string;
     baseUrl?: string;
+    const inferredBase = baseUrl || req.get("origin") || `${req.protocol}://${req.get("host")}`;
   };
 
   if (!html) return res.status(400).json({ error: "Missing 'html' in request body" });
-  if (!baseUrl) return res.status(400).json({ error: "Missing 'baseUrl' in request body" });
-
+ 
   const withBase = (p: string) =>
-    p.startsWith("http") ? p : `${baseUrl.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
+  p.startsWith("http") ? p : `${inferredBase.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
 
   // 1) Discover current hashed CSS files from your homepage
   let cssHrefs: string[] = [];
@@ -94,7 +94,7 @@ app.post("/pdf", async (req: Request, res: Response) => {
   <meta charset="utf-8" />
   <title>${title}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <base href="${baseUrl.replace(/\/?$/, "/")}" />
+  <base href="${inferredBase.replace(/\/?$/, "/")}" />
   ${cssLinks}
   <style>
     /* Page & print behavior */
