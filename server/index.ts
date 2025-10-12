@@ -129,6 +129,16 @@ try {
     }
     /* Opt-in class to keep blocks together */
     .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+/* Opt-in class to keep blocks together */
+.avoid-break { page-break-inside: avoid; break-inside: avoid; }
+
+/* Force a new page before the section */
+.pdf-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+    
   </style>
 </head>
 <body>
