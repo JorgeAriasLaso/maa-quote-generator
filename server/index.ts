@@ -72,25 +72,24 @@ app.post("/pdf", async (req: Request, res: Response) => {
       ? p
       : `${inferredBase.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
 
-  // 1) Discover current hashed CSS files from your homepage
-  let cssHrefs: string[] = [];
-  try {
-    const resp = await fetch(withBase("/"), { method: "GET" });
-    const homeHtml = await resp.text();
-    const linkRegex =
-      /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
-    let m: RegExpExecArray | null;
-    while ((m = linkRegex.exec(homeHtml))) {
-      const href = m[1];
-      if (/^\/?assets\/.+\.css(\?.*)?$/i.test(href)) cssHrefs.push(withBase(href));
-    }
-  } catch (e) {
-    console.warn("Could not fetch homepage to discover CSS:", e);
+ // 1) Discover current hashed CSS files from your homepage (with 5s timeout)
+let cssHrefs: string[] = [];
+try {
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), 5000);
+  const resp = await fetch(withBase("/"), { method: "GET", signal: ac.signal });
+  clearTimeout(t);
+  const homeHtml = await resp.text();
+  const linkRegex = /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = linkRegex.exec(homeHtml))) {
+    const href = m[1];
+    if (/^\/?assets\/.+\.css(\?.*)?$/i.test(href)) cssHrefs.push(withBase(href));
   }
+} catch (e) {
+  console.warn("Could not fetch homepage to discover CSS (skipping):", e);
+}
 
-  if (cssHrefs.length === 0) {
-    console.warn("⚠️ No CSS stylesheets discovered; PDF may be unstyled.");
-  }
   const cssLinks = cssHrefs.map((href) => `<link rel="stylesheet" href="${href}">`).join("\n");
 
   // 2) Build full HTML (use real CSS, inject your HTML AS-IS; no extra wrapper)
@@ -165,7 +164,7 @@ app.post("/pdf", async (req: Request, res: Response) => {
     page.setDefaultNavigationTimeout(60_000);
     page.setDefaultTimeout(60_000);
 
-    await page.setContent(fullHtml, { waitUntil: "networkidle0" });
+    await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
 
     try {
       await page.evaluate(async () => {
