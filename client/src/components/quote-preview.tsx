@@ -227,7 +227,7 @@ document.body.appendChild(a);
 a.click();
 a.remove();
 URL.revokeObjectURL(url);
-/      
+  
     } catch (error) {
       console.error('PDF generation error:', error);
     } finally {
