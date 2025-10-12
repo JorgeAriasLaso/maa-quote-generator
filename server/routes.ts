@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import puppeteer from "puppeteer-core";
-import chromium from "chrome-aws-lambda";
+import chromium from '@sparticuz/chromium';
 import { insertQuoteSchema, insertClientSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
