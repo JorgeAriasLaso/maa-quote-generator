@@ -190,7 +190,7 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       // Apply smart page breaks before capturing
       applySmartPageBreaks({ pageHeightMm: 297, topBottomMarginMm: 24 });
       
-// CLONE + RESTORE UI + SEND TO SERVER (no html2canvas/jsPDF)
+// CLONE + RESTORE UI + SEND TO SERVER (no html2/jsPDF)
 const clone = quoteElement.cloneNode(true) as HTMLElement;
 
 // Immediately restore the live UI (we've got our clone)
@@ -702,110 +702,76 @@ URL.revokeObjectURL(url);
       // Allow time for DOM to update
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Enhanced approach: Higher scale for crisp text while maintaining reasonable file size
-  const canvas = await html2canvas(quoteElement, {
-  scale: 2.0,
-  useCORS: true,
-  allowTaint: false,
-  backgroundColor: '#ffffff',
-  logging: false,
-  imageTimeout: 10000,
-  width: 794,
-  onclone: (clonedDoc) => {
-    const clonedElement = clonedDoc.getElementById('quote-root');
-    if (!clonedElement) return;
+    // CLONE + RESTORE UI + SEND TO SERVER (no html2canvas/jsPDF)
+const clone = quoteElement.cloneNode(true) as HTMLElement;
 
-    // 🔒 SAFE MODE: hide external images so CORS can’t taint the canvas
-    const images = clonedElement.querySelectorAll('img');
-    images.forEach((img, index) => {
-      const el = img as HTMLImageElement;
-      const src = el.getAttribute('src') || '';
-      const isExternal = /^https?:\/\//i.test(src) && !src.includes(location.host);
-      if (isExternal) {
-        el.style.display = 'none'; // hide external images for PDF export
-      }
-
-      // Keep your sizing rules for visible images
-      if (el.style.display !== 'none') {
-        if (index === 0) {
-          el.style.maxWidth = '160px';
-          el.style.height = 'auto';
-          el.style.maxHeight = '80px';
-          el.style.objectFit = 'contain';
-        } else {
-          el.style.width = '140px';
-          el.style.height = '105px';
-          el.style.objectFit = 'cover';
-        }
-      }
-    });
-
-    // Keep consistent layout
-    clonedElement.style.maxWidth = '794px';
-    clonedElement.style.width = '794px';
-    clonedElement.style.backgroundColor = '#ffffff';
-    clonedElement.style.padding = '20px';
-    clonedElement.style.fontSize = '12px';
-  },
+// Immediately restore the live UI (we've got our clone)
+Object.assign(quoteElement.style, originalStyles);
+if (previewHeader) (previewHeader as HTMLElement).style.display = '';
+internalAnalysisSections.forEach((section) => {
+  (section as HTMLElement).style.display = '';
 });
 
+// Apply the same fixed sizing to the CLONE (keeps your layout intent)
+clone.style.maxWidth = '794px';
+clone.style.width = '794px';
+clone.style.margin = '0';
+clone.style.padding = '20px';
+clone.style.backgroundColor = '#ffffff';
+clone.style.fontSize = '12px';
+clone.style.lineHeight = '1.4';
 
+// Keep your “hide not-for-PDF” logic on the CLONE
+clone.querySelectorAll('.internal-analysis-only').forEach((el) => {
+  (el as HTMLElement).style.display = 'none';
+});
+const headerInClone = clone.querySelector('.preview-header');
+if (headerInClone) (headerInClone as HTMLElement).style.display = 'none';
 
-      // Restore original styles
-      Object.assign(quoteElement.style, originalStyles);
-      if (previewHeader) {
-        (previewHeader as HTMLElement).style.display = '';
-      }
-      internalAnalysisSections.forEach((section) => {
-        (section as HTMLElement).style.display = '';
-      });
+// Optional: keep image sizing rules (logo first, others cropped)
+const imgs = Array.from(clone.querySelectorAll('img'));
+imgs.forEach((img, index) => {
+  const el = img as HTMLImageElement;
+  if (index === 0) {
+    el.style.maxWidth = '160px';
+    el.style.height = 'auto';
+    el.style.maxHeight = '80px';
+    el.style.objectFit = 'contain';
+  } else {
+    el.style.width = '140px';
+    el.style.height = '105px';
+    el.style.objectFit = 'cover';
+  }
+});
 
-      // Create PDF as single continuous document (no page splitting)
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/jpeg', 0.92); // Higher quality for crisp text
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      // Scale to fit A4 width with margins
-      const pdfWidth = 210 - 30; // A4 width minus margins
-      const pdfHeight = (imgHeight * pdfWidth) / imgWidth;
-      
-      // Add pages as needed for the full content - optimized for exactly 2 pages
-      let currentY = 0;
-      const pageHeight = 297 - 20; // Smaller margins to fit more content
-      let pageCount = 1;
-      
-      while (currentY < pdfHeight) {
-        if (pageCount > 1) {
-          pdf.addPage();
-        }
-        
-        const remainingHeight = pdfHeight - currentY;
-        const heightToAdd = Math.min(pageHeight, remainingHeight);
-        
-        // Calculate source region
-        const sourceY = (currentY * imgHeight) / pdfHeight;
-        const sourceHeight = (heightToAdd * imgHeight) / pdfHeight;
-        
-        // Create canvas for this page
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = imgWidth;
-        pageCanvas.height = sourceHeight;
-        const pageCtx = pageCanvas.getContext('2d');
-        
-        if (pageCtx) {
-          pageCtx.drawImage(canvas, 0, sourceY, imgWidth, sourceHeight, 0, 0, imgWidth, sourceHeight);
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.92); // Higher quality for better text clarity
-          pdf.addImage(pageData, 'JPEG', 15, 15, pdfWidth, heightToAdd);
-        }
-        
-        currentY += heightToAdd;
-        pageCount++;
-      }
+// Build the SAME filename you had
+const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
 
-      // Generate filename and save
-      const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
-      pdf.save(filename);
+// Send cleaned HTML to backend (Puppeteer) and download
+const API = 'https://maa-quote-generator.onrender.com';
+const payload = {
+  html: clone.outerHTML,
+  title: filename.replace(/\.pdf$/i, ''),
+  baseUrl: API,
+};
+
+const res = await fetch(`${API}/pdf`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf' },
+  body: JSON.stringify(payload),
+});
+if (!res.ok) throw new Error(`PDF failed (${res.status})`);
+
+const blob = await res.blob();
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+a.remove();
+URL.revokeObjectURL(url);
+
       
     } catch (error) {
       console.error('Error generating PDF:', error);
