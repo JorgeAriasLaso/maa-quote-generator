@@ -63,6 +63,7 @@ import katowice1 from "@assets/katowice1.jpg";
 import katowice2 from "@assets/katowice2.jpg";
 import katowice3 from "@assets/katowice3.jpg";
 import katowice4 from "@assets/katowice4.jpg";
+const API_BASE = import.meta.env.VITE_API_BASE || "";
 
 
 interface QuotePreviewProps {
@@ -204,12 +205,20 @@ internalAnalysisSections.forEach((section) => {
 const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
 
 // Send cleaned HTML to backend for Puppeteer PDF
-const API = 'https://maa-quote-generator.onrender.com';
+const baseUrl = 'https://maa-quote-generator.onrender.com';
+
 const payload = {
-  html: clone.outerHTML,              // cloned & already cleaned/styled
-  title: filename.replace(/\.pdf$/i, ''), // server sets disposition; keep name sans .pdf
-  baseUrl: API,                       // lets server resolve /assets/* CSS/images
+  html: clone.outerHTML,                 // cloned & already cleaned/styled
+  title: filename.replace(/\.pdf$/i, ''),// server sets disposition; keep name sans .pdf
+  baseUrl,                               // lets server resolve /assets/* CSS/images
 };
+
+const res = await fetch(`${baseUrl}/pdf`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf' },
+  body: JSON.stringify(payload),
+});
+
 
 const res = await fetch(`${API}/pdf`, {
   method: 'POST',
@@ -747,19 +756,22 @@ imgs.forEach((img, index) => {
 // Build the SAME filename you had
 const filename = `${quote.quoteNumber}_${quote.fiscalName.replace(/\s+/g, '_')}_${quote.destination.replace(/\s+/g, '_')}.pdf`;
 
+// Use Render in Replit (via env var) or same-origin in production
+const baseUrl = API_BASE || window.location.origin;
+
 // Send cleaned HTML to backend (Puppeteer) and download
-const API = 'https://maa-quote-generator.onrender.com';
 const payload = {
   html: clone.outerHTML,
   title: filename.replace(/\.pdf$/i, ''),
-  baseUrl: API,
+  baseUrl, // <- use the variable above
 };
 
-const res = await fetch(`${API}/pdf`, {
+const res = await fetch(`${API_BASE || ""}/pdf`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf' },
   body: JSON.stringify(payload),
 });
+
 if (!res.ok) throw new Error(`PDF failed (${res.status})`);
 
 const blob = await res.blob();
