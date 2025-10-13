@@ -1,3 +1,4 @@
+import { generatePdfRemote } from "./pdfClient";
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -492,3 +493,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   return httpServer;
 }
+
+// Remote PDF generation via Render
+app.get("/api/quotes/:id/pdf", async (req, res) => {
+  try {
+    const pdfBuffer = await generatePdfRemote({ quoteId: req.params.id });
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="quote-${req.params.id}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("PDF error:", err);
+    res.status(502).json({ error: "PDF generation failed" });
+  }
+});
