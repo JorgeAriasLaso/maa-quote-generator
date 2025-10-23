@@ -475,7 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         printBackground: true,
         preferCSSPageSize: true,
-        scale: 1
+        scale: 0.8
       });
 
       await browser.close();
