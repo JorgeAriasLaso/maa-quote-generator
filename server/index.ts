@@ -4,6 +4,8 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+let pdfJobInFlight = false;
+
 
 process.env.PUPPETEER_CACHE_DIR ||= "/tmp/puppeteer";
 process.env.PUPPETEER_DOWNLOAD_PATH ||= "/tmp/puppeteer";
@@ -54,6 +56,16 @@ app.get("/pdf/test", (_req, res) => {
 });
 
 /** ✅ FINAL, SINGLE /pdf ROUTE (auto-detect CSS + crisp print) */
+app.use("/pdf", (req, res, next) => {
+  if (pdfJobInFlight) {
+    return res.status(429).json({ error: "Renderer busy. Try again in a few seconds." });
+  }
+  pdfJobInFlight = true;
+  res.on("finish", () => { pdfJobInFlight = false; });
+  res.on("close", () => { pdfJobInFlight = false; });
+  next();
+});
+
 app.post("/pdf", async (req: Request, res: Response) => {
   const { html, title = "quote", baseUrl = "" } = (req.body ?? {}) as {
     html?: string;
