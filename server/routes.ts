@@ -464,6 +464,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         `
       });
 
+      // ↓↓↓ STEP 1: shrink big images in-memory before PDF ↓↓↓
+await page.evaluate(async () => {
+  const MAX_DIM = 1800;      // cap longest side
+  const JPEG_QUALITY = 0.72; // balance quality/size
+
+  function shouldCompress(img: HTMLImageElement) {
+    const src = img.currentSrc || img.src || "";
+    if (!src) return false;
+    if (/logo|icon|favicon|qr/i.test(src)) return false;        // keep tiny assets
+    if (/\.svg(\?|#|$)/i.test(src)) return false;               // keep vectors
+    const w = img.naturalWidth || 0;
+    const h = img.naturalHeight || 0;
+    return w * h >= 400 * 400;                                  // only bigger images
+  }
+
+  async function compress(el: HTMLImageElement, url: string) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "sync";
+    img.src = url;
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("load fail"));
+    });
+
+    const longest = Math.max(img.naturalWidth, img.naturalHeight) || 1;
+    const scale = Math.min(1, MAX_DIM / longest);
+    const w = Math.max(1, Math.round(img.naturalWidth * scale));
+    const h = Math.max(1, Math.round(img.naturalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    el.srcset = "";        // force use of our compressed source
+    el.src = dataUrl;
+  }
+
+  const imgs = Array.from(document.images).filter(shouldCompress);
+  for (const el of imgs) {
+    try { await compress(el, el.currentSrc || el.src); } catch {}
+  }
+});
+// ↑↑↑ END STEP 1
+
+      
       // Generate PDF
       const pdf = await page.pdf({
         format: 'A4',
@@ -475,7 +525,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         printBackground: true,
         preferCSSPageSize: true,
-        scale: 0.8
+        scale: 1
       });
 
       await browser.close();
