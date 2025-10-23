@@ -383,6 +383,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const page = await browser.newPage();
+      await page.setRequestInterception(true);
+page.on("request", (req) => {
+  if (req.resourceType() === "image") {
+    // Force Chromium to load smaller, compressed formats when possible
+    req.continue({
+      headers: {
+        ...req.headers(),
+        Accept: "image/avif,image/webp,image/*,*/*"
+      },
+    });
+  } else {
+    req.continue();
+  }
+});
+
       await page.setViewport({ width: 1240, height: 1754 }); // A4 at ~150 DPI
       
       // Emulate print media for proper PDF rendering
