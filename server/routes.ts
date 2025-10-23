@@ -383,6 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const page = await browser.newPage();
+      await page.setViewport({ width: 1240, height: 1754 }); // A4 at ~150 DPI
       
       // Emulate print media for proper PDF rendering
       await page.emulateMediaType('print');
@@ -516,17 +517,18 @@ await page.evaluate(async () => {
       
       // Generate PDF
       const pdf = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '15mm',
-          right: '15mm',
-          bottom: '15mm',
-          left: '15mm'
-        },
-        printBackground: true,
-        preferCSSPageSize: true,
-        scale: 1
-      });
+  format: 'A4',
+  margin: {
+    top: '15mm',
+    right: '15mm',
+    bottom: '15mm',
+    left: '15mm'
+  },
+  printBackground: true,
+  preferCSSPageSize: true,
+  scale: 1
+});
+
 
       await browser.close();
 
