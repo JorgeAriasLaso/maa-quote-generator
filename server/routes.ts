@@ -492,9 +492,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   return httpServer;
-}
 
-// Remote PDF generation via Render
+  // Remote PDF generation via Render
 app.get("/api/quotes/:id/pdf", async (req, res) => {
   try {
     const pdfBuffer = await generatePdfRemote({ quoteId: req.params.id });
@@ -506,3 +505,8 @@ app.get("/api/quotes/:id/pdf", async (req, res) => {
     res.status(502).json({ error: "PDF generation failed" });
   }
 });
+  
+  
+}
+
+
