@@ -383,6 +383,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const page = await browser.newPage();
+      await page.setRequestInterception(true);
+page.on("request", (req) => {
+  if (req.resourceType() === "image") {
+    // Force Chromium to load smaller, compressed formats when possible
+    req.continue({
+      headers: {
+        ...req.headers(),
+        Accept: "image/avif,image/webp,image/*,*/*"
+      },
+    });
+  } else {
+    req.continue();
+  }
+});
+
+      await page.setViewport({ width: 1240, height: 1754 }); // A4 at ~150 DPI
       
       // Emulate print media for proper PDF rendering
       await page.emulateMediaType('print');
@@ -464,19 +480,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
         `
       });
 
+      // ↓↓↓ STEP 1: shrink big images in-memory before PDF ↓↓↓
+await page.evaluate(async () => {
+  const MAX_DIM = 1800;      // cap longest side
+  const JPEG_QUALITY = 0.72; // balance quality/size
+
+  function shouldCompress(img: HTMLImageElement) {
+    const src = img.currentSrc || img.src || "";
+    if (!src) return false;
+    if (/logo|icon|favicon|qr/i.test(src)) return false;        // keep tiny assets
+    if (/\.svg(\?|#|$)/i.test(src)) return false;               // keep vectors
+    const w = img.naturalWidth || 0;
+    const h = img.naturalHeight || 0;
+    return w * h >= 400 * 400;                                  // only bigger images
+  }
+
+  async function compress(el: HTMLImageElement, url: string) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "sync";
+    img.src = url;
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("load fail"));
+    });
+
+    const longest = Math.max(img.naturalWidth, img.naturalHeight) || 1;
+    const scale = Math.min(1, MAX_DIM / longest);
+    const w = Math.max(1, Math.round(img.naturalWidth * scale));
+    const h = Math.max(1, Math.round(img.naturalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    el.srcset = "";        // force use of our compressed source
+    el.src = dataUrl;
+  }
+
+  const imgs = Array.from(document.images).filter(shouldCompress);
+  for (const el of imgs) {
+    try { await compress(el, el.currentSrc || el.src); } catch {}
+  }
+});
+// ↑↑↑ END STEP 1
+
+      
       // Generate PDF
       const pdf = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '15mm',
-          right: '15mm',
-          bottom: '15mm',
-          left: '15mm'
-        },
-        printBackground: true,
-        preferCSSPageSize: true,
-        scale: 1
-      });
+  format: 'A4',
+  margin: {
+    top: '15mm',
+    right: '15mm',
+    bottom: '15mm',
+    left: '15mm'
+  },
+  printBackground: true,
+  preferCSSPageSize: true,
+  scale: 1
+});
+
 
       await browser.close();
 
@@ -492,9 +559,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   return httpServer;
-}
 
-// Remote PDF generation via Render
+  // Remote PDF generation via Render
 app.get("/api/quotes/:id/pdf", async (req, res) => {
   try {
     const pdfBuffer = await generatePdfRemote({ quoteId: req.params.id });
@@ -506,3 +572,8 @@ app.get("/api/quotes/:id/pdf", async (req, res) => {
     res.status(502).json({ error: "PDF generation failed" });
   }
 });
+  
+  
+}
+
+
