@@ -10,6 +10,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import express from "express";
+import sharp from "sharp";
+import fetch from "node-fetch";
 
 // Configure multer for file uploads
 const uploadStorage = multer.diskStorage({
@@ -44,6 +46,41 @@ const upload = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files statically
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+  // /img-opt?url=ENCODED_URL&w=1500&q=72&fmt=jpeg
+app.get("/img-opt", async (req, res) => {
+  try {
+    const url = req.query.url ? String(req.query.url) : "";
+    if (!url.startsWith("http")) {
+      return res.status(400).send("Missing or invalid ?url");
+    }
+
+    const width = req.query.w ? Math.min(Number(req.query.w), 2400) : 1500; // sane cap
+    const quality = req.query.q ? Math.min(Number(req.query.q), 95) : 72;
+    const fmtParam = (req.query.fmt ? String(req.query.fmt) : "jpeg").toLowerCase();
+    const fmt: "jpeg" | "webp" = fmtParam === "webp" ? "webp" : "jpeg";
+
+    const r = await fetch(url);
+    if (!r.ok) return res.status(400).send("Bad image URL");
+    const input = Buffer.from(await r.arrayBuffer());
+
+    let pipeline = sharp(input).rotate().resize({ width, withoutEnlargement: true }).withMetadata({ orientation: false });
+
+    if (fmt === "jpeg") {
+      pipeline = pipeline.jpeg({ quality, progressive: true, chromaSubsampling: "4:2:0" });
+    } else {
+      pipeline = pipeline.webp({ quality });
+    }
+
+    const out = await pipeline.toBuffer();
+    res.set("Cache-Control", "public, max-age=31536000, immutable");
+    res.type(fmt).send(out);
+  } catch (err) {
+    res.status(500).send("Image optimize error");
+  }
+});
+
+  
   // Get all quotes
   app.get("/api/quotes", async (req, res) => {
     try {
