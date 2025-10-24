@@ -404,6 +404,8 @@ app.get("/img-opt", async (req, res) => {
 
   // PDF Generation endpoint - proper server-side PDF with page breaks
   app.post('/api/generate-pdf', async (req, res) => {
+  console.log('[REQ] POST /api/generate-pdf', { htmlLen: req.body?.html?.length ?? 0 });
+
     try {
       const { html } = req.body;
       
