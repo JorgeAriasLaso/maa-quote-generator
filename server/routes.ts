@@ -623,7 +623,81 @@ await page.addStyleTag({
   `
 });
 
-      
+     // Force all images (including CSS backgrounds and base64) through our optimizer
+await page.evaluate(async (base) => {
+  const optimizeUrl = (u) =>
+    `${base}/img-opt?url=${encodeURIComponent(u)}&w=1500&q=72&fmt=jpeg`;
+
+  // 1) <img src="...">
+  document.querySelectorAll('img[src]').forEach((img) => {
+    const src = img.getAttribute('src') || '';
+    if (src.startsWith('data:')) return; // handled below
+    if (/^https?:\/\//i.test(src) && !src.includes('/img-opt?')) {
+      img.setAttribute('src', optimizeUrl(src));
+    }
+  });
+
+  // 2) CSS background-image: url(...)
+  const extractUrls = (bg) =>
+    (bg.match(/url\(([^)]+)\)/gi) || [])
+      .map(s => s.replace(/^url\((['"]?)/, '').replace(/(['"]?)\)$/, ''));
+
+  Array.from(document.querySelectorAll('*')).forEach((el) => {
+    const bg = getComputedStyle(el).backgroundImage;
+    if (!bg || bg === 'none') return;
+    const urls = extractUrls(bg);
+    if (!urls.length) return;
+    const newBg = urls.map((u) => {
+      if (u.startsWith('data:')) return u; // handled below
+      if (!/^https?:\/\//i.test(u)) return bg; // skip relative; optional: make absolute
+      return `url("${optimizeUrl(u)}")`;
+    }).join(', ');
+    if (newBg) (el as HTMLElement).style.backgroundImage = newBg;
+  });
+
+  // 3) Re-encode base64 images (both <img> and background-image)
+  async function reencodeDataUrl(dataUrl, maxW = 1500, q = 0.72) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width || 1);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx?.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', q));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  // 3a) <img src="data:...">
+  const imgNodes = Array.from(document.querySelectorAll('img[src^="data:"]'));
+  for (const img of imgNodes) {
+    const src = img.getAttribute('src')!;
+    const newSrc = await reencodeDataUrl(src);
+    (img as HTMLImageElement).src = newSrc as string;
+  }
+
+  // 3b) background-image: data:
+  const nodes = Array.from(document.querySelectorAll('*'));
+  for (const el of nodes) {
+    const bg = getComputedStyle(el).backgroundImage;
+    if (!bg || bg === 'none') continue;
+    const urls = extractUrls(bg).filter(u => u.startsWith('data:'));
+    if (!urls.length) continue;
+    const out: string[] = [];
+    for (const u of urls) {
+      const nu = await reencodeDataUrl(u);
+      out.push(`url("${nu}")`);
+    }
+    (el as HTMLElement).style.backgroundImage = out.join(', ');
+  }
+}, `${req.protocol}://${req.get('host')}`);
+ 
       // Generate PDF
       const pdf = await page.pdf({
   format: 'A4',
