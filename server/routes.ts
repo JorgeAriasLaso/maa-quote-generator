@@ -704,8 +704,7 @@ await page.evaluate(async (base) => {
  
       // Generate PDF
       const pdf = await page.pdf({
-console.log("[PDF] interceptedImages:", interceptedImages);
-res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
+
       format: 'A4',
   margin: {
     top: '15mm',
@@ -718,6 +717,9 @@ res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
   scale: 1
 });
 
+      console.log("[PDF] interceptedImages:", interceptedImages);
+res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
+      
       // ✅ Add this cleanup immediately after PDF generation
 page.removeListener("request", onRequest);
 try { await page.setRequestInterception(false); } catch {}
