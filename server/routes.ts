@@ -633,7 +633,7 @@ await page.addStyleTag({
     bottom: '15mm',
     left: '15mm'
   },
-  printBackground: true,
+  printBackground: false,
   preferCSSPageSize: true,
   scale: 1
 });
