@@ -413,7 +413,7 @@ app.get("/img-opt", async (req, res) => {
 
       // Launch browser
       const browser = await puppeteer.launch({
-        args: chromium.args,
+        args: [...chromium.args, "--disable-pdf-tagging"],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
         headless: chromium.headless,
