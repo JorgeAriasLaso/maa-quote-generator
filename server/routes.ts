@@ -420,6 +420,7 @@ app.get("/img-opt", async (req, res) => {
       });
 
       const page = await browser.newPage();
+      let interceptedImages = 0;
      await page.setRequestInterception(true);
 
 // Prefer your own base URL if you have one set; otherwise derive from request
@@ -443,12 +444,15 @@ const onRequest = (r: any) => {
       type === "image" || /\.(png|jpe?g|webp|gif|bmp|tiff|svg)$/i.test(url);
 
     if (isImage) {
+      interceptedImages++;
       const optimized = `${base}/img-opt?url=${encodeURIComponent(
         url
       )}&w=1500&q=72&fmt=jpeg`;
       return r.continue({ url: optimized });
     }
 
+
+    
     return r.continue();
   } catch {
     try { r.continue(); } catch {}
@@ -700,7 +704,9 @@ await page.evaluate(async (base) => {
  
       // Generate PDF
       const pdf = await page.pdf({
-  format: 'A4',
+console.log("[PDF] interceptedImages:", interceptedImages);
+res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
+      format: 'A4',
   margin: {
     top: '15mm',
     right: '15mm',
