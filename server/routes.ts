@@ -589,6 +589,40 @@ await page.evaluate(async () => {
 });
 // ↑↑↑ END STEP 1
 
+// 4B-1) Strip loaded webfonts/@font-face to avoid multi-MB font embedding
+await page.evaluate(() => {
+  document
+    .querySelectorAll(
+      'link[href*="fonts.googleapis"], link[href*="fonts.gstatic"], link[rel="preload"][as="font"]'
+    )
+    .forEach(el => el.remove());
+  document.querySelectorAll('style').forEach(s => {
+    if (s.textContent && s.textContent.includes('@font-face')) s.remove();
+  });
+});
+
+// 4B-2) Force system fonts & disable rasterizing effects for print only
+await page.addStyleTag({
+  content: `
+  @media print {
+    html, body, * {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+      text-shadow: none !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    * {
+      box-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+      mix-blend-mode: normal !important;
+      /* If you DO need background images in the PDF, comment the next line */
+      background-image: none !important;
+    }
+  }
+  `
+});
+
       
       // Generate PDF
       const pdf = await page.pdf({
