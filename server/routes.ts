@@ -420,20 +420,43 @@ app.get("/img-opt", async (req, res) => {
       });
 
       const page = await browser.newPage();
-      await page.setRequestInterception(true);
-page.on("request", (req) => {
-  if (req.resourceType() === "image") {
-    // Force Chromium to load smaller, compressed formats when possible
-    req.continue({
-      headers: {
-        ...req.headers(),
-        Accept: "image/avif,image/webp,image/*,*/*"
-      },
-    });
-  } else {
-    req.continue();
+     await page.setRequestInterception(true);
+
+// Prefer your own base URL if you have one set; otherwise derive from request
+const base =
+  process.env.PUBLIC_BASE_URL ??
+  (req.get("host") ? `https://${req.get("host")}` : "");
+
+// Keep a named handler so we can remove it later
+const onRequest = (r: any) => {
+  try {
+    const url = r.url();
+    const type = r.resourceType && r.resourceType();
+
+    // Avoid loops and skip data URIs
+    if (!base || url.startsWith("data:") || url.includes("/img-opt")) {
+      return r.continue();
+    }
+
+    // Only rewrite images (resource type OR common image extensions)
+    const isImage =
+      type === "image" || /\.(png|jpe?g|webp|gif|bmp|tiff|svg)$/i.test(url);
+
+    if (isImage) {
+      const optimized = `${base}/img-opt?url=${encodeURIComponent(
+        url
+      )}&w=1500&q=72&fmt=jpeg`;
+      return r.continue({ url: optimized });
+    }
+
+    return r.continue();
+  } catch {
+    try { r.continue(); } catch {}
   }
-});
+};
+
+page.on("request", onRequest);
+
 
       await page.setViewport({ width: 1240, height: 1754 }); // A4 at ~150 DPI
       
@@ -581,6 +604,10 @@ await page.evaluate(async () => {
   scale: 1
 });
 
+      // ✅ Add this cleanup immediately after PDF generation
+page.removeListener("request", onRequest);
+try { await page.setRequestInterception(false); } catch {}
+      
 
       await browser.close();
 
