@@ -184,6 +184,17 @@ try {
 
     const page = await browser.newPage();
 
+       // TEMP: log total asset bytes by type to detect heavy content
+const bytesByType: Record<string, number> = {};
+page.on("response", async (res) => {
+  try {
+    const t = res.request().resourceType();
+    const len = res.headers()["content-length"];
+    const n = len ? parseInt(len, 10) || 0 : 0;
+    bytesByType[t] = (bytesByType[t] || 0) + n;
+  } catch {}
+});
+
     // Reduce oversized PDFs (e.g., Madrid, Warsaw) by blocking webfonts during PDF generation
 await page.setRequestInterception(true);
 page.on("request", (req) => {
@@ -217,18 +228,7 @@ await page.addStyleTag({
       });
     } catch {}
 
-    // TEMP: log total asset bytes by type to detect heavy content
-const bytesByType: Record<string, number> = {};
-page.on("response", async (res) => {
-  try {
-    const t = res.request().resourceType();
-    const len = res.headers()["content-length"];
-    const n = len ? parseInt(len, 10) || 0 : 0;
-    bytesByType[t] = (bytesByType[t] || 0) + n;
-  } catch {}
-});
-
-    
+     
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
