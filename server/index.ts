@@ -73,8 +73,6 @@ app.post("/pdf", async (req: Request, res: Response) => {
     baseUrl?: string;
   };
 
-  return res.redirect(307, "/api/generate-pdf");
-
   if (!html) return res.status(400).json({ error: "Missing 'html' in request body" });
 
   // Fallback origin if client didn't send baseUrl
