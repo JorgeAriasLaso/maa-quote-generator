@@ -217,6 +217,18 @@ await page.addStyleTag({
       });
     } catch {}
 
+    // TEMP: log total asset bytes by type to detect heavy content
+const bytesByType: Record<string, number> = {};
+page.on("response", async (res) => {
+  try {
+    const t = res.request().resourceType();
+    const len = res.headers()["content-length"];
+    const n = len ? parseInt(len, 10) || 0 : 0;
+    bytesByType[t] = (bytesByType[t] || 0) + n;
+  } catch {}
+});
+
+    
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -225,6 +237,8 @@ await page.addStyleTag({
       scale: 0.95, // safety margin to avoid right-edge cut
     });
 
+    console.log("PDF asset bytes by type:", bytesByType);
+    
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${title}.pdf"`);
     res.end(pdfBuffer);
