@@ -723,7 +723,7 @@ await page.evaluate(async (base) => {
 res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
       
       // ✅ Add this cleanup immediately after PDF generation
-page.removeListener("request", onRequest);
+page.off("request", onRequest);
 try { await page.setRequestInterception(false); } catch {}
       
 
