@@ -183,10 +183,32 @@ try {
     });
 
     const page = await browser.newPage();
+
+    // Reduce oversized PDFs (e.g., Madrid, Warsaw) by blocking webfonts during PDF generation
+await page.setRequestInterception(true);
+page.on("request", (req) => {
+  const type = req.resourceType();
+  const url = req.url();
+  if (type === "font" || url.includes("fonts.googleapis.com") || url.includes("fonts.gstatic.com")) {
+    return req.abort(); // skip heavy font files
+  }
+  return req.continue();
+});
+
+    
     page.setDefaultNavigationTimeout(60_000);
     page.setDefaultTimeout(60_000);
 
     await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
+
+    // Force system font fallback (only affects PDF rendering)
+await page.addStyleTag({
+  content: `
+    @media print {
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    }
+  `
+});
 
     try {
       await page.evaluate(async () => {
