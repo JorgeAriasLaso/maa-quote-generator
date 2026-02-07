@@ -199,14 +199,43 @@ page.on("response", async (res) => {
   } catch {}
 });
 
-    // Reduce oversized PDFs (e.g., Madrid, Warsaw) by blocking webfonts during PDF generation
+ // Reduce oversized PDFs by blocking webfonts and intercepting images for compression
 await page.setRequestInterception(true);
-page.on("request", (req) => {
+page.on("request", async (req) => {
   const type = req.resourceType();
   const url = req.url();
+  
+  // Block fonts
   if (type === "font" || url.includes("fonts.googleapis.com") || url.includes("fonts.gstatic.com")) {
-    return req.abort(); // skip heavy font files
+    return req.abort();
   }
+  
+  // Intercept and compress images
+  if (type === "image") {
+    try {
+      const response = await fetch(url);
+      const buffer = Buffer.from(await response.arrayBuffer());
+      
+      // Import sharp dynamically
+      const sharp = (await import("sharp")).default;
+      
+      // Compress image: resize to max 800px width, 80% quality JPEG
+      const compressed = await sharp(buffer)
+        .resize(800, null, { withoutEnlargement: true, fit: 'inside' })
+        .jpeg({ quality: 80, progressive: true })
+        .toBuffer();
+      
+      return req.respond({
+        status: 200,
+        contentType: 'image/jpeg',
+        body: compressed
+      });
+    } catch (err) {
+      console.warn('Image compression failed for', url, err);
+      return req.continue(); // fallback to original
+    }
+  }
+  
   return req.continue();
 });
 
