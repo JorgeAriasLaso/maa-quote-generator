@@ -31,11 +31,32 @@
 @media print {
   .page-break { break-before: page; page-break-before: always; height: 0; }
 }
+
 .flow-panel {
-  background: #E6F2FF;           /* same light blue as current box */
+  background: #E6F2FF;
   border-radius: 8px;
   padding: 10mm;
   margin: 0 0 6mm 0;
   break-inside: avoid;
   page-break-inside: avoid;
+}
+
+/* Destination images - force 2x2 grid in PDF */
+@media print {
+  table[style*="tableLayout"] {
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  
+  table[style*="tableLayout"] td {
+    width: 50% !important;
+    vertical-align: top !important;
+  }
+  
+  table[style*="tableLayout"] img {
+    width: 100% !important;
+    height: 150px !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
 }
