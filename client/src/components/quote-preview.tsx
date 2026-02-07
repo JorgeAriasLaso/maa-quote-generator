@@ -1173,36 +1173,55 @@ URL.revokeObjectURL(url);
                     </div>
                     
                     {/* Images placed after text to avoid page break cuts - protected block */}
-                    <div className="flex flex-wrap gap-2 justify-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
-                      {highlights && highlights.description && highlights.images ? (
-                        // Madrid format - use custom images
-                        highlights.images.slice(0, 4).map((image, index) => (
-                          <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
-                            <img 
-                              src={image.src} 
-                              alt={image.alt} 
-                              className="w-full h-28 object-cover rounded-lg shadow-sm"
-                              style={{ minHeight: '100px', maxHeight: '120px' }}
-                            />
-                          </div>
-                        ))
-                      ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
-                        // Other cities - use highlight images
-                        highlights.slice(0, 4).map((highlight, index) => (
-                          <div key={index} className="flex-shrink-0" style={{ width: '48%', maxWidth: '180px' }}>
-                            <img 
-                              src={highlight.image} 
-                              alt={highlight.title} 
-                              className="w-full h-28 object-cover rounded-lg shadow-sm"
-                              style={{ minHeight: '100px', maxHeight: '120px' }}
-                            />
-                          </div>
-                        ))
-                      ) : (
-                        // Placeholder if no images available
-                        <div className="text-center text-slate-400 text-sm py-8">Images will be added when uploaded</div>
-                      )}
-                    </div>
+                   {/* Images placed after text to avoid page break cuts - protected block */}
+                    <table style={{ width: '100%', borderCollapse: 'collapse', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                      <tbody>
+                    {highlights && highlights.description && highlights.images ? (
+                      // Madrid format - use custom images
+                      <>
+                        <tr>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            <img src={highlights.images[0].src} alt={highlights.images[0].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
+                          </td>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights.images[1] && <img src={highlights.images[1].src} alt={highlights.images[1].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights.images[2] && <img src={highlights.images[2].src} alt={highlights.images[2].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights.images[3] && <img src={highlights.images[3].src} alt={highlights.images[3].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                        </tr>
+                      </>
+                    ) : highlights && Array.isArray(highlights) && highlights.length > 0 ? (
+                      // Other cities - use highlight images
+                      <>
+                        <tr>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            <img src={highlights[0].image} alt={highlights[0].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
+                          </td>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights[1] && <img src={highlights[1].image} alt={highlights[1].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights[2] && <img src={highlights[2].image} alt={highlights[2].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                          <td style={{ width: '50%', padding: '4px' }}>
+                            {highlights[3] && <img src={highlights[3].image} alt={highlights[3].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                          </td>
+                        </tr>
+                      </>
+                    ) : (
+                      <tr><td colSpan={2} style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.875rem', padding: '2rem 0' }}>Images will be added when uploaded</td></tr>
+                    )}
+                      </tbody>
+                    </table>
+                  </div>
                   </div>
                 </>
               )}
