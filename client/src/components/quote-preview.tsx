@@ -1181,18 +1181,18 @@ URL.revokeObjectURL(url);
                       <>
                         <tr>
                          <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            <img src={highlights.images[0].src} alt={highlights.images[0].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
+                            <img className="grid-img" src={highlights.images[0].src} alt={highlights.images[0].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
                           </td>
                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights.images[1] && <img src={highlights.images[1].src} alt={highlights.images[1].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights.images[1] && <img className="grid-img" src={highlights.images[1].src} alt={highlights.images[1].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                         <tr>
                          <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights.images[2] && <img src={highlights.images[2].src} alt={highlights.images[2].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights.images[2] && <img className="grid-img" src={highlights.images[2].src} alt={highlights.images[2].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                        <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights.images[3] && <img src={highlights.images[3].src} alt={highlights.images[3].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights.images[3] && <img className="grid-img" src={highlights.images[3].src} alt={highlights.images[3].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                       </>
@@ -1201,18 +1201,18 @@ URL.revokeObjectURL(url);
                       <>
                         <tr>
                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            <img src={highlights[0].image} alt={highlights[0].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
+                            <img className="grid-img" src={highlights[0].image} alt={highlights[0].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
                           </td>
                        <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights[1] && <img src={highlights[1].image} alt={highlights[1].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights[1] && <img className="grid-img" src={highlights[1].image} alt={highlights[1].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                         <tr>
                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights[2] && <img src={highlights[2].image} alt={highlights[2].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights[2] && <img className="grid-img" src={highlights[2].image} alt={highlights[2].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                          <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
-                            {highlights[3] && <img src={highlights[3].image} alt={highlights[3].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
+                            {highlights[3] && <img className="grid-img" src={highlights[3].image} alt={highlights[3].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                       </>
