@@ -1174,24 +1174,24 @@ URL.revokeObjectURL(url);
                     
                 
                    {/* Images placed after text to avoid page break cuts - protected block */}
-                    <table style={{ width: '100%', borderCollapse: 'collapse', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
+                 <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                       <tbody>
                     {highlights && highlights.description && highlights.images ? (
                       // Madrid format - use custom images
                       <>
                         <tr>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             <img src={highlights.images[0].src} alt={highlights.images[0].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
                           </td>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                        <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights.images[1] && <img src={highlights.images[1].src} alt={highlights.images[1].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                         <tr>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights.images[2] && <img src={highlights.images[2].src} alt={highlights.images[2].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                       <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights.images[3] && <img src={highlights.images[3].src} alt={highlights.images[3].alt} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
@@ -1200,18 +1200,18 @@ URL.revokeObjectURL(url);
                       // Other cities - use highlight images
                       <>
                         <tr>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                        <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             <img src={highlights[0].image} alt={highlights[0].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />
                           </td>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                       <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights[1] && <img src={highlights[1].image} alt={highlights[1].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
                         <tr>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                        <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights[2] && <img src={highlights[2].image} alt={highlights[2].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
-                          <td style={{ width: '50%', padding: '4px' }}>
+                         <td style={{ width: '50%', padding: '4px', verticalAlign: 'top' }}>
                             {highlights[3] && <img src={highlights[3].image} alt={highlights[3].title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', display: 'block' }} />}
                           </td>
                         </tr>
