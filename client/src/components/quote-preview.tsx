@@ -192,6 +192,15 @@ export function QuotePreview({ quote, costBreakdown: externalCostBreakdown }: Qu
       
 // CLONE + RESTORE UI + SEND TO SERVER (no html2/jsPDF)
 const clone = quoteElement.cloneNode(true) as HTMLElement;
+      // 1. Remove hidden elements so they don't take up space
+clone.querySelectorAll('.preview-header, .internal-analysis-only, .no-pdf').forEach(el => el.remove());
+
+// 2. IMPORTANT: Remove all images that are currently hidden (other cities)
+clone.querySelectorAll('img').forEach(img => {
+  if (img.style.display === 'none' || img.offsetParent === null) {
+    img.remove();
+  }
+});
 
 // Immediately restore the live UI (we've got our clone)
 Object.assign(quoteElement.style, originalStyles);
