@@ -204,32 +204,7 @@ page.on("request", async (req) => {
     return req.abort();
   }
   
-  // Intercept and compress images
-  if (type === "image") {
-    try {
-      const response = await fetch(url);
-      const buffer = Buffer.from(await response.arrayBuffer());
-      
-      // Import sharp dynamically
-      const sharp = (await import("sharp")).default;
-      
-    // Compress image: resize to max 600px width, 75% quality JPEG
-    const compressed = await sharp(buffer)
-        .resize(500, null, { withoutEnlargement: true, fit: 'inside' })
-        .jpeg({ quality: 70, progressive: true })
-        .toBuffer();
-      
-      return req.respond({
-        status: 200,
-        contentType: 'image/jpeg',
-        body: compressed
-      });
-    } catch (err) {
-      console.warn('Image compression failed for', url, err);
-      return req.continue(); // fallback to original
-    }
-  }
-  
+
   return req.continue();
 });
 
