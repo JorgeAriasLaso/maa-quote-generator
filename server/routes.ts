@@ -10,6 +10,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import express from "express";
+import sharp from "sharp";
+import fetch from "node-fetch";
 
 // Configure multer for file uploads
 const uploadStorage = multer.diskStorage({
@@ -44,6 +46,41 @@ const upload = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files statically
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+  // /img-opt?url=ENCODED_URL&w=1500&q=72&fmt=jpeg
+app.get("/img-opt", async (req, res) => {
+  try {
+    const url = req.query.url ? String(req.query.url) : "";
+    if (!url.startsWith("http")) {
+      return res.status(400).send("Missing or invalid ?url");
+    }
+
+    const width = req.query.w ? Math.min(Number(req.query.w), 2400) : 1500; // sane cap
+    const quality = req.query.q ? Math.min(Number(req.query.q), 95) : 72;
+    const fmtParam = (req.query.fmt ? String(req.query.fmt) : "jpeg").toLowerCase();
+    const fmt: "jpeg" | "webp" = fmtParam === "webp" ? "webp" : "jpeg";
+
+    const r = await fetch(url);
+    if (!r.ok) return res.status(400).send("Bad image URL");
+    const input = Buffer.from(await r.arrayBuffer());
+
+    let pipeline = sharp(input).rotate().resize({ width, withoutEnlargement: true }).withMetadata({ orientation: false });
+
+    if (fmt === "jpeg") {
+      pipeline = pipeline.jpeg({ quality, progressive: true, chromaSubsampling: "4:2:0" });
+    } else {
+      pipeline = pipeline.webp({ quality });
+    }
+
+    const out = await pipeline.toBuffer();
+    res.set("Cache-Control", "public, max-age=31536000, immutable");
+    res.type(fmt).send(out);
+  } catch (err) {
+    res.status(500).send("Image optimize error");
+  }
+});
+
+  
   // Get all quotes
   app.get("/api/quotes", async (req, res) => {
     try {
@@ -367,6 +404,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // PDF Generation endpoint - proper server-side PDF with page breaks
   app.post('/api/generate-pdf', async (req, res) => {
+  console.log('[REQ] POST /api/generate-pdf', { htmlLen: req.body?.html?.length ?? 0 });
+
     try {
       const { html } = req.body;
       
@@ -376,13 +415,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Launch browser
       const browser = await puppeteer.launch({
-        args: chromium.args,
+        args: [...chromium.args, "--disable-pdf-tagging"],
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath,
+        executablePath: await chromium.executablePath(),
         headless: chromium.headless,
       });
 
       const page = await browser.newPage();
+      let interceptedImages = 0;
+     await page.setRequestInterception(true);
+
+// Prefer your own base URL if you have one set; otherwise derive from request
+const base =
+  process.env.PUBLIC_BASE_URL ??
+  (req.get("host") ? `https://${req.get("host")}` : "");
+
+// Keep a named handler so we can remove it later
+const onRequest = (r: any) => {
+  try {
+    const url = r.url();
+    const type = r.resourceType && r.resourceType();
+
+    // Avoid loops and skip data URIs
+    if (!base || url.startsWith("data:") || url.includes("/img-opt")) {
+      return r.continue();
+    }
+
+    // Only rewrite images (resource type OR common image extensions)
+    const isImage =
+      type === "image" || /\.(png|jpe?g|webp|gif|bmp|tiff|svg)$/i.test(url);
+
+    if (isImage) {
+      interceptedImages++;
+      const optimized = `${base}/img-opt?url=${encodeURIComponent(
+        url
+      )}&w=1500&q=72&fmt=jpeg`;
+      return r.continue({ url: optimized });
+    }
+
+
+    
+    return r.continue();
+  } catch {
+    try { r.continue(); } catch {}
+  }
+};
+
+page.on("request", onRequest);
+
+
+      await page.setViewport({ width: 1240, height: 1754 }); // A4 at ~150 DPI
       
       // Emulate print media for proper PDF rendering
       await page.emulateMediaType('print');
@@ -464,19 +546,186 @@ export async function registerRoutes(app: Express): Promise<Server> {
         `
       });
 
+      // ↓↓↓ STEP 1: shrink big images in-memory before PDF ↓↓↓
+await page.evaluate(async () => {
+  const MAX_DIM = 1800;      // cap longest side
+  const JPEG_QUALITY = 0.72; // balance quality/size
+
+  function shouldCompress(img: HTMLImageElement) {
+    const src = img.currentSrc || img.src || "";
+    if (!src) return false;
+    if (/logo|icon|favicon|qr/i.test(src)) return false;        // keep tiny assets
+    if (/\.svg(\?|#|$)/i.test(src)) return false;               // keep vectors
+    const w = img.naturalWidth || 0;
+    const h = img.naturalHeight || 0;
+    return w * h >= 400 * 400;                                  // only bigger images
+  }
+
+  async function compress(el: HTMLImageElement, url: string) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.decoding = "sync";
+    img.src = url;
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("load fail"));
+    });
+
+    const longest = Math.max(img.naturalWidth, img.naturalHeight) || 1;
+    const scale = Math.min(1, MAX_DIM / longest);
+    const w = Math.max(1, Math.round(img.naturalWidth * scale));
+    const h = Math.max(1, Math.round(img.naturalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    el.srcset = "";        // force use of our compressed source
+    el.src = dataUrl;
+  }
+
+  const imgs = Array.from(document.images).filter(shouldCompress);
+  for (const el of imgs) {
+    try { await compress(el, el.currentSrc || el.src); } catch {}
+  }
+});
+// ↑↑↑ END STEP 1
+
+// 4B-1) Strip loaded webfonts/@font-face to avoid multi-MB font embedding
+await page.evaluate(() => {
+  document
+    .querySelectorAll(
+      'link[href*="fonts.googleapis"], link[href*="fonts.gstatic"], link[rel="preload"][as="font"]'
+    )
+    .forEach(el => el.remove());
+  document.querySelectorAll('style').forEach(s => {
+    if (s.textContent && s.textContent.includes('@font-face')) s.remove();
+  });
+});
+
+// 4B-2) Force system fonts & disable rasterizing effects for print only
+await page.addStyleTag({
+  content: `
+  @media print {
+    html, body, * {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+      text-shadow: none !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    * {
+      box-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+      mix-blend-mode: normal !important;
+      /* If you DO need background images in the PDF, comment the next line */
+      background-image: none !important;
+    }
+  }
+  `
+});
+
+     // Force all images (including CSS backgrounds and base64) through our optimizer
+await page.evaluate(async (base) => {
+  const optimizeUrl = (u) =>
+    `${base}/img-opt?url=${encodeURIComponent(u)}&w=1500&q=72&fmt=jpeg`;
+
+  // 1) <img src="...">
+  document.querySelectorAll('img[src]').forEach((img) => {
+    const src = img.getAttribute('src') || '';
+    if (src.startsWith('data:')) return; // handled below
+    if (/^https?:\/\//i.test(src) && !src.includes('/img-opt?')) {
+      img.setAttribute('src', optimizeUrl(src));
+    }
+  });
+
+  // 2) CSS background-image: url(...)
+  const extractUrls = (bg) =>
+    (bg.match(/url\(([^)]+)\)/gi) || [])
+      .map(s => s.replace(/^url\((['"]?)/, '').replace(/(['"]?)\)$/, ''));
+
+  Array.from(document.querySelectorAll('*')).forEach((el) => {
+    const bg = getComputedStyle(el).backgroundImage;
+    if (!bg || bg === 'none') return;
+    const urls = extractUrls(bg);
+    if (!urls.length) return;
+    const newBg = urls.map((u) => {
+      if (u.startsWith('data:')) return u; // handled below
+      if (!/^https?:\/\//i.test(u)) return bg; // skip relative; optional: make absolute
+      return `url("${optimizeUrl(u)}")`;
+    }).join(', ');
+    if (newBg) (el as HTMLElement).style.backgroundImage = newBg;
+  });
+
+  // 3) Re-encode base64 images (both <img> and background-image)
+  async function reencodeDataUrl(dataUrl, maxW = 1500, q = 0.72) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width || 1);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx?.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', q));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  // 3a) <img src="data:...">
+  const imgNodes = Array.from(document.querySelectorAll('img[src^="data:"]'));
+  for (const img of imgNodes) {
+    const src = img.getAttribute('src')!;
+    const newSrc = await reencodeDataUrl(src);
+    (img as HTMLImageElement).src = newSrc as string;
+  }
+
+  // 3b) background-image: data:
+  const nodes = Array.from(document.querySelectorAll('*'));
+  for (const el of nodes) {
+    const bg = getComputedStyle(el).backgroundImage;
+    if (!bg || bg === 'none') continue;
+    const urls = extractUrls(bg).filter(u => u.startsWith('data:'));
+    if (!urls.length) continue;
+    const out: string[] = [];
+    for (const u of urls) {
+      const nu = await reencodeDataUrl(u);
+      out.push(`url("${nu}")`);
+    }
+    (el as HTMLElement).style.backgroundImage = out.join(', ');
+  }
+}, `${req.protocol}://${req.get('host')}`);
+ 
       // Generate PDF
       const pdf = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '15mm',
-          right: '15mm',
-          bottom: '15mm',
-          left: '15mm'
-        },
-        printBackground: true,
-        preferCSSPageSize: true,
-        scale: 1
-      });
+
+      format: 'A4',
+  margin: {
+    top: '15mm',
+    right: '15mm',
+    bottom: '15mm',
+    left: '15mm'
+  },
+  printBackground: false,
+  preferCSSPageSize: true,
+  scale: 1
+});
+
+      console.log("[PDF] interceptedImages:", interceptedImages);
+res.setHeader("X-PDF-Intercepted-Images", String(interceptedImages));
+      
+      // ✅ Add this cleanup immediately after PDF generation
+page.removeListener("request", onRequest);
+try { await page.setRequestInterception(false); } catch {}
+      
 
       await browser.close();
 
@@ -492,9 +741,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   return httpServer;
-}
 
-// Remote PDF generation via Render
+  // Remote PDF generation via Render
 app.get("/api/quotes/:id/pdf", async (req, res) => {
   try {
     const pdfBuffer = await generatePdfRemote({ quoteId: req.params.id });
@@ -506,3 +754,8 @@ app.get("/api/quotes/:id/pdf", async (req, res) => {
     res.status(502).json({ error: "PDF generation failed" });
   }
 });
+  
+  
+}
+
+

@@ -4,6 +4,8 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+let pdfJobInFlight = false;
+
 
 process.env.PUPPETEER_CACHE_DIR ||= "/tmp/puppeteer";
 process.env.PUPPETEER_DOWNLOAD_PATH ||= "/tmp/puppeteer";
@@ -54,6 +56,16 @@ app.get("/pdf/test", (_req, res) => {
 });
 
 /** ✅ FINAL, SINGLE /pdf ROUTE (auto-detect CSS + crisp print) */
+app.use("/pdf", (req, res, next) => {
+  if (pdfJobInFlight) {
+    return res.status(429).json({ error: "Renderer busy. Try again in a few seconds." });
+  }
+  pdfJobInFlight = true;
+  res.on("finish", () => { pdfJobInFlight = false; });
+  res.on("close", () => { pdfJobInFlight = false; });
+  next();
+});
+
 app.post("/pdf", async (req: Request, res: Response) => {
   const { html, title = "quote", baseUrl = "" } = (req.body ?? {}) as {
     html?: string;
@@ -171,10 +183,43 @@ try {
     });
 
     const page = await browser.newPage();
+
+       // TEMP: log total asset bytes by type to detect heavy content
+const bytesByType: Record<string, number> = {};
+page.on("response", async (res) => {
+  try {
+    const t = res.request().resourceType();
+    const len = res.headers()["content-length"];
+    const n = len ? parseInt(len, 10) || 0 : 0;
+    bytesByType[t] = (bytesByType[t] || 0) + n;
+  } catch {}
+});
+
+    // Reduce oversized PDFs (e.g., Madrid, Warsaw) by blocking webfonts during PDF generation
+await page.setRequestInterception(true);
+page.on("request", (req) => {
+  const type = req.resourceType();
+  const url = req.url();
+  if (type === "font" || url.includes("fonts.googleapis.com") || url.includes("fonts.gstatic.com")) {
+    return req.abort(); // skip heavy font files
+  }
+  return req.continue();
+});
+
+    
     page.setDefaultNavigationTimeout(60_000);
     page.setDefaultTimeout(60_000);
 
     await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
+
+    // Force system font fallback (only affects PDF rendering)
+await page.addStyleTag({
+  content: `
+    @media print {
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    }
+  `
+});
 
     try {
       await page.evaluate(async () => {
@@ -183,6 +228,7 @@ try {
       });
     } catch {}
 
+     
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -191,6 +237,8 @@ try {
       scale: 0.95, // safety margin to avoid right-edge cut
     });
 
+    console.log("PDF asset bytes by type:", bytesByType);
+    
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${title}.pdf"`);
     res.end(pdfBuffer);
