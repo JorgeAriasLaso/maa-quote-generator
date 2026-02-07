@@ -214,9 +214,9 @@ page.on("request", async (req) => {
       const sharp = (await import("sharp")).default;
       
     // Compress image: resize to max 600px width, 75% quality JPEG
-      const compressed = await sharp(buffer)
-        .resize(600, null, { withoutEnlargement: true, fit: 'inside' })
-        .jpeg({ quality: 75, progressive: true })
+    const compressed = await sharp(buffer)
+        .resize(500, null, { withoutEnlargement: true, fit: 'inside' })
+        .jpeg({ quality: 70, progressive: true })
         .toBuffer();
       
       return req.respond({
