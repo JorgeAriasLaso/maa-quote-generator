@@ -84,25 +84,8 @@ app.post("/pdf", async (req: Request, res: Response) => {
       ? p
       : `${inferredBase.replace(/\/$/, "")}/${p.replace(/^\//, "")}`;
 
- // 1) Discover current hashed CSS files from your homepage (with 5s timeout)
-let cssHrefs: string[] = [];
-try {
-  const ac = new AbortController();
-  const t = setTimeout(() => ac.abort(), 5000);
-  const resp = await fetch(withBase("/"), { method: "GET", signal: ac.signal });
-  clearTimeout(t);
-  const homeHtml = await resp.text();
-  const linkRegex = /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/gi;
-  let m: RegExpExecArray | null;
-  while ((m = linkRegex.exec(homeHtml))) {
-    const href = m[1];
-    if (/^\/?assets\/.+\.css(\?.*)?$/i.test(href)) cssHrefs.push(withBase(href));
-  }
-} catch (e) {
-  console.warn("Could not fetch homepage to discover CSS (skipping):", e);
-}
-
-  const cssLinks = cssHrefs.map((href) => `<link rel="stylesheet" href="${href}">`).join("\n");
+// Minimal CSS - only what's needed for PDF
+const cssLinks = ""; // We'll use inline styles instead
 
   // 2) Build full HTML (use real CSS, inject your HTML AS-IS; no extra wrapper)
   const fullHtml = `<!DOCTYPE html>
@@ -113,44 +96,65 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base href="${inferredBase.replace(/\/?$/, "/")}" />
   ${cssLinks}
-  <style>
-    /* Page & print behavior */
+ <style>
+    /* Reset and print setup */
     @page { size: A4; margin: 10mm; }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     html, body {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
       background: white;
-      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.4;
+      color: #000;
     }
-    /* Keep everything inside printable area (A4 210mm - 2x10mm) */
+    
     body > * {
       max-width: 190mm;
       margin: 0 auto;
-      box-sizing: border-box;
     }
-    /* Avoid cutoffs and huge gaps */
-    * { box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; }
-    h1,h2,h3,h4,h5,h6,p,ul,ol,li,div,section {
-      margin-top: 0.4rem !important;
-      margin-bottom: 0.4rem !important;
-      line-height: 1.3 !important;
-    }
-    img, video, canvas {
-      max-width: 100% !important; height: auto !important;
-      page-break-inside: avoid; break-inside: avoid;
-    }
-    /* Opt-in class to keep blocks together */
-    .avoid-break { page-break-inside: avoid; break-inside: avoid; }
-/* Opt-in class to keep blocks together */
-.avoid-break { page-break-inside: avoid; break-inside: avoid; }
-
-/* Force a new page before the section */
-.pdf-break-before {
-  page-break-before: always;
-  break-before: page;
-}
-
     
+    /* Typography - compact spacing */
+    h1 { font-size: 18pt; margin: 8pt 0 6pt; font-weight: 700; }
+    h2 { font-size: 14pt; margin: 6pt 0 4pt; font-weight: 600; }
+    h3 { font-size: 12pt; margin: 4pt 0 3pt; font-weight: 600; }
+    h4, h5, h6 { font-size: 10pt; margin: 3pt 0; font-weight: 600; }
+    
+    p, ul, ol, div, section {
+      margin: 3pt 0;
+      line-height: 1.3;
+    }
+    
+    /* Images - optimize display */
+    img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block;
+      page-break-inside: avoid;
+    }
+    
+    /* Utility classes */
+    .avoid-break {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    
+    .pdf-break-before {
+      page-break-before: always;
+      break-before: page;
+    }
+    
+    /* Hide elements not needed in PDF */
+    button, .no-print {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -230,12 +234,13 @@ await page.addStyleTag({
 
      
     const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      preferCSSPageSize: true,
-      margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
-      scale: 0.95, // safety margin to avoid right-edge cut
-    });
+  format: "A4",
+  printBackground: true,
+  preferCSSPageSize: false, // Changed to false
+  margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
+  scale: 0.90, // Reduced from 0.95
+  omitBackground: false,
+});
 
     console.log("PDF asset bytes by type:", bytesByType);
     
