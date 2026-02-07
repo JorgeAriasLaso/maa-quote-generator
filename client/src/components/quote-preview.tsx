@@ -1172,7 +1172,7 @@ URL.revokeObjectURL(url);
                       )}
                     </div>
                     
-                    {/* Images placed after text to avoid page break cuts - protected block */}
+                
                    {/* Images placed after text to avoid page break cuts - protected block */}
                     <table style={{ width: '100%', borderCollapse: 'collapse', pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                       <tbody>
@@ -1222,7 +1222,7 @@ URL.revokeObjectURL(url);
                       </tbody>
                     </table>
                   </div>
-                  </div>
+                 
                 </>
               )}
                 </div>
